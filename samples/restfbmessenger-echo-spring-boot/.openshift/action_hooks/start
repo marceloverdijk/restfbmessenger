@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export JAVA_HOME=/etc/alternatives/java_sdk_1.8.0
+export PATH=$JAVA_HOME/bin:$PATH
+
+nohup java -jar $OPENSHIFT_REPO_DIR/build/libs/*.jar --server.address=${OPENSHIFT_DIY_IP} --server.port=${OPENSHIFT_DIY_PORT} &

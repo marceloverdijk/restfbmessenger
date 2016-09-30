@@ -1,0 +1,26 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE"
+    }
+}
+
+description = "RestFB Messenger Sample Echo Spring Boot"
+
+apply from: "../samples.gradle"
+
+apply plugin: "java"
+apply plugin: "spring-boot"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "com.github.marsbits.restfbmessenger:restfbmessenger-spring-boot-starter:${restfbmessengerVersion}"
+    testCompile "org.springframework.boot:spring-boot-starter-test"
+}

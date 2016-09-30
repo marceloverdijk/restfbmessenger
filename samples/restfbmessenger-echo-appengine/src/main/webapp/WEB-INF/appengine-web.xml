@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
+
+    <application>restfb-messenger-echo</application>
+    <version>1</version>
+    <threadsafe>true</threadsafe>
+
+    <system-properties>
+        <property name="java.util.logging.config.file" value="WEB-INF/logging.properties" />
+        <property name="restfbmessenger.verify_token" value="Let me in!" />
+        <property name="restfbmessenger.access_token" value="EAAWeppv5OUoBAN0H1FlUAlBZAWJlvCzogbsorbEsIrznyJIj7xfzNPVtAf1SangqyYgi8YsAflX8WPa6FZAOW2BJAki9bRjovJbAMfIiiNJLL37BcKhk3TUaxFVGpZCLP7jWsCQ0AeO8yp0ZB01DK8lmYiZAzHOzsBuVwIok0iQZDZD" />
+        <property name="restfbmessenger.app_secret" value="92860d23389acc8046e12e5c913e84f0" />
+    </system-properties>
+
+</appengine-web-app>

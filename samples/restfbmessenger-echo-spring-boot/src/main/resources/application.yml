@@ -1,0 +1,8 @@
+logging:
+  level:
+    com.github.marsbits.restfbmessenger: DEBUG
+management.context-path: /management
+restfbmessenger:
+  app-secret: ${APP_SECRET}
+  access-token: ${ACCESS_TOKEN}
+  verify-token: ${VERIFY_TOKEN}

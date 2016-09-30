@@ -1,0 +1,8 @@
+rootProject.name = "restfbmessenger"
+
+def String[] modules = [
+        "restfbmessenger-core",
+        "restfbmessenger-spring-boot-starter"
+]
+
+include modules

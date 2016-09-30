@@ -1,0 +1,263 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        mavenLocal()
+    }
+}
+
+configure(allprojects) { project ->
+
+    group = "com.github.marsbits.restfbmessenger"
+
+    ext {
+        hibernateValidatorVersion = "5.2.4.Final"
+        junitVersion = "4.12"
+        mockitoVersion = "1.10.19"
+        restfbVersion = "1.31.0"
+        servletVersion = "2.5"
+        servlet3Version = "3.1.0"
+        springVersion = "4.3.3.RELEASE"
+        springBootVersion = "1.4.1.RELEASE"
+    }
+
+    ext.javadocLinks = [
+            "http://docs.oracle.com/javase/7/docs/api/",
+            "http://docs.oracle.com/javaee/7/api/",
+            "http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/",
+            "http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/",
+            "http://fasterxml.github.io/jackson-core/javadoc/2.8/",
+            "http://fasterxml.github.io/jackson-databind/javadoc/2.8/",
+            "http://restfb.com/javadoc/"
+    ] as String[]
+
+    apply plugin: "java"
+    apply plugin: "idea"
+    apply plugin: "maven"
+
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    [compileJava, compileTestJava]*.options*.compilerArgs = ['-Xlint:none']
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        mavenLocal()
+    }
+
+    dependencies {
+        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+    }
+
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
+}
+
+configure(subprojects) { subproject ->
+
+    jar {
+        manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
+        manifest.attributes["Implementation-Title"] = subproject.name
+        manifest.attributes["Implementation-Version"] = subproject.version
+
+        from("${rootProject.projectDir}/src/dist") {
+            include "license.txt"
+            into "META-INF"
+            expand(copyright: new Date().format("yyyy"), version: project.version)
+        }
+    }
+
+    javadoc {
+        description = "Generates project-level Javadoc API documentation."
+
+        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+        options.author = true
+        options.header = project.name
+        options.links(javadocLinks)
+        options.addStringOption("Xdoclint:none", "-quiet")
+
+        // suppress warnings due to cross-module @see and @link references;
+        // note that global 'api' task does display all warnings.
+        logging.captureStandardError LogLevel.INFO
+        logging.captureStandardOutput LogLevel.INFO // suppress "## warnings" message
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = "sources"
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = "javadoc"
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: System.getenv("SONATYPE_OSSRH_USERNAME"), password: System.getenv("SONATYPE_OSSRH_PASSWORD"))
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: System.getenv("SONATYPE_OSSRH_USERNAME"), password: System.getenv("SONATYPE_OSSRH_PASSWORD"))
+                }
+
+                pom.project {
+                    name "RestFB Messenger"
+                    packaging "jar"
+                    description "RestFB Messenger"
+                    url "https://github.com/marsbits/restfbmessenger"
+
+                    scm {
+                        connection "scm:git@github.com/marsbits/restfbmessenger.git"
+                        developerConnection "scm:git@github.com:marsbits/restfbmessenger.git"
+                        url "https://github.com/marsbits/restfbmessenger"
+                    }
+
+                    licenses {
+                        license {
+                            name "The Apache License, Version 2.0"
+                            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id "marceloverdijk"
+                            name "Marcel Overdijk"
+                            email "marcel@overdijk.me"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+project("restfbmessenger-core") {
+
+    description = "RestFB Messenger Core"
+
+    dependencies {
+        compile "com.restfb:restfb:${restfbVersion}"
+        compileOnly "javax.servlet:servlet-api:${servletVersion}"
+        testCompileOnly "javax.servlet:servlet-api:${servletVersion}"
+    }
+}
+
+project("restfbmessenger-spring-boot-starter") {
+
+    description = "RestFB Messenger Spring Boot Starter"
+
+    dependencies {
+        compile project(":restfbmessenger-core")
+        compile "org.springframework.boot:spring-boot:${springBootVersion}"
+        compile "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
+        compileOnly "javax.servlet:javax.servlet-api:${servlet3Version}"
+        compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
+        testCompile "org.springframework:spring-web:${springVersion}"
+        testCompile "org.springframework.boot:spring-boot-test:${springBootVersion}"
+        testCompileOnly "javax.servlet:javax.servlet-api:${servlet3Version}"
+    }
+}
+
+configure(rootProject) {
+
+    description = "RestFB Messenger"
+
+    // don't publish the default jar for the root project
+    configurations.archives.artifacts.clear()
+
+    task api(type: Javadoc) {
+        group = "Documentation"
+        description = "Generates aggregated Javadoc API documentation."
+        title = "${rootProject.description} ${version} API"
+
+        dependsOn {
+            subprojects.collect {
+                it.tasks.getByName("jar")
+            }
+        }
+        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
+        options.author = true
+        options.header = rootProject.description
+        options.overview = "src/api/overview.html"
+        options.splitIndex = true
+        options.links(javadocLinks)
+        options.addStringOption("Xdoclint:none", "-quiet")
+
+        source subprojects.collect { project ->
+            project.sourceSets.main.allJava
+        }
+
+        classpath += files(subprojects.collect { it.sourceSets.main.compileClasspath })
+        destinationDir = new File(buildDir, "api")
+        maxMemory = "1024m"
+    }
+
+    task docs(dependsOn: ["api"]) {
+        group = "Documentation"
+        description = "Generates aggregated Javadoc API and reference documentation."
+    }
+
+    task docsZip(type: Zip, dependsOn: "docs") {
+        group = "Distribution"
+        baseName = rootProject.name
+        classifier = "docs"
+        description = "Builds -${classifier} archive containing Javadoc API and reference documentation."
+
+        from(api) {
+            into "api"
+        }
+    }
+
+    task distZip(type: Zip, dependsOn: "docsZip") {
+        group = "Distribution"
+        baseName = rootProject.name
+        classifier = "dist"
+        description = "Builds -${classifier} archive containing all jars and documentation."
+
+        from("src/dist") {
+            include "license.txt"
+            expand(copyright: new Date().format("yyyy"), version: project.version)
+        }
+
+        from(zipTree(docsZip.archivePath)) {
+            into "docs"
+        }
+
+        subprojects.each { subproject ->
+            into("libs") {
+                from subproject.jar
+                if (subproject.tasks.findByPath("sourcesJar")) {
+                    from subproject.sourcesJar
+                }
+                if (subproject.tasks.findByPath("javadocJar")) {
+                    from subproject.javadocJar
+                }
+            }
+        }
+    }
+
+    artifacts {
+        archives docsZip
+        archives distZip
+    }
+
+    task wrapper(type: Wrapper) {
+        description = "Generates gradlew[.bat] scripts."
+        gradleVersion = "3.1"
+    }
+}
