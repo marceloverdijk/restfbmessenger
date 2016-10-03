@@ -7,9 +7,9 @@
 
     <system-properties>
         <property name="java.util.logging.config.file" value="WEB-INF/logging.properties" />
-        <property name="restfbmessenger.verify_token" value="Let me in!" />
-        <property name="restfbmessenger.access_token" value="EAAWeppv5OUoBAN0H1FlUAlBZAWJlvCzogbsorbEsIrznyJIj7xfzNPVtAf1SangqyYgi8YsAflX8WPa6FZAOW2BJAki9bRjovJbAMfIiiNJLL37BcKhk3TUaxFVGpZCLP7jWsCQ0AeO8yp0ZB01DK8lmYiZAzHOzsBuVwIok0iQZDZD" />
-        <property name="restfbmessenger.app_secret" value="92860d23389acc8046e12e5c913e84f0" />
+        <property name="restfbmessenger.verify_token" value="${restfbmessengerVerifyToken}" />
+        <property name="restfbmessenger.access_token" value="${restfbmessengerAccessToken}" />
+        <property name="restfbmessenger.app_secret" value="${restfbmessengerAppSecret}" />
     </system-properties>
 
 </appengine-web-app>
