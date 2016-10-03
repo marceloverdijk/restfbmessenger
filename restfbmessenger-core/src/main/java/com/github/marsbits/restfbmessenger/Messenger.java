@@ -17,6 +17,7 @@
 package com.github.marsbits.restfbmessenger;
 
 import com.github.marsbits.restfbmessenger.send.SendOperations;
+import com.restfb.exception.FacebookException;
 import com.restfb.types.User;
 
 /**
@@ -48,8 +49,9 @@ public interface Messenger {
      *
      * @param userId the user id
      * @return the user
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    User getUserProfile(String userId);
+    User getUserProfile(String userId) throws FacebookException;
 
     /**
      * Returns the {@link User} for the given user id. Only the given fields will be retrieved and
@@ -58,8 +60,9 @@ public interface Messenger {
      * @param userId the user id
      * @param fields the comma separated list if user fields
      * @return the user
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    User getUserProfile(String userId, String fields);
+    User getUserProfile(String userId, String fields) throws FacebookException;
 
     /**
      * Send API for sending messages to users.

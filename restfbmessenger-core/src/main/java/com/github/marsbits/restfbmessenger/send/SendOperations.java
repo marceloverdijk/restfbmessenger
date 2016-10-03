@@ -18,6 +18,7 @@ package com.github.marsbits.restfbmessenger.send;
 
 import java.util.List;
 
+import com.restfb.exception.FacebookException;
 import com.restfb.types.send.ButtonTemplatePayload;
 import com.restfb.types.send.GenericTemplatePayload;
 import com.restfb.types.send.IdMessageRecipient;
@@ -48,8 +49,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param senderAction the sender action
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse senderAction(IdMessageRecipient recipient, SenderActionEnum senderAction);
+    SendResponse senderAction(IdMessageRecipient recipient, SenderActionEnum senderAction)
+            throws FacebookException;
 
     /**
      * Sends the given sender action to the user.
@@ -57,56 +60,64 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param senderAction the sender action
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse senderAction(PhoneMessageRecipient recipient, SenderActionEnum senderAction);
+    SendResponse senderAction(PhoneMessageRecipient recipient, SenderActionEnum senderAction)
+            throws FacebookException;
 
     /**
      * Sends a read receipt to the user.
      *
      * @param recipient the recipient
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse markSeen(IdMessageRecipient recipient);
+    SendResponse markSeen(IdMessageRecipient recipient) throws FacebookException;
 
     /**
      * Sends a read receipt to the user.
      *
      * @param recipient the recipient
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse markSeen(PhoneMessageRecipient recipient);
+    SendResponse markSeen(PhoneMessageRecipient recipient) throws FacebookException;
 
     /**
      * Sends a typing indicator on to the user.
      *
      * @param recipient the recipient
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse typingOn(IdMessageRecipient recipient);
+    SendResponse typingOn(IdMessageRecipient recipient) throws FacebookException;
 
     /**
      * Sends a typing indicator on to the user.
      *
      * @param recipient the recipient
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse typingOn(PhoneMessageRecipient recipient);
+    SendResponse typingOn(PhoneMessageRecipient recipient) throws FacebookException;
 
     /**
      * Sends a typing indicator off to the user.
      *
      * @param recipient the recipient
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse typingOff(IdMessageRecipient recipient);
+    SendResponse typingOff(IdMessageRecipient recipient) throws FacebookException;
 
     /**
      * Sends a typing indicator off to the user.
      *
      * @param recipient the recipient
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse typingOff(PhoneMessageRecipient recipient);
+    SendResponse typingOff(PhoneMessageRecipient recipient) throws FacebookException;
 
     /**
      * Sends the given message to the user.
@@ -114,8 +125,9 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param message the message
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse message(IdMessageRecipient recipient, Message message);
+    SendResponse message(IdMessageRecipient recipient, Message message) throws FacebookException;
 
     /**
      * Sends the given message to the user.
@@ -123,8 +135,9 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param message the message
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse message(PhoneMessageRecipient recipient, Message message);
+    SendResponse message(PhoneMessageRecipient recipient, Message message) throws FacebookException;
 
     /**
      * Sends the given text message to the user.
@@ -132,8 +145,9 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param text the text message
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse textMessage(IdMessageRecipient recipient, String text);
+    SendResponse textMessage(IdMessageRecipient recipient, String text) throws FacebookException;
 
     /**
      * Sends the given text message to the user.
@@ -141,8 +155,9 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param text the text message
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse textMessage(PhoneMessageRecipient recipient, String text);
+    SendResponse textMessage(PhoneMessageRecipient recipient, String text) throws FacebookException;
 
     /**
      * Sends the given attachment to the user.
@@ -151,8 +166,10 @@ public interface SendOperations {
      * @param type the type of the attachment
      * @param url the url of the attachment
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse attachment(IdMessageRecipient recipient, MediaAttachment.Type type, String url);
+    SendResponse attachment(IdMessageRecipient recipient, MediaAttachment.Type type, String url)
+            throws FacebookException;
 
     /**
      * Sends the given attachment to the user.
@@ -161,8 +178,10 @@ public interface SendOperations {
      * @param type the type of the attachment
      * @param url the url of the attachment
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse attachment(PhoneMessageRecipient recipient, MediaAttachment.Type type, String url);
+    SendResponse attachment(PhoneMessageRecipient recipient, MediaAttachment.Type type, String url)
+            throws FacebookException;
 
     /**
      * Sends the given image to the user.
@@ -170,8 +189,9 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param url the url of the image
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse imageAttachment(IdMessageRecipient recipient, String url);
+    SendResponse imageAttachment(IdMessageRecipient recipient, String url) throws FacebookException;
 
     /**
      * Sends the given image to the user.
@@ -179,8 +199,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param url the url of the image
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse imageAttachment(PhoneMessageRecipient recipient, String url);
+    SendResponse imageAttachment(PhoneMessageRecipient recipient, String url)
+            throws FacebookException;
 
     /**
      * Sends the given audio to the user.
@@ -188,8 +210,9 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param url the url of the audio
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse audioAttachment(IdMessageRecipient recipient, String url);
+    SendResponse audioAttachment(IdMessageRecipient recipient, String url) throws FacebookException;
 
     /**
      * Sends the given audio to the user.
@@ -197,8 +220,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param url the url of the audio
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse audioAttachment(PhoneMessageRecipient recipient, String url);
+    SendResponse audioAttachment(PhoneMessageRecipient recipient, String url)
+            throws FacebookException;
 
     /**
      * Sends the given video to the user.
@@ -206,8 +231,9 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param url the url of the video
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse videoAttachment(IdMessageRecipient recipient, String url);
+    SendResponse videoAttachment(IdMessageRecipient recipient, String url) throws FacebookException;
 
     /**
      * Sends the given video to the user.
@@ -215,8 +241,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param url the url of the video
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse videoAttachment(PhoneMessageRecipient recipient, String url);
+    SendResponse videoAttachment(PhoneMessageRecipient recipient, String url)
+            throws FacebookException;
 
     /**
      * Sends the given file to the user.
@@ -224,8 +252,9 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param url the url of the file
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse fileAttachment(IdMessageRecipient recipient, String url);
+    SendResponse fileAttachment(IdMessageRecipient recipient, String url) throws FacebookException;
 
     /**
      * Sends the given file to the user.
@@ -233,8 +262,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param url the url of the file
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse fileAttachment(PhoneMessageRecipient recipient, String url);
+    SendResponse fileAttachment(PhoneMessageRecipient recipient, String url)
+            throws FacebookException;
 
     /**
      * Sends the given text message and quick replies to the user.
@@ -243,9 +274,10 @@ public interface SendOperations {
      * @param text the text message
      * @param quickReplies the quick replies
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse quickReplies(IdMessageRecipient recipient, String text,
-            List<QuickReply> quickReplies);
+            List<QuickReply> quickReplies) throws FacebookException;
 
     /**
      * Sends the given text message and quick replies to the user.
@@ -254,9 +286,10 @@ public interface SendOperations {
      * @param text the text message
      * @param quickReplies the quick replies
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse quickReplies(PhoneMessageRecipient recipient, String text,
-            List<QuickReply> quickReplies);
+            List<QuickReply> quickReplies) throws FacebookException;
 
     /**
      * Sends the given media attachment and quick replies to the user.
@@ -265,9 +298,10 @@ public interface SendOperations {
      * @param attachment the media attachment
      * @param quickReplies the quick replies
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse quickReplies(IdMessageRecipient recipient, MediaAttachment attachment,
-            List<QuickReply> quickReplies);
+            List<QuickReply> quickReplies) throws FacebookException;
 
     /**
      * Sends the given media attachment and quick replies to the user.
@@ -276,9 +310,10 @@ public interface SendOperations {
      * @param attachment the media attachment
      * @param quickReplies the quick replies
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse quickReplies(PhoneMessageRecipient recipient, MediaAttachment attachment,
-            List<QuickReply> quickReplies);
+            List<QuickReply> quickReplies) throws FacebookException;
 
     /**
      * Sends the given template attachment and quick replies to the user.
@@ -287,9 +322,10 @@ public interface SendOperations {
      * @param attachment the template attachment
      * @param quickReplies the quick replies
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse quickReplies(IdMessageRecipient recipient, TemplateAttachment attachment,
-            List<QuickReply> quickReplies);
+            List<QuickReply> quickReplies) throws FacebookException;
 
     /**
      * Sends the given template attachment and quick replies to the user.
@@ -298,9 +334,10 @@ public interface SendOperations {
      * @param attachment the template attachment
      * @param quickReplies the quick replies
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse quickReplies(PhoneMessageRecipient recipient, TemplateAttachment attachment,
-            List<QuickReply> quickReplies);
+            List<QuickReply> quickReplies) throws FacebookException;
 
     /**
      * Sends the given generic template to the user.
@@ -308,9 +345,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param genericTemplate the generic template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse genericTemplate(IdMessageRecipient recipient,
-            GenericTemplatePayload genericTemplate);
+            GenericTemplatePayload genericTemplate) throws FacebookException;
 
     /**
      * Sends the given generic template to the user.
@@ -318,9 +356,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param genericTemplate the generic template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse genericTemplate(PhoneMessageRecipient recipient,
-            GenericTemplatePayload genericTemplate);
+            GenericTemplatePayload genericTemplate) throws FacebookException;
 
     /**
      * Sends the given button template to the user.
@@ -328,8 +367,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param buttonTemplate the button template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse buttonTemplate(IdMessageRecipient recipient, ButtonTemplatePayload buttonTemplate);
+    SendResponse buttonTemplate(IdMessageRecipient recipient, ButtonTemplatePayload buttonTemplate)
+            throws FacebookException;
 
     /**
      * Sends the given button template to the user.
@@ -337,9 +378,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param buttonTemplate the button template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse buttonTemplate(PhoneMessageRecipient recipient,
-            ButtonTemplatePayload buttonTemplate);
+            ButtonTemplatePayload buttonTemplate) throws FacebookException;
 
     /**
      * Sends the given receipt template to the user.
@@ -347,9 +389,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param receiptTemplate the receipt template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse receiptTemplate(IdMessageRecipient recipient,
-            ReceiptTemplatePayload receiptTemplate);
+            ReceiptTemplatePayload receiptTemplate) throws FacebookException;
 
     /**
      * Sends the given receipt template to the user.
@@ -357,9 +400,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param receiptTemplate the receipt template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse receiptTemplate(PhoneMessageRecipient recipient,
-            ReceiptTemplatePayload receiptTemplate);
+            ReceiptTemplatePayload receiptTemplate) throws FacebookException;
 
     /**
      * Sends the given airline itinerary template to the user.
@@ -367,9 +411,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param airlineItineraryTemplate airline itinerary template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse airlineItineraryTemplate(IdMessageRecipient recipient,
-            AirlineItineraryTemplatePayload airlineItineraryTemplate);
+            AirlineItineraryTemplatePayload airlineItineraryTemplate) throws FacebookException;
 
     /**
      * Sends the given airline itinerary template to the user.
@@ -377,9 +422,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param airlineItineraryTemplate airline itinerary template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse airlineItineraryTemplate(PhoneMessageRecipient recipient,
-            AirlineItineraryTemplatePayload airlineItineraryTemplate);
+            AirlineItineraryTemplatePayload airlineItineraryTemplate) throws FacebookException;
 
     /**
      * Sends the given airline checkin template to the user.
@@ -387,9 +433,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param airlineCheckinTemplate airline checkin template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse airlineCheckinTemplate(IdMessageRecipient recipient,
-            AirlineCheckinTemplatePayload airlineCheckinTemplate);
+            AirlineCheckinTemplatePayload airlineCheckinTemplate) throws FacebookException;
 
     /**
      * Sends the given airline checkin template to the user.
@@ -397,9 +444,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param airlineCheckinTemplate airline checkin template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse airlineCheckinTemplate(PhoneMessageRecipient recipient,
-            AirlineCheckinTemplatePayload airlineCheckinTemplate);
+            AirlineCheckinTemplatePayload airlineCheckinTemplate) throws FacebookException;
 
     /**
      * Sends the given airline boarding pass template to the user.
@@ -407,9 +455,11 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param airlineBoardingPassTemplate airline boarding pass template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse airlineBoardingPassTemplate(IdMessageRecipient recipient,
-            AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate);
+            AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate)
+            throws FacebookException;
 
     /**
      * Sends the given airline boarding pass template to the user.
@@ -417,9 +467,11 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param airlineBoardingPassTemplate airline boarding pass template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse airlineBoardingPassTemplate(PhoneMessageRecipient recipient,
-            AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate);
+            AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate)
+            throws FacebookException;
 
     /**
      * Sends the given airline update template to the user.
@@ -427,9 +479,10 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param airlineUpdateTemplate airline update template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse airlineUpdateTemplate(IdMessageRecipient recipient,
-            AirlineUpdateTemplatePayload airlineUpdateTemplate);
+            AirlineUpdateTemplatePayload airlineUpdateTemplate) throws FacebookException;
 
     /**
      * Sends the given airline update template to the user.
@@ -437,7 +490,8 @@ public interface SendOperations {
      * @param recipient the recipient
      * @param airlineUpdateTemplate airline update template
      * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     SendResponse airlineUpdateTemplate(PhoneMessageRecipient recipient,
-            AirlineUpdateTemplatePayload airlineUpdateTemplate);
+            AirlineUpdateTemplatePayload airlineUpdateTemplate) throws FacebookException;
 }
