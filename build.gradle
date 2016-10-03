@@ -4,6 +4,9 @@ buildscript {
         mavenCentral()
         mavenLocal()
     }
+    dependencies {
+        classpath "nu.studer:gradle-credentials-plugin:1.0.1"
+    }
 }
 
 configure(allprojects) { project ->
@@ -34,6 +37,8 @@ configure(allprojects) { project ->
     apply plugin: "java"
     apply plugin: "idea"
     apply plugin: "maven"
+    apply plugin: "signing"
+    apply plugin: "nu.studer.credentials"
 
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
@@ -60,6 +65,10 @@ configure(allprojects) { project ->
 }
 
 configure(subprojects) { subproject ->
+
+    ext."signing.keyId" = credentials.signingKeyId
+    ext."signing.password" = credentials.signingPassword
+    ext."signing.secretKeyRingFile" = credentials.signingSecretKeyRingFile
 
     jar {
         manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
@@ -99,19 +108,26 @@ configure(subprojects) { subproject ->
     }
 
     artifacts {
-        archives sourcesJar
-        archives javadocJar
+        archives sourcesJar, javadocJar
     }
+
+    signing {
+        sign configurations.archives
+    }
+
 
     uploadArchives {
         repositories {
             mavenDeployer {
+
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
                 repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: System.getenv("SONATYPE_OSSRH_USERNAME"), password: System.getenv("SONATYPE_OSSRH_PASSWORD"))
+                    authentication(userName: credentials.ossrhUsername, password: credentials.ossrhPassword)
                 }
 
                 snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: System.getenv("SONATYPE_OSSRH_USERNAME"), password: System.getenv("SONATYPE_OSSRH_PASSWORD"))
+                    authentication(userName: credentials.ossrhUsername, password: credentials.ossrhPassword)
                 }
 
                 pom.project {
@@ -179,82 +195,6 @@ configure(rootProject) {
 
     // don't publish the default jar for the root project
     configurations.archives.artifacts.clear()
-
-    task api(type: Javadoc) {
-        group = "Documentation"
-        description = "Generates aggregated Javadoc API documentation."
-        title = "${rootProject.description} ${version} API"
-
-        dependsOn {
-            subprojects.collect {
-                it.tasks.getByName("jar")
-            }
-        }
-        options.memberLevel = org.gradle.external.javadoc.JavadocMemberLevel.PROTECTED
-        options.author = true
-        options.header = rootProject.description
-        options.overview = "src/api/overview.html"
-        options.splitIndex = true
-        options.links(javadocLinks)
-        options.addStringOption("Xdoclint:none", "-quiet")
-
-        source subprojects.collect { project ->
-            project.sourceSets.main.allJava
-        }
-
-        classpath += files(subprojects.collect { it.sourceSets.main.compileClasspath })
-        destinationDir = new File(buildDir, "api")
-        maxMemory = "1024m"
-    }
-
-    task docs(dependsOn: ["api"]) {
-        group = "Documentation"
-        description = "Generates aggregated Javadoc API and reference documentation."
-    }
-
-    task docsZip(type: Zip, dependsOn: "docs") {
-        group = "Distribution"
-        baseName = rootProject.name
-        classifier = "docs"
-        description = "Builds -${classifier} archive containing Javadoc API and reference documentation."
-
-        from(api) {
-            into "api"
-        }
-    }
-
-    task distZip(type: Zip, dependsOn: "docsZip") {
-        group = "Distribution"
-        baseName = rootProject.name
-        classifier = "dist"
-        description = "Builds -${classifier} archive containing all jars and documentation."
-
-        from("src/dist") {
-            include "license.txt"
-            expand(copyright: new Date().format("yyyy"), version: project.version)
-        }
-
-        from(zipTree(docsZip.archivePath)) {
-            into "docs"
-        }
-
-        subprojects.each { subproject ->
-            into("libs") {
-                from subproject.jar
-                if (subproject.tasks.findByPath("sourcesJar")) {
-                    from subproject.sourcesJar
-                }
-                if (subproject.tasks.findByPath("javadocJar")) {
-                    from subproject.javadocJar
-                }
-            }
-        }
-    }
-
-    artifacts {
-        archives docsZip
-        archives distZip
-    }
 
     task wrapper(type: Wrapper) {
         description = "Generates gradlew[.bat] scripts."
