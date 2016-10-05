@@ -9,7 +9,7 @@ It utilizes the [RestFB][] client for the low level communication with the Faceb
 
 Add the following dependency to your project:
 
-Maven:
+_Maven_:
 
 ```xml
 <dependency>
@@ -19,7 +19,7 @@ Maven:
 </dependency>
 ```
 
-Gradle:
+_Gradle_:
 
 ```groovy
 dependencies {
