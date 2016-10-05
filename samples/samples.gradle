@@ -3,7 +3,7 @@ ext {
     junitVersion = "4.12"
     mockitoVersion = "1.10.19"
     restfbVersion = "1.30.0"
-    restfbmessengerVersion = "1.0.0.BUILD-SNAPSHOT"
+    restfbmessengerVersion = "1.0.0-SNAPSHOT"
     servletVersion = "3.1.0"
     springVersion = "4.3.2.RELEASE"
 }
