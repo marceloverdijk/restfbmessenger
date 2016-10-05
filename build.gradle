@@ -74,12 +74,6 @@ configure(subprojects) { subproject ->
         manifest.attributes["Created-By"] = "${System.getProperty("java.version")} (${System.getProperty("java.specification.vendor")})"
         manifest.attributes["Implementation-Title"] = subproject.name
         manifest.attributes["Implementation-Version"] = subproject.version
-
-        from("${rootProject.projectDir}/src/dist") {
-            include "license.txt"
-            into "META-INF"
-            expand(copyright: new Date().format("yyyy"), version: project.version)
-        }
     }
 
     javadoc {
