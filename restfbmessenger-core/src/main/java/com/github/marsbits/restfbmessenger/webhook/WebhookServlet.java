@@ -93,12 +93,14 @@ public class WebhookServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        logger.info("Validating webhook");
+        logger.info("Validating webhook...");
         if (HUB_MODE_SUBSCRIBE_VALUE.equals(req.getParameter(HUB_MODE_PARAM_NAME)) &&
                 messenger.verifyToken(req.getParameter(HUB_VERIFY_TOKEN_PARAM_NAME))) {
+            logger.info("Validating webhook succeeded");
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.getWriter().write(req.getParameter(HUB_CHALLENGE_PARAM_NAME));
         } else {
+            logger.warning("Validating webhook failed");
             resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             resp.getWriter().write("Failed validation. Make sure the validation tokens match.");
         }
