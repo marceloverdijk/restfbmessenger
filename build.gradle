@@ -169,7 +169,7 @@ project("restfbmessenger-core") {
     dependencies {
         compile "com.restfb:restfb:${restfbVersion}"
         compileOnly "javax.servlet:servlet-api:${servletVersion}"
-        testCompileOnly "javax.servlet:servlet-api:${servletVersion}"
+        testCompile "javax.servlet:servlet-api:${servletVersion}"
     }
 }
 
@@ -183,9 +183,9 @@ project("restfbmessenger-spring-boot-starter") {
         compile "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}"
         compileOnly "javax.servlet:javax.servlet-api:${servlet3Version}"
         compileOnly "org.hibernate:hibernate-validator:${hibernateValidatorVersion}"
+        testCompile "javax.servlet:javax.servlet-api:${servlet3Version}"
         testCompile "org.springframework:spring-web:${springVersion}"
         testCompile "org.springframework.boot:spring-boot-test:${springBootVersion}"
-        testCompileOnly "javax.servlet:javax.servlet-api:${servlet3Version}"
     }
 }
 
