@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
 
 import com.github.marsbits.restfbmessenger.DefaultMessenger;
 import com.github.marsbits.restfbmessenger.Messenger;
-import com.restfb.Version;
 
 /**
  * The Echo config.
@@ -40,7 +39,6 @@ public class EchoConfig {
         String verifyToken = "the-verify-token";
         String accessToken = "the-access-token";
         String appSecret = "the-app-secret";
-        return new DefaultMessenger(verifyToken, accessToken, appSecret, echoCallbackHandler,
-                Version.VERSION_2_7);
+        return new DefaultMessenger(verifyToken, accessToken, appSecret, echoCallbackHandler);
     }
 }

@@ -16,6 +16,11 @@
 
 package com.github.marsbits.restfbmessenger.webhook;
 
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_CHALLENGE_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_MODE_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_MODE_SUBSCRIBE_VALUE;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_SIGNATURE_HEADER_NAME;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_VERIFY_TOKEN_PARAM_NAME;
 import static java.lang.String.format;
 
 import java.io.BufferedReader;
@@ -43,13 +48,10 @@ public class WebhookServlet extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(WebhookServlet.class.getName());
 
+    /**
+     * The {@code messengerProviderClass} servlet init parameter name.
+     */
     public static final String MESSENGER_PROVIDER_CLASS_PARAM_NAME = "messengerProviderClass";
-
-    public static final String HUB_MODE_PARAM_NAME = "hub.mode";
-    public static final String HUB_MODE_SUBSCRIBE_VALUE = "subscribe";
-    public static final String HUB_VERIFY_TOKEN_PARAM_NAME = "hub.verify_token";
-    public static final String HUB_CHALLENGE_PARAM_NAME = "hub.challenge";
-    public static final String HUB_SIGNATURE_HEADER_NAME = "X-Hub-Signature";
 
     private Messenger messenger;
 

@@ -16,6 +16,7 @@
 
 package com.github.marsbits.restfbmessenger.sample;
 
+import static com.github.marsbits.restfbmessenger.Messenger.*;
 import static java.lang.String.format;
 
 import java.util.logging.Logger;
@@ -48,11 +49,11 @@ public class EchoWebhookController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<String> get(
-            @RequestParam("hub.mode") String mode,
-            @RequestParam("hub.verify_token") String verifyToken,
-            @RequestParam("hub.challenge") String challenge) {
+            @RequestParam(HUB_MODE_PARAM_NAME) String mode,
+            @RequestParam(HUB_VERIFY_TOKEN_PARAM_NAME) String verifyToken,
+            @RequestParam(HUB_CHALLENGE_PARAM_NAME) String challenge) {
         logger.info("Validating webhook...");
-        if ("subscribe".equals(mode) && messenger.verifyToken(verifyToken)) {
+        if (HUB_MODE_SUBSCRIBE_VALUE.equals(mode) && messenger.verifyToken(verifyToken)) {
             logger.info("Validating webhook succeeded");
             return new ResponseEntity<>(challenge, HttpStatus.OK);
         } else {
@@ -64,7 +65,7 @@ public class EchoWebhookController {
 
     @RequestMapping(method = RequestMethod.POST)
     public void post(
-            @RequestHeader("X-Hub-Signature") String signature,
+            @RequestHeader(HUB_SIGNATURE_HEADER_NAME) String signature,
             @RequestBody String payload) {
         logger.info("Webhook received");
         try {

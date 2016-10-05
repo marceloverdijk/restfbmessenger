@@ -37,7 +37,7 @@ public class EchoWebApplicationInitializer implements WebApplicationInitializer 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.setConfigLocation("com.github.marsbits.restfbmessenger.sample");
+        context.setConfigLocation(this.getClass().getPackage().getName());
         servletContext.addListener(new ContextLoaderListener(context));
         ServletRegistration.Dynamic dispatcher = servletContext.addServlet("DispatcherServlet", new DispatcherServlet(context));
         dispatcher.setLoadOnStartup(1);

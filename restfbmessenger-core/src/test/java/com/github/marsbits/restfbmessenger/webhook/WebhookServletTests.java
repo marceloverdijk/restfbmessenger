@@ -16,10 +16,10 @@
 
 package com.github.marsbits.restfbmessenger.webhook;
 
-import static com.github.marsbits.restfbmessenger.webhook.WebhookServlet.HUB_MODE_PARAM_NAME;
-import static com.github.marsbits.restfbmessenger.webhook.WebhookServlet.HUB_MODE_SUBSCRIBE_VALUE;
-import static com.github.marsbits.restfbmessenger.webhook.WebhookServlet.HUB_SIGNATURE_HEADER_NAME;
-import static com.github.marsbits.restfbmessenger.webhook.WebhookServlet.HUB_VERIFY_TOKEN_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_MODE_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_MODE_SUBSCRIBE_VALUE;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_SIGNATURE_HEADER_NAME;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_VERIFY_TOKEN_PARAM_NAME;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;

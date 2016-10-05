@@ -29,6 +29,31 @@ import com.restfb.types.User;
 public interface Messenger {
 
     /**
+     * The {@code hub.mode} request parameter name.
+     */
+    String HUB_MODE_PARAM_NAME = "hub.mode";
+
+    /**
+     * The {@code hub.mode} {@code subscribe} request parameter value.
+     */
+    String HUB_MODE_SUBSCRIBE_VALUE = "subscribe";
+
+    /**
+     * The {@code hub.verify_token} request parameter name.
+     */
+    String HUB_VERIFY_TOKEN_PARAM_NAME = "hub.verify_token";
+
+    /**
+     * The {@code hub.challenge} request parameter name.
+     */
+    String HUB_CHALLENGE_PARAM_NAME = "hub.challenge";
+
+    /**
+     * The {@code X-Hub-Signature} request header name.
+     */
+    String HUB_SIGNATURE_HEADER_NAME = "X-Hub-Signature";
+
+    /**
      * Verifies the webhook verify token.
      *
      * @param token the received webhook verify token
