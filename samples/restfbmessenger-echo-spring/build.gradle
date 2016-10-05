@@ -1,0 +1,31 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        classpath "org.akhikhl.gretty:gretty:+"
+    }
+}
+
+description = "RestFB Messenger Sample Echo Spring"
+
+apply from: "../samples.gradle"
+
+apply plugin: "java"
+apply plugin: "war"
+apply plugin: "org.akhikhl.gretty"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile "com.github.marsbits.restfbmessenger:restfbmessenger-core:${restfbmessengerVersion}"
+    compile "org.springframework:spring-webmvc:${springVersion}"
+    compileOnly "javax.servlet:javax.servlet-api:${servletVersion}"
+}
+
+gretty {
+    contextPath = "/"
+}
