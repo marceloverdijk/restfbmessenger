@@ -22,5 +22,4 @@ targetCompatibility = 1.8
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "com.github.marsbits.restfbmessenger:restfbmessenger-spring-boot-starter:${restfbmessengerVersion}"
-    testCompile "org.springframework.boot:spring-boot-starter-test"
 }
