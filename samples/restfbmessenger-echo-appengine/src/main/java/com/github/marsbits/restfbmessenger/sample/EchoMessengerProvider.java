@@ -20,7 +20,6 @@ import com.github.marsbits.restfbmessenger.DefaultMessenger;
 import com.github.marsbits.restfbmessenger.Messenger;
 import com.github.marsbits.restfbmessenger.MessengerProvider;
 import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
-import com.restfb.Version;
 
 /**
  * The Echo {@code MessengerProvider}.
@@ -35,7 +34,6 @@ public class EchoMessengerProvider implements MessengerProvider {
         String accessToken = System.getProperty("restfbmessenger.access_token");
         String appSecret = System.getProperty("restfbmessenger.app_secret");
         CallbackHandler callbackHandler = new EchoCallbackHandler();
-        return new DefaultMessenger(verifyToken, accessToken, appSecret, callbackHandler,
-                Version.VERSION_2_7);
+        return new DefaultMessenger(verifyToken, accessToken, appSecret, callbackHandler);
     }
 }
