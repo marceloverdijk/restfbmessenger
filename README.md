@@ -95,7 +95,34 @@ using the `web.xml` configuration.
 
 ### Servlet 3 @WebListener
 
-..
+In a Servlet 3 environment the `WebhookServlet` can also be configured 
+programmatically like:
+
+```java
+@WebListener
+public class EchoInitializer implements ServletContextListener {
+
+    @Override
+    public void contextInitialized(ServletContextEvent event) {
+        Messenger messenger = new EchoMessengerProvider().getMessenger();
+        WebhookServlet webhookServlet = new WebhookServlet(messenger);
+        ServletRegistration.Dynamic webhook =
+                event.getServletContext().addServlet("WebhookServlet", webhookServlet);
+        webhook.setLoadOnStartup(1);
+        webhook.addMapping("/webhook");
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+    }
+}
+```
+
+Another option is to extend the `com.github.marsbits.restfbmessenger.webhook.WebhookServlet`
+and annotate it with the `@WebServlet` annotation.
+
+See the [RestFB Messenger Echo Servlet 3][] sample for a full sample 
+using a `@WebListener` to do the configuration programmatically. 
 
 ### Spring
 
@@ -123,9 +150,10 @@ dependencies {
 }
 ```
 
-The `restfbmessenger-spring-boot-starter` will automatically trigger 
-auto configuration to create the `com.github.marsbits.restfbmessenger.Messenger` 
-instance and register the `com.github.marsbits.restfbmessenger.webhook.WebhookServlet` 
+The `restfbmessenger-spring-boot-starter` will automatically add the
+`restfbmessenger-core` dependency and trigger the auto configuration to 
+create the `com.github.marsbits.restfbmessenger.Messenger` instance and 
+register the `com.github.marsbits.restfbmessenger.webhook.WebhookServlet` 
 servlet.
 
 Only a class implementing the `CallbackHandler` need to be added to the 
@@ -168,3 +196,4 @@ The RestFB Messenger library is released under version 2.0 of the [Apache Licens
 [Facebook Messenger Platform]: https://developers.facebook.com/docs/messenger-platform
 [RestFB]: http://restfb.com
 [RestFB Messenger Echo App Engine]: https://github.com/marsbits/restfbmessenger/tree/master/samples/restfbmessenger-echo-appengine
+[RestFB Messenger Echo Servlet 3]: https://github.com/marsbits/restfbmessenger/tree/master/samples/restfbmessenger-echo-servlet3
