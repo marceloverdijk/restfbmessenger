@@ -1,6 +1,6 @@
 ##  RestFB Messenger Changelog
 
-### 1.0.0 (2016-10-TBD)
+### 1.0.0 (2016-10-06)
 
 * Initial release
   * RestFB Messenger Core module
