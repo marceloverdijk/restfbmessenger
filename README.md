@@ -126,7 +126,65 @@ using a `@WebListener` to do the configuration programmatically.
 
 ### Spring
 
-..
+When using Spring one option is to simply configure the `WebhookServlet`
+like the previous examples. 
+
+In a Spring environment the `Messenger` bean will typically be created 
+manually in the Spring application context and use other injected beans 
+as well.
+
+In that case the `MessengerProvider` implementation must find a way to
+retrieve the `Messenger` instance from the Spring application context.
+ 
+Another option is to create a custom controller and use that instead of 
+the `WebhookServlet`. This custom controller should then listen to Facebook
+callbacks and act on them appropriately.
+
+This could look like:
+
+```java
+@Controller
+@RequestMapping("/webhook")
+public class EchoWebhookController {
+
+    private static final Logger logger = Logger.getLogger(EchoWebhookController.class.getName());
+
+    @Autowired
+    private Messenger messenger;
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<String> get(
+            @RequestParam(HUB_MODE_PARAM_NAME) String mode,
+            @RequestParam(HUB_VERIFY_TOKEN_PARAM_NAME) String verifyToken,
+            @RequestParam(HUB_CHALLENGE_PARAM_NAME) String challenge) {
+        logger.info("Validating webhook...");
+        if (HUB_MODE_SUBSCRIBE_VALUE.equals(mode) && messenger.verifyToken(verifyToken)) {
+            logger.info("Validating webhook succeeded");
+            return new ResponseEntity<>(challenge, HttpStatus.OK);
+        } else {
+            logger.warning("Validating webhook failed");
+            return new ResponseEntity<>("Failed validation. Make sure the validation tokens match.",
+                    HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public void post(
+            @RequestHeader(HUB_SIGNATURE_HEADER_NAME) String signature,
+            @RequestBody String payload) {
+        logger.info("Webhook received");
+        try {
+            messenger.handleCallback(payload, signature);
+        } catch (Exception e) {
+            logger.severe(format("Exception handling webhook: %s", e.getMessage()));
+            throw e;
+        }
+    }
+}
+```
+
+See the [RestFB Messenger Echo Spring][] sample for a full sample 
+using a custom Spring controller. 
 
 ### <a name="springboot"></a>Spring Boot
 
@@ -187,6 +245,9 @@ restfbmessenger:
     path: /webhook # The path of the webhook servlet 
 ```
 
+See the [RestFB Messenger Echo Spring Boot][] sample for a full sample 
+using the RestFB Messenger Spring Boot Starter. 
+
 ## License
 
 The RestFB Messenger library is released under version 2.0 of the [Apache License][].
@@ -197,3 +258,5 @@ The RestFB Messenger library is released under version 2.0 of the [Apache Licens
 [RestFB]: http://restfb.com
 [RestFB Messenger Echo App Engine]: https://github.com/marsbits/restfbmessenger/tree/master/samples/restfbmessenger-echo-appengine
 [RestFB Messenger Echo Servlet 3]: https://github.com/marsbits/restfbmessenger/tree/master/samples/restfbmessenger-echo-servlet3
+[RestFB Messenger Echo Spring]: https://github.com/marsbits/restfbmessenger/tree/master/samples/restfbmessenger-echo-spring
+[RestFB Messenger Echo Spring Boot]: https://github.com/marsbits/restfbmessenger/tree/master/samples/restfbmessenger-echo-spring-boot
