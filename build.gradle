@@ -29,8 +29,6 @@ configure(allprojects) { project ->
             "http://docs.oracle.com/javaee/7/api/",
             "http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/",
             "http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/",
-            "http://fasterxml.github.io/jackson-core/javadoc/2.8/",
-            "http://fasterxml.github.io/jackson-databind/javadoc/2.8/",
             "http://restfb.com/javadoc/"
     ] as String[]
 
