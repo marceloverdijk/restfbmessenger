@@ -20,7 +20,13 @@ public class MyCallbackHandler extends AbstractCallbackHandler {
 
     @Override
     public void onMessage(Messenger messenger, MessagingItem messaging) {
-        // TODO implement..
+        String senderId = messaging.getSender().getId();
+        IdMessageRecipient recipient = new IdMessageRecipient(senderId);
+        MessageItem message = messaging.getMessage();
+        messenger.send().markSeen(recipient);
+        messenger.send().typingOn(recipient);
+        messenger.send().textMessage(recipient, format("Hi human, I received your message: %s", message.getText()));
+        messenger.send().typingOff(recipient);
     }
     
     @Override
@@ -29,6 +35,7 @@ public class MyCallbackHandler extends AbstractCallbackHandler {
     }
     
     // TODO override other methods the chatbot need to repsond to..
+}
 ```
 
 ## Installation
