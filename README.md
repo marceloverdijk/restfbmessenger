@@ -25,7 +25,8 @@ public class MyCallbackHandler extends AbstractCallbackHandler {
         MessageItem message = messaging.getMessage();
         messenger.send().markSeen(recipient);
         messenger.send().typingOn(recipient);
-        messenger.send().textMessage(recipient, format("Hi human, I received your message: %s", message.getText()));
+        messenger.send().textMessage(recipient, 
+            format("Hi human, I received your message: %s", message.getText()));
         messenger.send().typingOff(recipient);
     }
     
@@ -67,7 +68,30 @@ If you want to use RestFB Messenger in a Spring Boot application see the
 
 ### Servlet 2.5/3 web.xml
 
-..
+In a standard webapp the `WebhookServlet` can be configured in the `web.xml` like:
+
+```xml
+<servlet>
+    <servlet-name>webhook</servlet-name>
+    <servlet-class>com.github.marsbits.restfbmessenger.webhook.WebhookServlet</servlet-class>
+    <init-param>
+        <param-name>messengerProviderClass</param-name>
+        <param-value>[fully-qualified class name of the MessengerProvider]</param-value>
+    </init-param>
+</servlet>
+
+<servlet-mapping>
+    <servlet-name>webhook</servlet-name>
+    <url-pattern>/webhook</url-pattern>
+</servlet-mapping>
+```
+
+The `messengerProviderClass` init param must point to a custom 
+class implementing the `com.github.marsbits.restfbmessenger.MessengerProvider`
+to provide the `Messenger` instance to the `WebhookServlet`.
+
+See the [RestFB Messenger Echo App Engine][] sample for a full sample 
+using the `web.xml` configuration. 
 
 ### Servlet 3 @WebListener
 
@@ -125,9 +149,14 @@ The following properties can be specified inside your
 
 ```txt
 restfbmessenger:
-  app-secret: the-app-secret
-  access-token: the-access-token
-  verify-token: the-verify-token
+  enabled: true # Enable RestFB Messenger
+  verify-token: # The Facebook verify token (required the verify the webhook)
+  access-token: # The Facebook access token (required to send messages)
+  app-secret: # The Facebook app secret (if not provided the payload signature will not be validated; useful in e.g. dev environment)
+  api-version: v2.7 # The Facebook api version
+  webhook:
+    enabled: true # Enable the webhook servlet
+    path: /webhook # The path of the webhook servlet 
 ```
 
 ## License
@@ -138,3 +167,4 @@ The RestFB Messenger library is released under version 2.0 of the [Apache Licens
 [Apache License]: http://www.apache.org/licenses/LICENSE-2.0
 [Facebook Messenger Platform]: https://developers.facebook.com/docs/messenger-platform
 [RestFB]: http://restfb.com
+[RestFB Messenger Echo App Engine]: https://github.com/marsbits/restfbmessenger/tree/master/samples/restfbmessenger-echo-appengine

@@ -3,6 +3,6 @@ logging:
     com.github.marsbits.restfbmessenger: DEBUG
 management.context-path: /management
 restfbmessenger:
-  app-secret: the-app-secret
-  access-token: the-access-token
   verify-token: the-verify-token
+  access-token: the-access-token
+  app-secret: the-app-secret
