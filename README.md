@@ -10,7 +10,7 @@ arguments and return types.
 The RestFB Messenger library does basically all the low level plumbing 
 and provides the user a high level API to implement the chatbot.
 
-The user only has to implement the `com.github.marsbits.restfbmessenger.webhook.CallbackHandler` 
+The user has to implement the `com.github.marsbits.restfbmessenger.webhook.CallbackHandler` 
 interface or extending the convenient `com.github.marsbits.restfbmessenger.webhook.AbstractCallbackHandler` 
 like below:
 
