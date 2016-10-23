@@ -321,7 +321,7 @@ public class DefaultSendOperationsTests {
 
     @Test
     public void testQuickRepliesWithTemplateAttachmentAndIdMessageRecipient() {
-        ButtonTemplatePayload payload = new ButtonTemplatePayload();
+        ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
         TemplateAttachment attachment = new TemplateAttachment(payload);
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(idMessageRecipient, attachment, quickReplies);
@@ -333,7 +333,7 @@ public class DefaultSendOperationsTests {
 
     @Test
     public void testQuickRepliesWithTemplateAttachmentAndPhoneMessageRecipient() {
-        ButtonTemplatePayload payload = new ButtonTemplatePayload();
+        ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
         TemplateAttachment attachment = new TemplateAttachment(payload);
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(phoneMessageRecipient, attachment, quickReplies);
@@ -526,7 +526,7 @@ public class DefaultSendOperationsTests {
     }
 
     private ButtonTemplatePayload createButtonTemplate() {
-        ButtonTemplatePayload buttonTemplate = new ButtonTemplatePayload();
+        ButtonTemplatePayload buttonTemplate = new ButtonTemplatePayload("body text");
         buttonTemplate.addButton(new CallButton("title", "phonenumber"));
         buttonTemplate.addButton(new PostbackButton("title", "postback"));
         return buttonTemplate;
