@@ -1,21 +1,22 @@
 ## RestFB Messenger
 
+[![Gitter](https://badges.gitter.im/restfbmessenger/restfbmessenger.svg)](https://gitter.im/restfbmessenger/restfbmessenger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.marsbits.restfbmessenger/restfbmessenger-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.marsbits.restfbmessenger/restfbmessenger-core)
-[![Javadocs](http://www.javadoc.io/badge/com.github.marsbits.restfbmessenger/restfbmessenger-core.svg?color=blue)](http://www.javadoc.io/doc/com.github.marsbits.restfbmessenger/restfbmessenger-core)
+[![Javadocs](http://www.javadoc.io/badge/com.github.marsbits.restfbmessenger/restfbmessenger-core.svg?color=brightgreen)](http://www.javadoc.io/doc/com.github.marsbits.restfbmessenger/restfbmessenger-core)
 [![Apache 2.0 License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
-RestFB Messenger is a Java library for implementing chatbots on the 
+RestFB Messenger is a Java library for implementing chatbots on the
 [Facebook Messenger Platform][].
 
-It utilizes the [RestFB][] client for the low level communication with 
-the Facebook Graph API. It also uses the RestFB Java types for input 
+It utilizes the [RestFB][] client for the low level communication with
+the Facebook Graph API. It also uses the RestFB Java types for input
 arguments and return types.
 
-The RestFB Messenger library does basically all the low level plumbing 
+The RestFB Messenger library does basically all the low level plumbing
 and provides the user a high level API to implement the chatbot.
 
-The user has to implement the `com.github.marsbits.restfbmessenger.webhook.CallbackHandler` 
-interface or extending the convenient `com.github.marsbits.restfbmessenger.webhook.AbstractCallbackHandler` 
+The user has to implement the `com.github.marsbits.restfbmessenger.webhook.CallbackHandler`
+interface or extending the convenient `com.github.marsbits.restfbmessenger.webhook.AbstractCallbackHandler`
 like below:
 
 ```java
@@ -29,16 +30,16 @@ public class MyCallbackHandler extends AbstractCallbackHandler {
         MessageItem message = messaging.getMessage();
         messenger.send().markSeen(recipient);
         messenger.send().typingOn(recipient);
-        messenger.send().textMessage(recipient, 
+        messenger.send().textMessage(recipient,
             format("Hi human, I received your message: %s", message.getText()));
         messenger.send().typingOff(recipient);
     }
-    
+
     @Override
     public void onPostback(Messenger messenger, MessagingItem messaging) {
         // TODO implement..
     }
-    
+
     // TODO override other methods the chatbot need to repsond to..
 }
 ```
@@ -65,8 +66,8 @@ dependencies {
 }
 ```
 
-If you want to use RestFB Messenger in a Spring Boot application see the 
-[Spring Boot](#springboot) configuration instead. 
+If you want to use RestFB Messenger in a Spring Boot application see the
+[Spring Boot](#springboot) configuration instead.
 
 ## Configuration
 
@@ -90,16 +91,16 @@ In a standard webapp the `WebhookServlet` can be configured in the `web.xml` lik
 </servlet-mapping>
 ```
 
-The `messengerProviderClass` init param must point to a custom 
+The `messengerProviderClass` init param must point to a custom
 class implementing the `com.github.marsbits.restfbmessenger.MessengerProvider`
 to provide the `Messenger` instance to the `WebhookServlet`.
 
-See the [RestFB Messenger Echo App Engine][] sample for a full sample 
-using the `web.xml` configuration. 
+See the [RestFB Messenger Echo App Engine][] sample for a full sample
+using the `web.xml` configuration.
 
 ### Servlet 3 @WebListener
 
-In a Servlet 3 environment the `WebhookServlet` can also be configured 
+In a Servlet 3 environment the `WebhookServlet` can also be configured
 programmatically like:
 
 ```java
@@ -125,22 +126,22 @@ public class EchoInitializer implements ServletContextListener {
 Another option is to extend the `com.github.marsbits.restfbmessenger.webhook.WebhookServlet`
 and annotate it with the `@WebServlet` annotation.
 
-See the [RestFB Messenger Echo Servlet 3][] sample for a full sample 
-using a `@WebListener` to do the configuration programmatically. 
+See the [RestFB Messenger Echo Servlet 3][] sample for a full sample
+using a `@WebListener` to do the configuration programmatically.
 
 ### Spring
 
 When using Spring one option is to simply configure the `WebhookServlet`
-like the previous examples. 
+like the previous examples.
 
-In a Spring environment the `Messenger` bean will typically be created 
-manually in the Spring application context and use other injected beans 
+In a Spring environment the `Messenger` bean will typically be created
+manually in the Spring application context and use other injected beans
 as well.
 
 In that case the `MessengerProvider` implementation must find a way to
 retrieve the `Messenger` instance from the Spring application context.
- 
-Another option is to create a custom controller and use that instead of 
+
+Another option is to create a custom controller and use that instead of
 the `WebhookServlet`. This custom controller should then listen to Facebook
 callbacks and act on them appropriately.
 
@@ -187,8 +188,8 @@ public class EchoWebhookController {
 }
 ```
 
-See the [RestFB Messenger Echo Spring][] sample for a full sample 
-using a custom Spring controller. 
+See the [RestFB Messenger Echo Spring][] sample for a full sample
+using a custom Spring controller.
 
 ### <a name="springboot"></a>Spring Boot
 
@@ -213,12 +214,12 @@ dependencies {
 ```
 
 The `restfbmessenger-spring-boot-starter` will automatically add the
-`restfbmessenger-core` dependency and trigger the auto configuration to 
-create the `com.github.marsbits.restfbmessenger.Messenger` instance and 
-register the `com.github.marsbits.restfbmessenger.webhook.WebhookServlet` 
+`restfbmessenger-core` dependency and trigger the auto configuration to
+create the `com.github.marsbits.restfbmessenger.Messenger` instance and
+register the `com.github.marsbits.restfbmessenger.webhook.WebhookServlet`
 servlet.
 
-Only a class implementing the `CallbackHandler` need to be added to the 
+Only a class implementing the `CallbackHandler` need to be added to the
 Spring context like:
 
 ```java
@@ -231,10 +232,10 @@ public class MyCallbackHandler extends AbstractCallbackHandler {
     }
 ```
 
-The auto configuration will automatically hook the `CallbackHandler` in 
+The auto configuration will automatically hook the `CallbackHandler` in
 the `Messenger` instance.
 
-The following properties can be specified inside your 
+The following properties can be specified inside your
 `application.properties`/`application.yml` file:
 
 ```txt
@@ -246,11 +247,19 @@ restfbmessenger:
   api-version: v2.7 # The Facebook api version
   webhook:
     enabled: true # Enable the webhook servlet
-    path: /webhook # The path of the webhook servlet 
+    path: /webhook # The path of the webhook servlet
 ```
 
-See the [RestFB Messenger Echo Spring Boot][] sample for a full sample 
-using the RestFB Messenger Spring Boot Starter. 
+See the [RestFB Messenger Echo Spring Boot][] sample for a full sample
+using the RestFB Messenger Spring Boot Starter.
+
+## Showcases
+
+Here are some projects that use RestFB Messenger to power its Facebok Messenger chatbot.
+
+* [Chuck Norris IO](https://m.me/chucknorris.io) (source code available [here](https://github.com/chucknorris-io/app-facebook-messenger))
+
+Create a [New Issue][] or [New Pull Request][] to add your own Facebook Messenger chatbot to the list.
 
 ## License
 
@@ -259,6 +268,8 @@ The RestFB Messenger library is released under version 2.0 of the [Apache Licens
 
 [Apache License]: http://www.apache.org/licenses/LICENSE-2.0
 [Facebook Messenger Platform]: https://developers.facebook.com/docs/messenger-platform
+[New Issue]: https://github.com/marsbits/restfbmessenger/issues/new
+[New Pull Request]: https://github.com/marsbits/restfbmessenger/compare
 [RestFB]: http://restfb.com
 [RestFB Messenger Echo App Engine]: https://github.com/marsbits/restfbmessenger/tree/master/samples/restfbmessenger-echo-appengine
 [RestFB Messenger Echo Servlet 3]: https://github.com/marsbits/restfbmessenger/tree/master/samples/restfbmessenger-echo-servlet3
