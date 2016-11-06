@@ -64,7 +64,7 @@ public interface Messenger {
     /**
      * Handles the webhook callback.
      *
-     * @param payload the received webhook payload
+     * @param payload   the received webhook payload
      * @param signature the received webhook signature
      */
     void handleCallback(String payload, String signature);
@@ -79,11 +79,20 @@ public interface Messenger {
     User getUserProfile(String userId) throws FacebookException;
 
     /**
-     * Returns the {@link User} for the given user id. Only the given fields will be retrieved and
-     * populated in the returned user object.
+     * Returns the {@link User} for the given user id. Only the given fields will be retrieved and populated in the returned user object.
      *
      * @param userId the user id
-     * @param fields the comma separated list if user fields
+     * @param fields the list of user fields
+     * @return the user
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    User getUserProfile(String userId, String... fields) throws FacebookException;
+
+    /**
+     * Returns the {@link User} for the given user id. Only the given fields will be retrieved and populated in the returned user object.
+     *
+     * @param userId the user id
+     * @param fields the comma separated list of user fields
      * @return the user
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */

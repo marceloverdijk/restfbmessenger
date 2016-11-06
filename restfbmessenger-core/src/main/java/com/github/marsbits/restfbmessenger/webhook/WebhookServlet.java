@@ -16,12 +16,8 @@
 
 package com.github.marsbits.restfbmessenger.webhook;
 
-import static com.github.marsbits.restfbmessenger.Messenger.HUB_CHALLENGE_PARAM_NAME;
-import static com.github.marsbits.restfbmessenger.Messenger.HUB_MODE_PARAM_NAME;
-import static com.github.marsbits.restfbmessenger.Messenger.HUB_MODE_SUBSCRIBE_VALUE;
-import static com.github.marsbits.restfbmessenger.Messenger.HUB_SIGNATURE_HEADER_NAME;
-import static com.github.marsbits.restfbmessenger.Messenger.HUB_VERIFY_TOKEN_PARAM_NAME;
-import static java.lang.String.format;
+import com.github.marsbits.restfbmessenger.Messenger;
+import com.github.marsbits.restfbmessenger.MessengerProvider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,17 +28,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.marsbits.restfbmessenger.Messenger;
-import com.github.marsbits.restfbmessenger.MessengerProvider;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_CHALLENGE_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_MODE_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_MODE_SUBSCRIBE_VALUE;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_SIGNATURE_HEADER_NAME;
+import static com.github.marsbits.restfbmessenger.Messenger.HUB_VERIFY_TOKEN_PARAM_NAME;
+import static java.lang.String.format;
 
 /**
- * Servlet that is responsible for receiving the Facebook Messenger webhook callbacks and delegating
- * them to the configured {@link Messenger} instance.
+ * Servlet that is responsible for receiving the Facebook Messenger webhook callbacks and delegating them to the configured {@link
+ * Messenger} instance.
  *
  * @author Marcel Overdijk
- * @since 1.0.0
  * @see Messenger#handleCallback(String, String)
  * @see CallbackHandler
+ * @since 1.0.0
  */
 public class WebhookServlet extends HttpServlet {
 

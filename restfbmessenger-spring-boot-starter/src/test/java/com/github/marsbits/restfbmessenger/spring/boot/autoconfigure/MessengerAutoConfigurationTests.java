@@ -16,13 +16,12 @@
 
 package com.github.marsbits.restfbmessenger.spring.boot.autoconfigure;
 
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-
-import java.lang.reflect.Field;
+import com.github.marsbits.restfbmessenger.DefaultMessenger;
+import com.github.marsbits.restfbmessenger.Messenger;
+import com.github.marsbits.restfbmessenger.webhook.AbstractCallbackHandler;
+import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,12 +32,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import com.github.marsbits.restfbmessenger.DefaultMessenger;
-import com.github.marsbits.restfbmessenger.Messenger;
-import com.github.marsbits.restfbmessenger.webhook.AbstractCallbackHandler;
-import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
-import com.restfb.DefaultFacebookClient;
-import com.restfb.FacebookClient;
+import java.lang.reflect.Field;
+
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * Tests for {@link MessengerAutoConfiguration}.
@@ -155,7 +155,9 @@ public class MessengerAutoConfigurationTests {
 
         @Bean
         public CallbackHandler callbackHandler() {
-            return new AbstractCallbackHandler() {};
+            return new AbstractCallbackHandler() {
+
+            };
         }
     }
 

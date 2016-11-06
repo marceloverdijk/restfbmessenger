@@ -16,6 +16,20 @@
 
 package com.github.marsbits.restfbmessenger;
 
+import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
+import com.restfb.FacebookClient;
+import com.restfb.JsonMapper;
+import com.restfb.Parameter;
+import com.restfb.types.User;
+import com.restfb.types.webhook.WebhookObject;
+import com.restfb.util.EncodingUtils;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.HMAC_SHA1_ALGORITHM;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.OBJECT_PAGE_VALUE;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.SIGNATURE_PREFIX;
@@ -29,20 +43,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
-import com.restfb.FacebookClient;
-import com.restfb.JsonMapper;
-import com.restfb.Parameter;
-import com.restfb.types.User;
-import com.restfb.types.webhook.WebhookObject;
-import com.restfb.util.EncodingUtils;
 
 /**
  * Tests for {@link DefaultMessenger}.
@@ -66,8 +66,7 @@ public class DefaultMessengerTests {
         this.callbackHandler = mock(CallbackHandler.class);
         this.facebookClient = mock(FacebookClient.class);
         this.jsonMapper = mock(JsonMapper.class);
-        this.messenger =
-                new DefaultMessenger(verifyToken, appSecret, callbackHandler, facebookClient);
+        this.messenger = new DefaultMessenger(verifyToken, appSecret, callbackHandler, facebookClient);
         when(facebookClient.getJsonMapper()).thenReturn(jsonMapper);
     }
 
@@ -148,19 +147,31 @@ public class DefaultMessengerTests {
         user.setGender("gender");
         when(facebookClient.fetchObject(userId, User.class,
                 Parameter.with(USER_FIELDS_PARAM_NAME, USER_FIELDS_DEFAULT_VALUE)))
-                        .thenReturn(user);
+                .thenReturn(user);
         assertThat(messenger.getUserProfile(userId), is(user));
     }
 
     @Test
-    public void testGetUserProfileWithSpecificFields() {
+    public void testGetUserProfileWithSpecificFieldsAsVarargs() {
         String userId = "user id";
         User user = new User();
         user.setFirstName("first name");
         user.setLastName("last name");
         when(facebookClient.fetchObject(userId, User.class,
                 Parameter.with(USER_FIELDS_PARAM_NAME, "first_name,last_name")))
-                        .thenReturn(user);
+                .thenReturn(user);
+        assertThat(messenger.getUserProfile(userId, "first_name", "last_name"), is(user));
+    }
+
+    @Test
+    public void testGetUserProfileWithSpecificFieldsAsString() {
+        String userId = "user id";
+        User user = new User();
+        user.setFirstName("first name");
+        user.setLastName("last name");
+        when(facebookClient.fetchObject(userId, User.class,
+                Parameter.with(USER_FIELDS_PARAM_NAME, "first_name,last_name")))
+                .thenReturn(user);
         assertThat(messenger.getUserProfile(userId, "first_name,last_name"), is(user));
     }
 

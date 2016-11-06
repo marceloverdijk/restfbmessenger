@@ -16,21 +16,6 @@
 
 package com.github.marsbits.restfbmessenger.send;
 
-import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.MESSAGES_PATH;
-import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.MESSAGE_PARAM_NAME;
-import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.RECIPIENT_PARAM_NAME;
-import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.SENDER_ACTION_PARAM_NAME;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.types.send.Bubble;
@@ -56,6 +41,21 @@ import com.restfb.types.send.airline.BoardingPass;
 import com.restfb.types.send.airline.FlightAirport;
 import com.restfb.types.send.airline.FlightInfo;
 import com.restfb.types.send.airline.FlightSchedule;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.MESSAGES_PATH;
+import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.MESSAGE_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.RECIPIENT_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.SENDER_ACTION_PARAM_NAME;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests for {@link DefaultSendOperations}.
@@ -96,59 +96,51 @@ public class DefaultSendOperationsTests {
     @Test
     public void testMarkSeenWithIdMessageRecipient() {
         send.markSeen(idMessageRecipient);
-        verifySend(idMessageRecipient,
-                Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.mark_seen));
+        verifySend(idMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.mark_seen));
     }
 
     @Test
     public void testMarkSeenWithPhoneMessageRecipient() {
         send.markSeen(phoneMessageRecipient);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.mark_seen));
+        verifySend(phoneMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.mark_seen));
     }
 
     @Test
     public void testTypingOnWithIdMessageRecipient() {
         send.typingOn(idMessageRecipient);
-        verifySend(idMessageRecipient,
-                Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_on));
+        verifySend(idMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_on));
     }
 
     @Test
     public void testTypingOnWithPhoneMessageRecipient() {
         send.typingOn(phoneMessageRecipient);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_on));
+        verifySend(phoneMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_on));
     }
 
     @Test
     public void testTypingOffWithIdMessageRecipient() {
         send.typingOff(idMessageRecipient);
-        verifySend(idMessageRecipient,
-                Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_off));
+        verifySend(idMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_off));
     }
 
     @Test
     public void testTypingOffWithPhoneMessageRecipient() {
         send.typingOff(phoneMessageRecipient);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_off));
+        verifySend(phoneMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_off));
     }
 
     @Test
     public void testMessageWithIdMessageRecipient() {
         Message message = new Message("Hello!");
         send.message(idMessageRecipient, message);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testMessageWithPhoneMessageRecipient() {
         Message message = new Message("Hello!");
         send.message(phoneMessageRecipient, message);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -156,8 +148,7 @@ public class DefaultSendOperationsTests {
         String text = "Hello!";
         send.textMessage(idMessageRecipient, text);
         Message message = new Message(text);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -165,8 +156,7 @@ public class DefaultSendOperationsTests {
         String text = "Hello!";
         send.textMessage(phoneMessageRecipient, text);
         Message message = new Message(text);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -176,8 +166,7 @@ public class DefaultSendOperationsTests {
         send.attachment(idMessageRecipient, MediaAttachment.Type.IMAGE, url);
         MediaAttachment attachment = new MediaAttachment(type, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -187,8 +176,7 @@ public class DefaultSendOperationsTests {
         send.attachment(phoneMessageRecipient, type, url);
         MediaAttachment attachment = new MediaAttachment(type, url);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -197,8 +185,7 @@ public class DefaultSendOperationsTests {
         send.imageAttachment(idMessageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.IMAGE, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -207,8 +194,7 @@ public class DefaultSendOperationsTests {
         send.imageAttachment(phoneMessageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.IMAGE, url);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -217,8 +203,7 @@ public class DefaultSendOperationsTests {
         send.audioAttachment(idMessageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.AUDIO, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -227,8 +212,7 @@ public class DefaultSendOperationsTests {
         send.audioAttachment(phoneMessageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.AUDIO, url);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -237,8 +221,7 @@ public class DefaultSendOperationsTests {
         send.videoAttachment(idMessageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.VIDEO, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -247,8 +230,7 @@ public class DefaultSendOperationsTests {
         send.videoAttachment(phoneMessageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.VIDEO, url);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -257,8 +239,7 @@ public class DefaultSendOperationsTests {
         send.fileAttachment(idMessageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.FILE, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -267,8 +248,7 @@ public class DefaultSendOperationsTests {
         send.fileAttachment(phoneMessageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.FILE, url);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -277,9 +257,8 @@ public class DefaultSendOperationsTests {
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(idMessageRecipient, text, quickReplies);
         Message message = new Message(text);
-        addQuickReplies(message, quickReplies);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        message.addQuickReplies(quickReplies);
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -288,9 +267,8 @@ public class DefaultSendOperationsTests {
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(phoneMessageRecipient, text, quickReplies);
         Message message = new Message(text);
-        addQuickReplies(message, quickReplies);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        message.addQuickReplies(quickReplies);
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -301,9 +279,8 @@ public class DefaultSendOperationsTests {
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(idMessageRecipient, attachment, quickReplies);
         Message message = new Message(attachment);
-        addQuickReplies(message, quickReplies);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        message.addQuickReplies(quickReplies);
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -314,9 +291,8 @@ public class DefaultSendOperationsTests {
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(phoneMessageRecipient, attachment, quickReplies);
         Message message = new Message(attachment);
-        addQuickReplies(message, quickReplies);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        message.addQuickReplies(quickReplies);
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -326,9 +302,8 @@ public class DefaultSendOperationsTests {
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(idMessageRecipient, attachment, quickReplies);
         Message message = new Message(attachment);
-        addQuickReplies(message, quickReplies);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        message.addQuickReplies(quickReplies);
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -338,9 +313,8 @@ public class DefaultSendOperationsTests {
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(phoneMessageRecipient, attachment, quickReplies);
         Message message = new Message(attachment);
-        addQuickReplies(message, quickReplies);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        message.addQuickReplies(quickReplies);
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -349,8 +323,7 @@ public class DefaultSendOperationsTests {
         send.genericTemplate(idMessageRecipient, genericTemplate);
         TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -359,8 +332,7 @@ public class DefaultSendOperationsTests {
         send.genericTemplate(phoneMessageRecipient, genericTemplate);
         TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -369,8 +341,7 @@ public class DefaultSendOperationsTests {
         send.buttonTemplate(idMessageRecipient, buttonTemplate);
         TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -379,8 +350,7 @@ public class DefaultSendOperationsTests {
         send.buttonTemplate(phoneMessageRecipient, buttonTemplate);
         TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -389,8 +359,7 @@ public class DefaultSendOperationsTests {
         send.receiptTemplate(idMessageRecipient, receiptTemplate);
         TemplateAttachment attachment = new TemplateAttachment(receiptTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -399,8 +368,7 @@ public class DefaultSendOperationsTests {
         send.receiptTemplate(phoneMessageRecipient, receiptTemplate);
         TemplateAttachment attachment = new TemplateAttachment(receiptTemplate);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -409,8 +377,7 @@ public class DefaultSendOperationsTests {
         send.airlineItineraryTemplate(idMessageRecipient, airlineItineraryTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineItineraryTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -419,8 +386,7 @@ public class DefaultSendOperationsTests {
         send.airlineItineraryTemplate(phoneMessageRecipient, airlineItineraryTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineItineraryTemplate);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -429,8 +395,7 @@ public class DefaultSendOperationsTests {
         send.airlineCheckinTemplate(idMessageRecipient, airlineCheckinTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineCheckinTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -439,8 +404,7 @@ public class DefaultSendOperationsTests {
         send.airlineCheckinTemplate(phoneMessageRecipient, airlineCheckinTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineCheckinTemplate);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -450,8 +414,7 @@ public class DefaultSendOperationsTests {
         send.airlineBoardingPassTemplate(idMessageRecipient, airlineBoardingPassTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineBoardingPassTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -461,8 +424,7 @@ public class DefaultSendOperationsTests {
         send.airlineBoardingPassTemplate(phoneMessageRecipient, airlineBoardingPassTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineBoardingPassTemplate);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -471,8 +433,7 @@ public class DefaultSendOperationsTests {
         send.airlineUpdateTemplate(idMessageRecipient, airlineUpdateTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineUpdateTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -481,8 +442,7 @@ public class DefaultSendOperationsTests {
         send.airlineUpdateTemplate(phoneMessageRecipient, airlineUpdateTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineUpdateTemplate);
         Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     public void verifySend(IdMessageRecipient recipient, Parameter... parameters) {
@@ -497,17 +457,7 @@ public class DefaultSendOperationsTests {
         List<Parameter> params = new ArrayList<>();
         params.add(recipient);
         params.addAll(Arrays.asList(parameters));
-        verify(facebookClient).publish(MESSAGES_PATH, SendResponse.class,
-                params.toArray(new Parameter[params.size()]));
-    }
-
-    // https://github.com/restfb/restfb/issues/581
-    private void addQuickReplies(Message message, List<QuickReply> quickReplies) {
-        if (quickReplies != null) {
-            for (QuickReply quickReply : quickReplies) {
-                message.addQuickReply(quickReply);
-            }
-        }
+        verify(facebookClient).publish(MESSAGES_PATH, SendResponse.class, params.toArray(new Parameter[params.size()]));
     }
 
     private List<QuickReply> createQuickReplies() {
@@ -538,8 +488,7 @@ public class DefaultSendOperationsTests {
         String currency = "currency";
         String paymentMethod = "payment method";
         ReceiptSummary summary = new ReceiptSummary(100.00);
-        ReceiptTemplatePayload receiptTemplate = new ReceiptTemplatePayload(recipientName,
-                orderNumber, currency, paymentMethod, summary);
+        ReceiptTemplatePayload receiptTemplate = new ReceiptTemplatePayload(recipientName, orderNumber, currency, paymentMethod, summary);
         return receiptTemplate;
     }
 
@@ -568,20 +517,20 @@ public class DefaultSendOperationsTests {
         String connectionId = "connection id";
         String segmentId = "segment id";
         String flightNumber = "flight number";
-        FlightAirport departureAirport =
-                new FlightAirport("departure airport code", "departure city");
+        FlightAirport departureAirport = new FlightAirport("departure airport code", "departure city");
         FlightAirport arrivalAirport = new FlightAirport("arrival airport code", "arrival city");
         Date departureDate = new Date(0);
         Date arrivalDate = new Date(3600000);
         FlightSchedule flightSchedule = new FlightSchedule(departureDate, arrivalDate);
         String travelClass = "travel class";
-        FlightInfo flightInfo = new FlightInfo(connectionId, segmentId, flightNumber,
-                departureAirport, arrivalAirport, flightSchedule, travelClass);
+        FlightInfo flightInfo =
+                new FlightInfo(connectionId, segmentId, flightNumber, departureAirport, arrivalAirport, flightSchedule, travelClass);
         return flightInfo;
     }
 
     private AirlineBoardingPassTemplatePayload createAirlineBoardingPassTemplate() {
-        String introMessage = "intro message";;
+        String introMessage = "intro message";
+        ;
         String locale = "locale";
         List<BoardingPass> boardingPassList = Arrays.asList(createBoardingPass());
         AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
@@ -595,8 +544,7 @@ public class DefaultSendOperationsTests {
         String logoImageUrl = "logo image url";
         String aboveBarCodeImageUrl = "above bar code image url";
         FlightInfo flightInfo = createFlightInfo();
-        BoardingPass boardingPass = new BoardingPass(passengerName, pnrNumber, logoImageUrl,
-                aboveBarCodeImageUrl, flightInfo);
+        BoardingPass boardingPass = new BoardingPass(passengerName, pnrNumber, logoImageUrl, aboveBarCodeImageUrl, flightInfo);
         return boardingPass;
     }
 
@@ -604,8 +552,7 @@ public class DefaultSendOperationsTests {
         String locale = "locale";
         String pnrNumber = "pnr number";
         FlightInfo updateFlightInfo = createFlightInfo();
-        AirlineUpdateTemplatePayload airlineUpdateTemplate =
-                new AirlineUpdateTemplatePayload(locale, pnrNumber, updateFlightInfo);
+        AirlineUpdateTemplatePayload airlineUpdateTemplate = new AirlineUpdateTemplatePayload(locale, pnrNumber, updateFlightInfo);
         return airlineUpdateTemplate;
     }
 }

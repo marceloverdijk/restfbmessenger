@@ -16,10 +16,6 @@
 
 package com.github.marsbits.restfbmessenger.send;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
 import com.restfb.types.send.ButtonTemplatePayload;
@@ -27,6 +23,7 @@ import com.restfb.types.send.GenericTemplatePayload;
 import com.restfb.types.send.IdMessageRecipient;
 import com.restfb.types.send.MediaAttachment;
 import com.restfb.types.send.Message;
+import com.restfb.types.send.MessageRecipient;
 import com.restfb.types.send.PhoneMessageRecipient;
 import com.restfb.types.send.QuickReply;
 import com.restfb.types.send.ReceiptTemplatePayload;
@@ -38,6 +35,10 @@ import com.restfb.types.send.airline.AirlineBoardingPassTemplatePayload;
 import com.restfb.types.send.airline.AirlineCheckinTemplatePayload;
 import com.restfb.types.send.airline.AirlineItineraryTemplatePayload;
 import com.restfb.types.send.airline.AirlineUpdateTemplatePayload;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Default implementation of the {@link SendOperations} interface.
@@ -60,276 +61,232 @@ public class DefaultSendOperations implements SendOperations {
     }
 
     @Override
-    public SendResponse senderAction(IdMessageRecipient recipient, SenderActionEnum senderAction) {
+    public SendResponse senderAction(MessageRecipient recipient, SenderActionEnum senderAction) {
         return send(recipient, Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction.name()));
     }
 
     @Override
-    public SendResponse senderAction(PhoneMessageRecipient recipient,
-            SenderActionEnum senderAction) {
-        return send(recipient, Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction.name()));
+    public SendResponse senderAction(String recipient, SenderActionEnum senderAction) {
+        return senderAction(toMessageRecipient(recipient), senderAction);
     }
 
     @Override
-    public SendResponse markSeen(IdMessageRecipient recipient) {
+    public SendResponse markSeen(MessageRecipient recipient) {
         return senderAction(recipient, SenderActionEnum.mark_seen);
     }
 
     @Override
-    public SendResponse markSeen(PhoneMessageRecipient recipient) {
-        return senderAction(recipient, SenderActionEnum.mark_seen);
+    public SendResponse markSeen(String recipient) {
+        return markSeen(toMessageRecipient(recipient));
     }
 
     @Override
-    public SendResponse typingOn(IdMessageRecipient recipient) {
+    public SendResponse typingOn(MessageRecipient recipient) {
         return senderAction(recipient, SenderActionEnum.typing_on);
     }
 
     @Override
-    public SendResponse typingOn(PhoneMessageRecipient recipient) {
-        return senderAction(recipient, SenderActionEnum.typing_on);
+    public SendResponse typingOn(String recipient) {
+        return typingOn(toMessageRecipient(recipient));
     }
 
     @Override
-    public SendResponse typingOff(IdMessageRecipient recipient) {
+    public SendResponse typingOff(MessageRecipient recipient) {
         return senderAction(recipient, SenderActionEnum.typing_off);
     }
 
     @Override
-    public SendResponse typingOff(PhoneMessageRecipient recipient) {
-        return senderAction(recipient, SenderActionEnum.typing_off);
+    public SendResponse typingOff(String recipient) {
+        return typingOff(toMessageRecipient(recipient));
     }
 
     @Override
-    public SendResponse message(IdMessageRecipient recipient, Message message) {
+    public SendResponse message(MessageRecipient recipient, Message message) {
         return send(recipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Override
-    public SendResponse message(PhoneMessageRecipient recipient, Message message) {
-        return send(recipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+    public SendResponse message(String recipient, Message message) {
+        return message(toMessageRecipient(recipient), message);
     }
 
     @Override
-    public SendResponse textMessage(IdMessageRecipient recipient, String text) {
+    public SendResponse textMessage(MessageRecipient recipient, String text) {
         Message message = new Message(text);
         return message(recipient, message);
     }
 
     @Override
-    public SendResponse textMessage(PhoneMessageRecipient recipient, String text) {
-        Message message = new Message(text);
-        return message(recipient, message);
+    public SendResponse textMessage(String recipient, String text) {
+        return textMessage(toMessageRecipient(recipient), text);
     }
 
     @Override
-    public SendResponse attachment(IdMessageRecipient recipient, MediaAttachment.Type type,
-            String url) {
+    public SendResponse attachment(MessageRecipient recipient, MediaAttachment.Type type, String url) {
         MediaAttachment attachment = new MediaAttachment(type, url);
         Message message = new Message(attachment);
         return message(recipient, message);
     }
 
     @Override
-    public SendResponse attachment(PhoneMessageRecipient recipient, MediaAttachment.Type type,
-            String url) {
-        MediaAttachment attachment = new MediaAttachment(type, url);
-        Message message = new Message(attachment);
-        return message(recipient, message);
+    public SendResponse attachment(String recipient, MediaAttachment.Type type, String url) {
+        return attachment(toMessageRecipient(recipient), type, url);
     }
 
     @Override
-    public SendResponse imageAttachment(IdMessageRecipient recipient, String url) {
+    public SendResponse imageAttachment(MessageRecipient recipient, String url) {
         return attachment(recipient, MediaAttachment.Type.IMAGE, url);
     }
 
     @Override
-    public SendResponse imageAttachment(PhoneMessageRecipient recipient, String url) {
-        return attachment(recipient, MediaAttachment.Type.IMAGE, url);
+    public SendResponse imageAttachment(String recipient, String url) {
+        return imageAttachment(toMessageRecipient(recipient), url);
     }
 
     @Override
-    public SendResponse audioAttachment(IdMessageRecipient recipient, String url) {
+    public SendResponse audioAttachment(MessageRecipient recipient, String url) {
         return attachment(recipient, MediaAttachment.Type.AUDIO, url);
     }
 
     @Override
-    public SendResponse audioAttachment(PhoneMessageRecipient recipient, String url) {
-        return attachment(recipient, MediaAttachment.Type.AUDIO, url);
+    public SendResponse audioAttachment(String recipient, String url) {
+        return audioAttachment(toMessageRecipient(recipient), url);
     }
 
     @Override
-    public SendResponse videoAttachment(IdMessageRecipient recipient, String url) {
+    public SendResponse videoAttachment(MessageRecipient recipient, String url) {
         return attachment(recipient, MediaAttachment.Type.VIDEO, url);
     }
 
     @Override
-    public SendResponse videoAttachment(PhoneMessageRecipient recipient, String url) {
-        return attachment(recipient, MediaAttachment.Type.VIDEO, url);
+    public SendResponse videoAttachment(String recipient, String url) {
+        return videoAttachment(toMessageRecipient(recipient), url);
     }
 
     @Override
-    public SendResponse fileAttachment(IdMessageRecipient recipient, String url) {
+    public SendResponse fileAttachment(MessageRecipient recipient, String url) {
         return attachment(recipient, MediaAttachment.Type.FILE, url);
     }
 
     @Override
-    public SendResponse fileAttachment(PhoneMessageRecipient recipient, String url) {
-        return attachment(recipient, MediaAttachment.Type.FILE, url);
+    public SendResponse fileAttachment(String recipient, String url) {
+        return fileAttachment(toMessageRecipient(recipient), url);
     }
 
     @Override
-    public SendResponse quickReplies(IdMessageRecipient recipient, String text,
-            List<QuickReply> quickReplies) {
+    public SendResponse quickReplies(MessageRecipient recipient, String text, List<QuickReply> quickReplies) {
         Message message = new Message(text);
-        addQuickReplies(message, quickReplies);
+        message.addQuickReplies(quickReplies);
         return message(recipient, message);
     }
 
     @Override
-    public SendResponse quickReplies(PhoneMessageRecipient recipient, String text,
-            List<QuickReply> quickReplies) {
-        Message message = new Message(text);
-        addQuickReplies(message, quickReplies);
-        return message(recipient, message);
+    public SendResponse quickReplies(String recipient, String text, List<QuickReply> quickReplies) {
+        return quickReplies(toMessageRecipient(recipient), text, quickReplies);
     }
 
     @Override
-    public SendResponse quickReplies(IdMessageRecipient recipient, MediaAttachment attachment,
-            List<QuickReply> quickReplies) {
+    public SendResponse quickReplies(MessageRecipient recipient, MediaAttachment attachment, List<QuickReply> quickReplies) {
         Message message = new Message(attachment);
-        addQuickReplies(message, quickReplies);
+        message.addQuickReplies(quickReplies);
         return message(recipient, message);
     }
 
     @Override
-    public SendResponse quickReplies(PhoneMessageRecipient recipient, MediaAttachment attachment,
-            List<QuickReply> quickReplies) {
+    public SendResponse quickReplies(String recipient, MediaAttachment attachment, List<QuickReply> quickReplies) {
+        return quickReplies(toMessageRecipient(recipient), attachment, quickReplies);
+    }
+
+    @Override
+    public SendResponse quickReplies(MessageRecipient recipient, TemplateAttachment attachment, List<QuickReply> quickReplies) {
         Message message = new Message(attachment);
-        addQuickReplies(message, quickReplies);
+        message.addQuickReplies(quickReplies);
         return message(recipient, message);
     }
 
     @Override
-    public SendResponse quickReplies(IdMessageRecipient recipient, TemplateAttachment attachment,
-            List<QuickReply> quickReplies) {
-        Message message = new Message(attachment);
-        addQuickReplies(message, quickReplies);
-        return message(recipient, message);
+    public SendResponse quickReplies(String recipient, TemplateAttachment attachment, List<QuickReply> quickReplies) {
+        return quickReplies(toMessageRecipient(recipient), attachment, quickReplies);
     }
 
     @Override
-    public SendResponse quickReplies(PhoneMessageRecipient recipient, TemplateAttachment attachment,
-            List<QuickReply> quickReplies) {
-        Message message = new Message(attachment);
-        addQuickReplies(message, quickReplies);
-        return message(recipient, message);
-    }
-
-    @Override
-    public SendResponse genericTemplate(IdMessageRecipient recipient,
-            GenericTemplatePayload genericTemplate) {
+    public SendResponse genericTemplate(MessageRecipient recipient, GenericTemplatePayload genericTemplate) {
         return template(recipient, genericTemplate);
     }
 
     @Override
-    public SendResponse genericTemplate(PhoneMessageRecipient recipient,
-            GenericTemplatePayload genericTemplate) {
-        return template(recipient, genericTemplate);
+    public SendResponse genericTemplate(String recipient, GenericTemplatePayload genericTemplate) {
+        return genericTemplate(toMessageRecipient(recipient), genericTemplate);
     }
 
     @Override
-    public SendResponse buttonTemplate(IdMessageRecipient recipient,
-            ButtonTemplatePayload buttonTemplate) {
+    public SendResponse buttonTemplate(MessageRecipient recipient, ButtonTemplatePayload buttonTemplate) {
         return template(recipient, buttonTemplate);
     }
 
     @Override
-    public SendResponse buttonTemplate(PhoneMessageRecipient recipient,
-            ButtonTemplatePayload buttonTemplate) {
-        return template(recipient, buttonTemplate);
+    public SendResponse buttonTemplate(String recipient, ButtonTemplatePayload buttonTemplate) {
+        return buttonTemplate(toMessageRecipient(recipient), buttonTemplate);
     }
 
     @Override
-    public SendResponse receiptTemplate(IdMessageRecipient recipient,
-            ReceiptTemplatePayload receiptTemplate) {
+    public SendResponse receiptTemplate(MessageRecipient recipient, ReceiptTemplatePayload receiptTemplate) {
         return template(recipient, receiptTemplate);
     }
 
     @Override
-    public SendResponse receiptTemplate(PhoneMessageRecipient recipient,
-            ReceiptTemplatePayload receiptTemplate) {
-        return template(recipient, receiptTemplate);
+    public SendResponse receiptTemplate(String recipient, ReceiptTemplatePayload receiptTemplate) {
+        return receiptTemplate(toMessageRecipient(recipient), receiptTemplate);
     }
 
     @Override
-    public SendResponse airlineItineraryTemplate(IdMessageRecipient recipient,
-            AirlineItineraryTemplatePayload airlineItineraryTemplate) {
+    public SendResponse airlineItineraryTemplate(MessageRecipient recipient, AirlineItineraryTemplatePayload airlineItineraryTemplate) {
         return template(recipient, airlineItineraryTemplate);
     }
 
     @Override
-    public SendResponse airlineItineraryTemplate(PhoneMessageRecipient recipient,
-            AirlineItineraryTemplatePayload airlineItineraryTemplate) {
-        return template(recipient, airlineItineraryTemplate);
+    public SendResponse airlineItineraryTemplate(String recipient, AirlineItineraryTemplatePayload airlineItineraryTemplate) {
+        return airlineItineraryTemplate(toMessageRecipient(recipient), airlineItineraryTemplate);
     }
 
     @Override
-    public SendResponse airlineCheckinTemplate(IdMessageRecipient recipient,
-            AirlineCheckinTemplatePayload airlineCheckinTemplate) {
+    public SendResponse airlineCheckinTemplate(MessageRecipient recipient, AirlineCheckinTemplatePayload airlineCheckinTemplate) {
         return template(recipient, airlineCheckinTemplate);
     }
 
     @Override
-    public SendResponse airlineCheckinTemplate(PhoneMessageRecipient recipient,
-            AirlineCheckinTemplatePayload airlineCheckinTemplate) {
-        return template(recipient, airlineCheckinTemplate);
+    public SendResponse airlineCheckinTemplate(String recipient, AirlineCheckinTemplatePayload airlineCheckinTemplate) {
+        return airlineCheckinTemplate(toMessageRecipient(recipient), airlineCheckinTemplate);
     }
 
     @Override
-    public SendResponse airlineBoardingPassTemplate(IdMessageRecipient recipient,
+    public SendResponse airlineBoardingPassTemplate(MessageRecipient recipient,
             AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate) {
         return template(recipient, airlineBoardingPassTemplate);
     }
 
     @Override
-    public SendResponse airlineBoardingPassTemplate(PhoneMessageRecipient recipient,
-            AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate) {
-        return template(recipient, airlineBoardingPassTemplate);
+    public SendResponse airlineBoardingPassTemplate(String recipient, AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate) {
+        return airlineBoardingPassTemplate(toMessageRecipient(recipient), airlineBoardingPassTemplate);
     }
 
     @Override
-    public SendResponse airlineUpdateTemplate(IdMessageRecipient recipient,
-            AirlineUpdateTemplatePayload airlineUpdateTemplate) {
+    public SendResponse airlineUpdateTemplate(MessageRecipient recipient, AirlineUpdateTemplatePayload airlineUpdateTemplate) {
         return template(recipient, airlineUpdateTemplate);
     }
 
     @Override
-    public SendResponse airlineUpdateTemplate(PhoneMessageRecipient recipient,
-            AirlineUpdateTemplatePayload airlineUpdateTemplate) {
-        return template(recipient, airlineUpdateTemplate);
+    public SendResponse airlineUpdateTemplate(String recipient, AirlineUpdateTemplatePayload airlineUpdateTemplate) {
+        return airlineUpdateTemplate(toMessageRecipient(recipient), airlineUpdateTemplate);
     }
 
-    protected SendResponse template(IdMessageRecipient recipient, TemplatePayload template) {
+    protected SendResponse template(MessageRecipient recipient, TemplatePayload template) {
         TemplateAttachment attachment = new TemplateAttachment(template);
         Message message = new Message(attachment);
         return message(recipient, message);
     }
 
-    protected SendResponse template(PhoneMessageRecipient recipient, TemplatePayload template) {
-        TemplateAttachment attachment = new TemplateAttachment(template);
-        Message message = new Message(attachment);
-        return message(recipient, message);
-    }
-
-    protected SendResponse send(IdMessageRecipient recipient, Parameter... parameters) {
-        List<Parameter> params = new ArrayList<>();
-        params.add(Parameter.with(RECIPIENT_PARAM_NAME, recipient));
-        params.addAll(Arrays.asList(parameters));
-        return send(params.toArray(new Parameter[params.size()]));
-    }
-
-    protected SendResponse send(PhoneMessageRecipient recipient, Parameter... parameters) {
+    protected SendResponse send(MessageRecipient recipient, Parameter... parameters) {
         List<Parameter> params = new ArrayList<>();
         params.add(Parameter.with(RECIPIENT_PARAM_NAME, recipient));
         params.addAll(Arrays.asList(parameters));
@@ -344,12 +301,15 @@ public class DefaultSendOperations implements SendOperations {
         return facebookClient.publish(MESSAGES_PATH, objectType, parameters);
     }
 
-    // https://github.com/restfb/restfb/issues/581
-    private void addQuickReplies(Message message, List<QuickReply> quickReplies) {
-        if (quickReplies != null) {
-            for (QuickReply quickReply : quickReplies) {
-                message.addQuickReply(quickReply);
+    private MessageRecipient toMessageRecipient(String str) {
+        MessageRecipient recipient = null;
+        if (str != null && str.length() > 0) {
+            if (str.startsWith("+")) {
+                recipient = new PhoneMessageRecipient(str);
+            } else {
+                recipient = new IdMessageRecipient(str);
             }
         }
+        return recipient;
     }
 }

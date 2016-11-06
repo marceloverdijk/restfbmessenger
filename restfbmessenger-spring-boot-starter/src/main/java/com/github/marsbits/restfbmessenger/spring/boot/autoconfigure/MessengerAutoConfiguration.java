@@ -16,6 +16,12 @@
 
 package com.github.marsbits.restfbmessenger.spring.boot.autoconfigure;
 
+import com.github.marsbits.restfbmessenger.DefaultMessenger;
+import com.github.marsbits.restfbmessenger.Messenger;
+import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
+import com.github.marsbits.restfbmessenger.webhook.WebhookServlet;
+import com.restfb.Version;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,12 +31,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.github.marsbits.restfbmessenger.DefaultMessenger;
-import com.github.marsbits.restfbmessenger.Messenger;
-import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
-import com.github.marsbits.restfbmessenger.webhook.WebhookServlet;
-import com.restfb.Version;
 
 /**
  * {@link EnableAutoConfiguration Auto-configuration} for Messenger.
@@ -60,6 +60,7 @@ public class MessengerAutoConfiguration {
                     Version.getVersionFromString(properties.getApiVersion()));
         }
     }
+
 
     @Configuration
     @ConditionalOnWebApplication

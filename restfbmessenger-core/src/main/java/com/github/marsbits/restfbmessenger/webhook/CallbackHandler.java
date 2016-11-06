@@ -20,21 +20,19 @@ import com.github.marsbits.restfbmessenger.Messenger;
 import com.restfb.types.webhook.WebhookObject;
 
 /**
- * Interface to be implemented by applications to handle webhook callbacks.
- * <p>
- * For most applications it will be more convenient to extend the {@link AbstractCallbackHandler}
- * instead.
+ * Interface to be implemented by applications to handle webhook callbacks. <p> For most applications it will be more convenient to extend
+ * the {@link AbstractCallbackHandler} instead.
  *
  * @author Marcel Overdijk
- * @since 1.0.0
  * @see AbstractCallbackHandler
+ * @since 1.0.0
  */
 public interface CallbackHandler {
 
     /**
      * Handles a webhook callback.
      *
-     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messenger     the {@code Messenger} instance that retrieved the callback
      * @param webhookObject the webhook object containing the callback request data
      */
     void onCallback(Messenger messenger, WebhookObject webhookObject);

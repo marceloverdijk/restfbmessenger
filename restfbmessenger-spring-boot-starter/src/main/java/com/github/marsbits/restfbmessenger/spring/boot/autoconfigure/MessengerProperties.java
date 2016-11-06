@@ -16,13 +16,13 @@
 
 package com.github.marsbits.restfbmessenger.spring.boot.autoconfigure;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import com.github.marsbits.restfbmessenger.DefaultMessenger;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.github.marsbits.restfbmessenger.DefaultMessenger;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 /**
  * MessengerConfig properties for Messenger.

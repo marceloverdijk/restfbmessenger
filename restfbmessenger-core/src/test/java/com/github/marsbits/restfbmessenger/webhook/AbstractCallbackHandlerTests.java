@@ -16,17 +16,6 @@
 
 package com.github.marsbits.restfbmessenger.webhook;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-
-import java.util.Arrays;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.github.marsbits.restfbmessenger.Messenger;
 import com.restfb.types.webhook.WebhookEntry;
 import com.restfb.types.webhook.WebhookObject;
@@ -39,6 +28,17 @@ import com.restfb.types.webhook.messaging.OptinItem;
 import com.restfb.types.webhook.messaging.PaymentItem;
 import com.restfb.types.webhook.messaging.PostbackItem;
 import com.restfb.types.webhook.messaging.ReadItem;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Arrays;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 /**
  * Tests for {@link AbstractCallbackHandler}.
@@ -54,7 +54,9 @@ public class AbstractCallbackHandlerTests {
 
     @Before
     public void setUp() {
-        this.callbackHandler = new AbstractCallbackHandler() {};
+        this.callbackHandler = new AbstractCallbackHandler() {
+
+        };
         this.spyCallbackHandler = spy(callbackHandler);
         this.messenger = mock(Messenger.class);
     }
@@ -180,8 +182,7 @@ public class AbstractCallbackHandlerTests {
         MessagingItem messagingItem3 = new MessagingItem();
         messagingItem3.setPostback(postback);
         MessagingItem messagingItem4 = new MessagingItem();
-        WebhookObject webhookObject =
-                createWebhookObject(messagingItem1, messagingItem2, messagingItem3, messagingItem4);
+        WebhookObject webhookObject = createWebhookObject(messagingItem1, messagingItem2, messagingItem3, messagingItem4);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onMessage(messenger, messagingItem1);
         verify(spyCallbackHandler, times(1)).onMessage(messenger, messagingItem2);

@@ -16,6 +16,20 @@
 
 package com.github.marsbits.restfbmessenger.webhook;
 
+import com.github.marsbits.restfbmessenger.Messenger;
+import com.github.marsbits.restfbmessenger.MessengerProvider;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.StringReader;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import static com.github.marsbits.restfbmessenger.Messenger.HUB_MODE_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.Messenger.HUB_MODE_SUBSCRIBE_VALUE;
 import static com.github.marsbits.restfbmessenger.Messenger.HUB_SIGNATURE_HEADER_NAME;
@@ -26,20 +40,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.io.BufferedReader;
-import java.io.PrintWriter;
-import java.io.StringReader;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.github.marsbits.restfbmessenger.Messenger;
-import com.github.marsbits.restfbmessenger.MessengerProvider;
 
 /**
  * Tests for {@link WebhookServlet}.

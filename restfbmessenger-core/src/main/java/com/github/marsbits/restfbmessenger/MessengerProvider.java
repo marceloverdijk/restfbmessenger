@@ -20,8 +20,8 @@ package com.github.marsbits.restfbmessenger;
  * Interface to be implemented by a class providing a {@link Messenger} instance.
  *
  * @author Marcel Overdijk
- * @since 1.0.0
  * @see com.github.marsbits.restfbmessenger.webhook.WebhookServlet
+ * @since 1.0.0
  */
 public interface MessengerProvider {
 

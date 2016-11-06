@@ -16,9 +16,17 @@
 
 package com.github.marsbits.restfbmessenger;
 
-import static java.lang.String.format;
-import static java.util.logging.Level.FINE;
-import static java.util.logging.Level.WARNING;
+import com.github.marsbits.restfbmessenger.send.DefaultSendOperations;
+import com.github.marsbits.restfbmessenger.send.SendOperations;
+import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
+import com.restfb.Parameter;
+import com.restfb.Version;
+import com.restfb.exception.FacebookException;
+import com.restfb.types.User;
+import com.restfb.types.webhook.WebhookObject;
+import com.restfb.util.EncodingUtils;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -27,16 +35,9 @@ import java.util.logging.Logger;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import com.github.marsbits.restfbmessenger.send.DefaultSendOperations;
-import com.github.marsbits.restfbmessenger.send.SendOperations;
-import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
-import com.restfb.DefaultFacebookClient;
-import com.restfb.FacebookClient;
-import com.restfb.Parameter;
-import com.restfb.Version;
-import com.restfb.types.User;
-import com.restfb.types.webhook.WebhookObject;
-import com.restfb.util.EncodingUtils;
+import static java.lang.String.format;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.WARNING;
 
 /**
  * Default implementation of the {@link Messenger} interface.
@@ -48,7 +49,7 @@ public class DefaultMessenger implements Messenger {
 
     private static final Logger logger = Logger.getLogger(DefaultMessenger.class.getName());
 
-    public static final Version DEFAULT_API_VERSION = Version.VERSION_2_7;
+    public static final Version DEFAULT_API_VERSION = Version.VERSION_2_8;
 
     public static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
     public static final String SIGNATURE_PREFIX = "sha1=";
@@ -56,8 +57,7 @@ public class DefaultMessenger implements Messenger {
     public static final String OBJECT_PAGE_VALUE = "page";
 
     public static final String USER_FIELDS_PARAM_NAME = "fields";
-    public static final String USER_FIELDS_DEFAULT_VALUE =
-            "first_name,last_name,profile_pic,locale,timezone,gender";
+    public static final String USER_FIELDS_DEFAULT_VALUE = "first_name,last_name,profile_pic,locale,timezone,gender";
 
     protected String verifyToken;
     protected String appSecret;
@@ -68,14 +68,12 @@ public class DefaultMessenger implements Messenger {
     protected CallbackHandler callbackHandler;
 
     /**
-     * Creates a {@code DefaultMessenger} instance.
-     * <p>
-     * If the app secret is not provided ({@code null} the callback signature verification will be
-     * disabled.
+     * Creates a {@code DefaultMessenger} instance. If the app secret is not provided ({@code null} the callback signature verification will
+     * be disabled.
      *
-     * @param verifyToken the verify token
-     * @param accessToken the access token
-     * @param appSecret the app secret
+     * @param verifyToken     the verify token
+     * @param accessToken     the access token
+     * @param appSecret       the app secret
      * @param callbackHandler the callback handler
      */
     public DefaultMessenger(String verifyToken, String accessToken, String appSecret,
@@ -85,34 +83,31 @@ public class DefaultMessenger implements Messenger {
 
     /**
      * Creates a {@code DefaultMessenger} instance.
-     * <p>
-     * If the app secret is not provided ({@code null} the callback signature verification will be
-     * disabled.
      *
-     * @param verifyToken the verify token
-     * @param accessToken the access token
-     * @param appSecret the app secret
+     * If the app secret is not provided ({@code null} the callback signature verification will be disabled.
+     *
+     * @param verifyToken     the verify token
+     * @param accessToken     the access token
+     * @param appSecret       the app secret
      * @param callbackHandler the callback handler
-     * @param apiVersion the api version
+     * @param apiVersion      the api version
      */
     public DefaultMessenger(String verifyToken, String accessToken, String appSecret,
             CallbackHandler callbackHandler, Version apiVersion) {
-        this(verifyToken, appSecret, callbackHandler,
-                new DefaultFacebookClient(accessToken, appSecret, apiVersion));
+        this(verifyToken, appSecret, callbackHandler, new DefaultFacebookClient(accessToken, appSecret, apiVersion));
     }
 
     /**
      * Creates a {@code DefaultMessenger} instance.
-     * <p>
-     * If the app secret is not provided ({@code null} the callback signature verification will be
-     * disabled.
-     * <p>
+     *
+     * If the app secret is not provided ({@code null} the callback signature verification will be disabled.
+     *
      * The access token and api version need to be configured on the provided facebook client.
      *
-     * @param verifyToken the verify token
-     * @param appSecret the app secret
+     * @param verifyToken     the verify token
+     * @param appSecret       the app secret
      * @param callbackHandler the callback handler
-     * @param facebookClient the facebook client
+     * @param facebookClient  the facebook client
      */
     public DefaultMessenger(String verifyToken, String appSecret,
             CallbackHandler callbackHandler, FacebookClient facebookClient) {
@@ -128,8 +123,7 @@ public class DefaultMessenger implements Messenger {
         }
         if (callbackHandler == null) {
             if (logger.isLoggable(WARNING)) {
-                logger.warning(
-                        "Webhook handler not configured; webhook callbacks will not be handled");
+                logger.warning("Webhook handler not configured; webhook callbacks will not be handled");
             }
         }
     }
@@ -147,8 +141,7 @@ public class DefaultMessenger implements Messenger {
             }
         } else {
             if (logger.isLoggable(FINE)) {
-                logger.fine(format("Handling webhook for payload: %s, signature: %s", payload,
-                        signature));
+                logger.fine(format("Handling webhook for payload: %s, signature: %s", payload, signature));
             }
             if (appSecret != null) {
                 if (!verifySignature(payload, signature)) {
@@ -158,12 +151,10 @@ public class DefaultMessenger implements Messenger {
                     return;
                 }
             }
-            WebhookObject webhookObject = facebookClient.getJsonMapper()
-                    .toJavaObject(payload, WebhookObject.class);
+            WebhookObject webhookObject = facebookClient.getJsonMapper().toJavaObject(payload, WebhookObject.class);
             if (!OBJECT_PAGE_VALUE.equals(webhookObject.getObject())) {
                 if (logger.isLoggable(FINE)) {
-                    logger.fine(format("Ignoring webhook object: %s; webhook handler not invoked",
-                            webhookObject.getObject()));
+                    logger.fine(format("Ignoring webhook object: %s; webhook handler not invoked", webhookObject.getObject()));
                 }
                 return;
             }
@@ -172,14 +163,24 @@ public class DefaultMessenger implements Messenger {
     }
 
     @Override
-    public User getUserProfile(String userId) {
+    public User getUserProfile(String userId) throws FacebookException {
         return getUserProfile(userId, USER_FIELDS_DEFAULT_VALUE);
     }
 
     @Override
-    public User getUserProfile(String userId, String fields) {
-        return facebookClient.fetchObject(userId, User.class,
-                Parameter.with(USER_FIELDS_PARAM_NAME, fields));
+    public User getUserProfile(String userId, String... fields) throws FacebookException {
+        StringBuilder sb = new StringBuilder();
+        String sep = "";
+        for (String field : fields) {
+            sb.append(sep).append(field);
+            sep = ",";
+        }
+        return getUserProfile(userId, sb.toString());
+    }
+
+    @Override
+    public User getUserProfile(String userId, String fields) throws FacebookException {
+        return facebookClient.fetchObject(userId, User.class, Parameter.with(USER_FIELDS_PARAM_NAME, fields));
     }
 
     @Override

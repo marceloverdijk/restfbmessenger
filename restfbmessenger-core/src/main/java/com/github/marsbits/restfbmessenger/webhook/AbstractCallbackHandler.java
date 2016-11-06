@@ -16,12 +16,6 @@
 
 package com.github.marsbits.restfbmessenger.webhook;
 
-import static java.lang.String.format;
-import static java.util.logging.Level.FINE;
-import static java.util.logging.Level.WARNING;
-
-import java.util.logging.Logger;
-
 import com.github.marsbits.restfbmessenger.Messenger;
 import com.restfb.types.webhook.WebhookEntry;
 import com.restfb.types.webhook.WebhookObject;
@@ -36,19 +30,18 @@ import com.restfb.types.webhook.messaging.PaymentItem;
 import com.restfb.types.webhook.messaging.PostbackItem;
 import com.restfb.types.webhook.messaging.ReadItem;
 
+import java.util.logging.Logger;
+
+import static java.lang.String.format;
+import static java.util.logging.Level.FINE;
+import static java.util.logging.Level.WARNING;
+
 /**
- * Abstract implementation of the {@link CallbackHandler} interface.
- * <p>
- * This class processes the received webhook and delegates the actual callbacks to the appropriate
- * methods like {@link #onMessage(Messenger, MessagingItem)},
- * {@link #onPostback(Messenger, MessagingItem)} etc.
- * <p>
- * Custom classes that extend this {@code AbstractCallbackHandler} should override the callback
- * methods that they want to listen and interact to.
- * <p>
- * A special case is the {@link #fallback(Messenger, MessagingItem)} methdod which is called when
- * the received callback type is unknown. This could potentially happen when Facebook introduces new
- * callback types.
+ * Abstract implementation of the {@link CallbackHandler} interface. <p> This class processes the received webhook and delegates the actual
+ * callbacks to the appropriate methods like {@link #onMessage(Messenger, MessagingItem)}, {@link #onPostback(Messenger, MessagingItem)}
+ * etc. <p> Custom classes that extend this {@code AbstractCallbackHandler} should override the callback methods that they want to listen
+ * and interact to. <p> A special case is the {@link #fallback(Messenger, MessagingItem)} methdod which is called when the received callback
+ * type is unknown. This could potentially happen when Facebook introduces new callback types.
  *
  * @author Marcel Overdijk
  * @since 1.0.0
