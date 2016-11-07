@@ -18,13 +18,13 @@ package com.github.marsbits.restfbmessenger.send;
 
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
+import com.restfb.exception.FacebookException;
 import com.restfb.types.send.ButtonTemplatePayload;
 import com.restfb.types.send.GenericTemplatePayload;
-import com.restfb.types.send.IdMessageRecipient;
 import com.restfb.types.send.MediaAttachment;
 import com.restfb.types.send.Message;
 import com.restfb.types.send.MessageRecipient;
-import com.restfb.types.send.PhoneMessageRecipient;
+import com.restfb.types.send.NotificationTypeEnum;
 import com.restfb.types.send.QuickReply;
 import com.restfb.types.send.ReceiptTemplatePayload;
 import com.restfb.types.send.SendResponse;
@@ -51,8 +51,9 @@ public class DefaultSendOperations implements SendOperations {
     public static final String MESSAGES_PATH = "me/messages";
 
     public static final String RECIPIENT_PARAM_NAME = "recipient";
-    public static final String SENDER_ACTION_PARAM_NAME = "sender_action";
     public static final String MESSAGE_PARAM_NAME = "message";
+    public static final String SENDER_ACTION_PARAM_NAME = "sender_action";
+    public static final String NOTIFICATION_TYPE_PARAM_NAME = "notification_type";
 
     protected FacebookClient facebookClient;
 
@@ -61,234 +62,261 @@ public class DefaultSendOperations implements SendOperations {
     }
 
     @Override
-    public SendResponse senderAction(MessageRecipient recipient, SenderActionEnum senderAction) {
-        return send(recipient, Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction.name()));
+    public SendResponse senderAction(MessageRecipient recipient, SenderActionEnum senderAction) throws FacebookException {
+        return senderAction(recipient, senderAction, null);
     }
 
     @Override
-    public SendResponse senderAction(String recipient, SenderActionEnum senderAction) {
-        return senderAction(toMessageRecipient(recipient), senderAction);
+    public SendResponse senderAction(MessageRecipient recipient, SenderActionEnum senderAction, NotificationTypeEnum notificationType)
+            throws FacebookException {
+        return send(recipient, notificationType, Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction.name()));
     }
 
     @Override
-    public SendResponse markSeen(MessageRecipient recipient) {
-        return senderAction(recipient, SenderActionEnum.mark_seen);
+    public SendResponse markSeen(MessageRecipient recipient) throws FacebookException {
+        return markSeen(recipient, null);
     }
 
     @Override
-    public SendResponse markSeen(String recipient) {
-        return markSeen(toMessageRecipient(recipient));
+    public SendResponse markSeen(MessageRecipient recipient, NotificationTypeEnum notificationType) throws FacebookException {
+        return senderAction(recipient, SenderActionEnum.mark_seen, notificationType);
     }
 
     @Override
-    public SendResponse typingOn(MessageRecipient recipient) {
-        return senderAction(recipient, SenderActionEnum.typing_on);
+    public SendResponse typingOn(MessageRecipient recipient) throws FacebookException {
+        return typingOn(recipient, null);
     }
 
     @Override
-    public SendResponse typingOn(String recipient) {
-        return typingOn(toMessageRecipient(recipient));
+    public SendResponse typingOn(MessageRecipient recipient, NotificationTypeEnum notificationType) throws FacebookException {
+        return senderAction(recipient, SenderActionEnum.typing_on, notificationType);
     }
 
     @Override
-    public SendResponse typingOff(MessageRecipient recipient) {
-        return senderAction(recipient, SenderActionEnum.typing_off);
+    public SendResponse typingOff(MessageRecipient recipient) throws FacebookException {
+        return typingOff(recipient, null);
     }
 
     @Override
-    public SendResponse typingOff(String recipient) {
-        return typingOff(toMessageRecipient(recipient));
+    public SendResponse typingOff(MessageRecipient recipient, NotificationTypeEnum notificationType) throws FacebookException {
+        return senderAction(recipient, SenderActionEnum.typing_off, notificationType);
     }
 
     @Override
-    public SendResponse message(MessageRecipient recipient, Message message) {
-        return send(recipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+    public SendResponse message(MessageRecipient recipient, Message message) throws FacebookException {
+        return message(recipient, message, null);
     }
 
     @Override
-    public SendResponse message(String recipient, Message message) {
-        return message(toMessageRecipient(recipient), message);
+    public SendResponse message(MessageRecipient recipient, Message message, NotificationTypeEnum notificationType)
+            throws FacebookException {
+        return send(recipient, notificationType, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Override
-    public SendResponse textMessage(MessageRecipient recipient, String text) {
+    public SendResponse textMessage(MessageRecipient recipient, String text) throws FacebookException {
+        return textMessage(recipient, text, null);
+    }
+
+    @Override
+    public SendResponse textMessage(MessageRecipient recipient, String text, NotificationTypeEnum notificationType)
+            throws FacebookException {
         Message message = new Message(text);
-        return message(recipient, message);
+        return message(recipient, message, notificationType);
     }
 
     @Override
-    public SendResponse textMessage(String recipient, String text) {
-        return textMessage(toMessageRecipient(recipient), text);
+    public SendResponse attachment(MessageRecipient recipient, MediaAttachment.Type type, String url) throws FacebookException {
+        return attachment(recipient, type, url, null);
     }
 
     @Override
-    public SendResponse attachment(MessageRecipient recipient, MediaAttachment.Type type, String url) {
+    public SendResponse attachment(MessageRecipient recipient, MediaAttachment.Type type, String url, NotificationTypeEnum notificationType)
+            throws FacebookException {
         MediaAttachment attachment = new MediaAttachment(type, url);
         Message message = new Message(attachment);
-        return message(recipient, message);
+        return message(recipient, message, notificationType);
     }
 
     @Override
-    public SendResponse attachment(String recipient, MediaAttachment.Type type, String url) {
-        return attachment(toMessageRecipient(recipient), type, url);
+    public SendResponse imageAttachment(MessageRecipient recipient, String url) throws FacebookException {
+        return imageAttachment(recipient, url, null);
     }
 
     @Override
-    public SendResponse imageAttachment(MessageRecipient recipient, String url) {
-        return attachment(recipient, MediaAttachment.Type.IMAGE, url);
+    public SendResponse imageAttachment(MessageRecipient recipient, String url, NotificationTypeEnum notificationType)
+            throws FacebookException {
+        return attachment(recipient, MediaAttachment.Type.IMAGE, url, notificationType);
     }
 
     @Override
-    public SendResponse imageAttachment(String recipient, String url) {
-        return imageAttachment(toMessageRecipient(recipient), url);
+    public SendResponse audioAttachment(MessageRecipient recipient, String url) throws FacebookException {
+        return audioAttachment(recipient, url, null);
     }
 
     @Override
-    public SendResponse audioAttachment(MessageRecipient recipient, String url) {
-        return attachment(recipient, MediaAttachment.Type.AUDIO, url);
+    public SendResponse audioAttachment(MessageRecipient recipient, String url, NotificationTypeEnum notificationType)
+            throws FacebookException {
+        return attachment(recipient, MediaAttachment.Type.AUDIO, url, notificationType);
     }
 
     @Override
-    public SendResponse audioAttachment(String recipient, String url) {
-        return audioAttachment(toMessageRecipient(recipient), url);
+    public SendResponse videoAttachment(MessageRecipient recipient, String url) throws FacebookException {
+        return videoAttachment(recipient, url, null);
     }
 
     @Override
-    public SendResponse videoAttachment(MessageRecipient recipient, String url) {
-        return attachment(recipient, MediaAttachment.Type.VIDEO, url);
+    public SendResponse videoAttachment(MessageRecipient recipient, String url, NotificationTypeEnum notificationType)
+            throws FacebookException {
+        return attachment(recipient, MediaAttachment.Type.VIDEO, url, notificationType);
     }
 
     @Override
-    public SendResponse videoAttachment(String recipient, String url) {
-        return videoAttachment(toMessageRecipient(recipient), url);
+    public SendResponse fileAttachment(MessageRecipient recipient, String url) throws FacebookException {
+        return fileAttachment(recipient, url, null);
     }
 
     @Override
-    public SendResponse fileAttachment(MessageRecipient recipient, String url) {
-        return attachment(recipient, MediaAttachment.Type.FILE, url);
+    public SendResponse fileAttachment(MessageRecipient recipient, String url, NotificationTypeEnum notificationType)
+            throws FacebookException {
+        return attachment(recipient, MediaAttachment.Type.FILE, url, notificationType);
     }
 
     @Override
-    public SendResponse fileAttachment(String recipient, String url) {
-        return fileAttachment(toMessageRecipient(recipient), url);
+    public SendResponse quickReplies(MessageRecipient recipient, String text, List<QuickReply> quickReplies) throws FacebookException {
+        return quickReplies(recipient, text, quickReplies, null);
     }
 
     @Override
-    public SendResponse quickReplies(MessageRecipient recipient, String text, List<QuickReply> quickReplies) {
+    public SendResponse quickReplies(MessageRecipient recipient, String text, List<QuickReply> quickReplies,
+            NotificationTypeEnum notificationType) throws FacebookException {
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
-        return message(recipient, message);
+        return message(recipient, message, notificationType);
     }
 
     @Override
-    public SendResponse quickReplies(String recipient, String text, List<QuickReply> quickReplies) {
-        return quickReplies(toMessageRecipient(recipient), text, quickReplies);
+    public SendResponse quickReplies(MessageRecipient recipient, MediaAttachment attachment, List<QuickReply> quickReplies)
+            throws FacebookException {
+        return quickReplies(recipient, attachment, quickReplies, null);
     }
 
     @Override
-    public SendResponse quickReplies(MessageRecipient recipient, MediaAttachment attachment, List<QuickReply> quickReplies) {
+    public SendResponse quickReplies(MessageRecipient recipient, MediaAttachment attachment, List<QuickReply> quickReplies,
+            NotificationTypeEnum notificationType) throws FacebookException {
         Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
-        return message(recipient, message);
+        return message(recipient, message, notificationType);
     }
 
     @Override
-    public SendResponse quickReplies(String recipient, MediaAttachment attachment, List<QuickReply> quickReplies) {
-        return quickReplies(toMessageRecipient(recipient), attachment, quickReplies);
+    public SendResponse quickReplies(MessageRecipient recipient, TemplateAttachment attachment, List<QuickReply> quickReplies)
+            throws FacebookException {
+        return quickReplies(recipient, attachment, quickReplies, null);
     }
 
     @Override
-    public SendResponse quickReplies(MessageRecipient recipient, TemplateAttachment attachment, List<QuickReply> quickReplies) {
+    public SendResponse quickReplies(MessageRecipient recipient, TemplateAttachment attachment, List<QuickReply> quickReplies,
+            NotificationTypeEnum notificationType) throws FacebookException {
         Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
-        return message(recipient, message);
+        return message(recipient, message, notificationType);
     }
 
     @Override
-    public SendResponse quickReplies(String recipient, TemplateAttachment attachment, List<QuickReply> quickReplies) {
-        return quickReplies(toMessageRecipient(recipient), attachment, quickReplies);
+    public SendResponse genericTemplate(MessageRecipient recipient, GenericTemplatePayload genericTemplate) throws FacebookException {
+        return genericTemplate(recipient, genericTemplate, null);
     }
 
     @Override
-    public SendResponse genericTemplate(MessageRecipient recipient, GenericTemplatePayload genericTemplate) {
-        return template(recipient, genericTemplate);
+    public SendResponse genericTemplate(MessageRecipient recipient, GenericTemplatePayload genericTemplate,
+            NotificationTypeEnum notificationType) throws FacebookException {
+        return template(recipient, genericTemplate, notificationType);
     }
 
     @Override
-    public SendResponse genericTemplate(String recipient, GenericTemplatePayload genericTemplate) {
-        return genericTemplate(toMessageRecipient(recipient), genericTemplate);
+    public SendResponse buttonTemplate(MessageRecipient recipient, ButtonTemplatePayload buttonTemplate) throws FacebookException {
+        return buttonTemplate(recipient, buttonTemplate, null);
     }
 
     @Override
-    public SendResponse buttonTemplate(MessageRecipient recipient, ButtonTemplatePayload buttonTemplate) {
-        return template(recipient, buttonTemplate);
+    public SendResponse buttonTemplate(MessageRecipient recipient, ButtonTemplatePayload buttonTemplate,
+            NotificationTypeEnum notificationType) throws FacebookException {
+        return template(recipient, buttonTemplate, notificationType);
     }
 
     @Override
-    public SendResponse buttonTemplate(String recipient, ButtonTemplatePayload buttonTemplate) {
-        return buttonTemplate(toMessageRecipient(recipient), buttonTemplate);
+    public SendResponse receiptTemplate(MessageRecipient recipient, ReceiptTemplatePayload receiptTemplate) throws FacebookException {
+        return receiptTemplate(recipient, receiptTemplate, null);
     }
 
     @Override
-    public SendResponse receiptTemplate(MessageRecipient recipient, ReceiptTemplatePayload receiptTemplate) {
-        return template(recipient, receiptTemplate);
+    public SendResponse receiptTemplate(MessageRecipient recipient, ReceiptTemplatePayload receiptTemplate,
+            NotificationTypeEnum notificationType) throws FacebookException {
+        return template(recipient, receiptTemplate, notificationType);
     }
 
     @Override
-    public SendResponse receiptTemplate(String recipient, ReceiptTemplatePayload receiptTemplate) {
-        return receiptTemplate(toMessageRecipient(recipient), receiptTemplate);
+    public SendResponse airlineItineraryTemplate(MessageRecipient recipient, AirlineItineraryTemplatePayload airlineItineraryTemplate)
+            throws FacebookException {
+        return airlineItineraryTemplate(recipient, airlineItineraryTemplate, null);
     }
 
     @Override
-    public SendResponse airlineItineraryTemplate(MessageRecipient recipient, AirlineItineraryTemplatePayload airlineItineraryTemplate) {
-        return template(recipient, airlineItineraryTemplate);
+    public SendResponse airlineItineraryTemplate(MessageRecipient recipient, AirlineItineraryTemplatePayload airlineItineraryTemplate,
+            NotificationTypeEnum notificationType) throws FacebookException {
+        return template(recipient, airlineItineraryTemplate, notificationType);
     }
 
     @Override
-    public SendResponse airlineItineraryTemplate(String recipient, AirlineItineraryTemplatePayload airlineItineraryTemplate) {
-        return airlineItineraryTemplate(toMessageRecipient(recipient), airlineItineraryTemplate);
+    public SendResponse airlineCheckinTemplate(MessageRecipient recipient, AirlineCheckinTemplatePayload airlineCheckinTemplate)
+            throws FacebookException {
+        return airlineCheckinTemplate(recipient, airlineCheckinTemplate, null);
     }
 
     @Override
-    public SendResponse airlineCheckinTemplate(MessageRecipient recipient, AirlineCheckinTemplatePayload airlineCheckinTemplate) {
-        return template(recipient, airlineCheckinTemplate);
-    }
-
-    @Override
-    public SendResponse airlineCheckinTemplate(String recipient, AirlineCheckinTemplatePayload airlineCheckinTemplate) {
-        return airlineCheckinTemplate(toMessageRecipient(recipient), airlineCheckinTemplate);
+    public SendResponse airlineCheckinTemplate(MessageRecipient recipient, AirlineCheckinTemplatePayload airlineCheckinTemplate,
+            NotificationTypeEnum notificationType) throws FacebookException {
+        return template(recipient, airlineCheckinTemplate, notificationType);
     }
 
     @Override
     public SendResponse airlineBoardingPassTemplate(MessageRecipient recipient,
-            AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate) {
-        return template(recipient, airlineBoardingPassTemplate);
+            AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate) throws FacebookException {
+        return airlineBoardingPassTemplate(recipient, airlineBoardingPassTemplate, null);
     }
 
     @Override
-    public SendResponse airlineBoardingPassTemplate(String recipient, AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate) {
-        return airlineBoardingPassTemplate(toMessageRecipient(recipient), airlineBoardingPassTemplate);
+    public SendResponse airlineBoardingPassTemplate(MessageRecipient recipient,
+            AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate, NotificationTypeEnum notificationType)
+            throws FacebookException {
+        return template(recipient, airlineBoardingPassTemplate, notificationType);
     }
 
     @Override
-    public SendResponse airlineUpdateTemplate(MessageRecipient recipient, AirlineUpdateTemplatePayload airlineUpdateTemplate) {
-        return template(recipient, airlineUpdateTemplate);
+    public SendResponse airlineUpdateTemplate(MessageRecipient recipient, AirlineUpdateTemplatePayload airlineUpdateTemplate)
+            throws FacebookException {
+        return airlineUpdateTemplate(recipient, airlineUpdateTemplate, null);
     }
 
     @Override
-    public SendResponse airlineUpdateTemplate(String recipient, AirlineUpdateTemplatePayload airlineUpdateTemplate) {
-        return airlineUpdateTemplate(toMessageRecipient(recipient), airlineUpdateTemplate);
+    public SendResponse airlineUpdateTemplate(MessageRecipient recipient, AirlineUpdateTemplatePayload airlineUpdateTemplate,
+            NotificationTypeEnum notificationType) throws FacebookException {
+        return template(recipient, airlineUpdateTemplate, notificationType);
     }
 
-    protected SendResponse template(MessageRecipient recipient, TemplatePayload template) {
+    protected SendResponse template(MessageRecipient recipient, TemplatePayload template, NotificationTypeEnum notificationType) {
         TemplateAttachment attachment = new TemplateAttachment(template);
         Message message = new Message(attachment);
-        return message(recipient, message);
+        return message(recipient, message, notificationType);
     }
 
-    protected SendResponse send(MessageRecipient recipient, Parameter... parameters) {
+    protected SendResponse send(MessageRecipient recipient, NotificationTypeEnum notificationType, Parameter... parameters) {
         List<Parameter> params = new ArrayList<>();
         params.add(Parameter.with(RECIPIENT_PARAM_NAME, recipient));
+        if (notificationType != null) {
+            params.add(Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, notificationType.name()));
+        }
         params.addAll(Arrays.asList(parameters));
         return send(params.toArray(new Parameter[params.size()]));
     }
@@ -299,17 +327,5 @@ public class DefaultSendOperations implements SendOperations {
 
     protected <T> T send(Class<T> objectType, Parameter... parameters) {
         return facebookClient.publish(MESSAGES_PATH, objectType, parameters);
-    }
-
-    private MessageRecipient toMessageRecipient(String str) {
-        MessageRecipient recipient = null;
-        if (str != null && str.length() > 0) {
-            if (str.startsWith("+")) {
-                recipient = new PhoneMessageRecipient(str);
-            } else {
-                recipient = new IdMessageRecipient(str);
-            }
-        }
-        return recipient;
     }
 }

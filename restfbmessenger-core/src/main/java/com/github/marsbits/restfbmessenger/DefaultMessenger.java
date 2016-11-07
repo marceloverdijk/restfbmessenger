@@ -76,8 +76,7 @@ public class DefaultMessenger implements Messenger {
      * @param appSecret       the app secret
      * @param callbackHandler the callback handler
      */
-    public DefaultMessenger(String verifyToken, String accessToken, String appSecret,
-            CallbackHandler callbackHandler) {
+    public DefaultMessenger(String verifyToken, String accessToken, String appSecret, CallbackHandler callbackHandler) {
         this(verifyToken, accessToken, appSecret, callbackHandler, DEFAULT_API_VERSION);
     }
 
@@ -92,8 +91,7 @@ public class DefaultMessenger implements Messenger {
      * @param callbackHandler the callback handler
      * @param apiVersion      the api version
      */
-    public DefaultMessenger(String verifyToken, String accessToken, String appSecret,
-            CallbackHandler callbackHandler, Version apiVersion) {
+    public DefaultMessenger(String verifyToken, String accessToken, String appSecret, CallbackHandler callbackHandler, Version apiVersion) {
         this(verifyToken, appSecret, callbackHandler, new DefaultFacebookClient(accessToken, appSecret, apiVersion));
     }
 
@@ -109,8 +107,7 @@ public class DefaultMessenger implements Messenger {
      * @param callbackHandler the callback handler
      * @param facebookClient  the facebook client
      */
-    public DefaultMessenger(String verifyToken, String appSecret,
-            CallbackHandler callbackHandler, FacebookClient facebookClient) {
+    public DefaultMessenger(String verifyToken, String appSecret, CallbackHandler callbackHandler, FacebookClient facebookClient) {
         this.verifyToken = verifyToken;
         this.appSecret = appSecret;
         this.callbackHandler = callbackHandler;

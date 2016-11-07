@@ -22,6 +22,7 @@ import com.restfb.types.send.GenericTemplatePayload;
 import com.restfb.types.send.MediaAttachment;
 import com.restfb.types.send.Message;
 import com.restfb.types.send.MessageRecipient;
+import com.restfb.types.send.NotificationTypeEnum;
 import com.restfb.types.send.QuickReply;
 import com.restfb.types.send.ReceiptTemplatePayload;
 import com.restfb.types.send.SendResponse;
@@ -55,12 +56,14 @@ public interface SendOperations {
     /**
      * Sends the given sender action to the user.
      *
-     * @param recipient    the recipient
-     * @param senderAction the sender action
+     * @param recipient        the recipient
+     * @param senderAction     the sender action
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse senderAction(String recipient, SenderActionEnum senderAction) throws FacebookException;
+    SendResponse senderAction(MessageRecipient recipient, SenderActionEnum senderAction, NotificationTypeEnum notificationType)
+            throws FacebookException;
 
     /**
      * Sends a read receipt to the user.
@@ -74,11 +77,12 @@ public interface SendOperations {
     /**
      * Sends a read receipt to the user.
      *
-     * @param recipient the recipient
+     * @param recipient        the recipient
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse markSeen(String recipient) throws FacebookException;
+    SendResponse markSeen(MessageRecipient recipient, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends a typing indicator on to the user.
@@ -92,11 +96,12 @@ public interface SendOperations {
     /**
      * Sends a typing indicator on to the user.
      *
-     * @param recipient the recipient
+     * @param recipient        the recipient
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse typingOn(String recipient) throws FacebookException;
+    SendResponse typingOn(MessageRecipient recipient, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends a typing indicator off to the user.
@@ -110,11 +115,12 @@ public interface SendOperations {
     /**
      * Sends a typing indicator off to the user.
      *
-     * @param recipient the recipient
+     * @param recipient        the recipient
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse typingOff(String recipient) throws FacebookException;
+    SendResponse typingOff(MessageRecipient recipient, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given message to the user.
@@ -129,12 +135,13 @@ public interface SendOperations {
     /**
      * Sends the given message to the user.
      *
-     * @param recipient the recipient
-     * @param message   the message
+     * @param recipient        the recipient
+     * @param message          the message
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse message(String recipient, Message message) throws FacebookException;
+    SendResponse message(MessageRecipient recipient, Message message, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given text message to the user.
@@ -149,12 +156,13 @@ public interface SendOperations {
     /**
      * Sends the given text message to the user.
      *
-     * @param recipient the recipient
-     * @param text      the text message
+     * @param recipient        the recipient
+     * @param text             the text message
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse textMessage(String recipient, String text) throws FacebookException;
+    SendResponse textMessage(MessageRecipient recipient, String text, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given attachment to the user.
@@ -170,13 +178,15 @@ public interface SendOperations {
     /**
      * Sends the given attachment to the user.
      *
-     * @param recipient the recipient
-     * @param type      the type of the attachment
-     * @param url       the url of the attachment
+     * @param recipient        the recipient
+     * @param type             the type of the attachment
+     * @param url              the url of the attachment
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse attachment(String recipient, MediaAttachment.Type type, String url) throws FacebookException;
+    SendResponse attachment(MessageRecipient recipient, MediaAttachment.Type type, String url, NotificationTypeEnum notificationType)
+            throws FacebookException;
 
     /**
      * Sends the given image to the user.
@@ -191,12 +201,13 @@ public interface SendOperations {
     /**
      * Sends the given image to the user.
      *
-     * @param recipient the recipient
-     * @param url       the url of the image
+     * @param recipient        the recipient
+     * @param url              the url of the image
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse imageAttachment(String recipient, String url) throws FacebookException;
+    SendResponse imageAttachment(MessageRecipient recipient, String url, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given audio to the user.
@@ -211,12 +222,13 @@ public interface SendOperations {
     /**
      * Sends the given audio to the user.
      *
-     * @param recipient the recipient
-     * @param url       the url of the audio
+     * @param recipient        the recipient
+     * @param url              the url of the audio
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse audioAttachment(String recipient, String url) throws FacebookException;
+    SendResponse audioAttachment(MessageRecipient recipient, String url, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given video to the user.
@@ -231,12 +243,13 @@ public interface SendOperations {
     /**
      * Sends the given video to the user.
      *
-     * @param recipient the recipient
-     * @param url       the url of the video
+     * @param recipient        the recipient
+     * @param url              the url of the video
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse videoAttachment(String recipient, String url) throws FacebookException;
+    SendResponse videoAttachment(MessageRecipient recipient, String url, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given file to the user.
@@ -251,12 +264,13 @@ public interface SendOperations {
     /**
      * Sends the given file to the user.
      *
-     * @param recipient the recipient
-     * @param url       the url of the file
+     * @param recipient        the recipient
+     * @param url              the url of the file
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse fileAttachment(String recipient, String url) throws FacebookException;
+    SendResponse fileAttachment(MessageRecipient recipient, String url, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given text message and quick replies to the user.
@@ -272,13 +286,15 @@ public interface SendOperations {
     /**
      * Sends the given text message and quick replies to the user.
      *
-     * @param recipient    the recipient
-     * @param text         the text message
-     * @param quickReplies the quick replies
+     * @param recipient        the recipient
+     * @param text             the text message
+     * @param quickReplies     the quick replies
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse quickReplies(String recipient, String text, List<QuickReply> quickReplies) throws FacebookException;
+    SendResponse quickReplies(MessageRecipient recipient, String text, List<QuickReply> quickReplies, NotificationTypeEnum notificationType)
+            throws FacebookException;
 
     /**
      * Sends the given media attachment and quick replies to the user.
@@ -295,13 +311,15 @@ public interface SendOperations {
     /**
      * Sends the given media attachment and quick replies to the user.
      *
-     * @param recipient    the recipient
-     * @param attachment   the media attachment
-     * @param quickReplies the quick replies
+     * @param recipient        the recipient
+     * @param attachment       the media attachment
+     * @param quickReplies     the quick replies
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse quickReplies(String recipient, MediaAttachment attachment, List<QuickReply> quickReplies) throws FacebookException;
+    SendResponse quickReplies(MessageRecipient recipient, MediaAttachment attachment, List<QuickReply> quickReplies,
+            NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given template attachment and quick replies to the user.
@@ -318,13 +336,15 @@ public interface SendOperations {
     /**
      * Sends the given template attachment and quick replies to the user.
      *
-     * @param recipient    the recipient
-     * @param attachment   the template attachment
-     * @param quickReplies the quick replies
+     * @param recipient        the recipient
+     * @param attachment       the template attachment
+     * @param quickReplies     the quick replies
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse quickReplies(String recipient, TemplateAttachment attachment, List<QuickReply> quickReplies) throws FacebookException;
+    SendResponse quickReplies(MessageRecipient recipient, TemplateAttachment attachment, List<QuickReply> quickReplies,
+            NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given generic template to the user.
@@ -339,12 +359,14 @@ public interface SendOperations {
     /**
      * Sends the given generic template to the user.
      *
-     * @param recipient       the recipient
-     * @param genericTemplate the generic template
+     * @param recipient        the recipient
+     * @param genericTemplate  the generic template
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse genericTemplate(String recipient, GenericTemplatePayload genericTemplate) throws FacebookException;
+    SendResponse genericTemplate(MessageRecipient recipient, GenericTemplatePayload genericTemplate, NotificationTypeEnum notificationType)
+            throws FacebookException;
 
     /**
      * Sends the given button template to the user.
@@ -359,12 +381,14 @@ public interface SendOperations {
     /**
      * Sends the given button template to the user.
      *
-     * @param recipient      the recipient
-     * @param buttonTemplate the button template
+     * @param recipient        the recipient
+     * @param buttonTemplate   the button template
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse buttonTemplate(String recipient, ButtonTemplatePayload buttonTemplate) throws FacebookException;
+    SendResponse buttonTemplate(MessageRecipient recipient, ButtonTemplatePayload buttonTemplate, NotificationTypeEnum notificationType)
+            throws FacebookException;
 
     /**
      * Sends the given receipt template to the user.
@@ -379,12 +403,14 @@ public interface SendOperations {
     /**
      * Sends the given receipt template to the user.
      *
-     * @param recipient       the recipient
-     * @param receiptTemplate the receipt template
+     * @param recipient        the recipient
+     * @param receiptTemplate  the receipt template
+     * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse receiptTemplate(String recipient, ReceiptTemplatePayload receiptTemplate) throws FacebookException;
+    SendResponse receiptTemplate(MessageRecipient recipient, ReceiptTemplatePayload receiptTemplate, NotificationTypeEnum notificationType)
+            throws FacebookException;
 
     /**
      * Sends the given airline itinerary template to the user.
@@ -402,10 +428,12 @@ public interface SendOperations {
      *
      * @param recipient                the recipient
      * @param airlineItineraryTemplate airline itinerary template
+     * @param notificationType         the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse airlineItineraryTemplate(String recipient, AirlineItineraryTemplatePayload airlineItineraryTemplate)
+    SendResponse airlineItineraryTemplate(MessageRecipient recipient, AirlineItineraryTemplatePayload airlineItineraryTemplate,
+            NotificationTypeEnum notificationType)
             throws FacebookException;
 
     /**
@@ -424,10 +452,12 @@ public interface SendOperations {
      *
      * @param recipient              the recipient
      * @param airlineCheckinTemplate airline checkin template
+     * @param notificationType       the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse airlineCheckinTemplate(String recipient, AirlineCheckinTemplatePayload airlineCheckinTemplate) throws FacebookException;
+    SendResponse airlineCheckinTemplate(MessageRecipient recipient, AirlineCheckinTemplatePayload airlineCheckinTemplate,
+            NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given airline boarding pass template to the user.
@@ -445,10 +475,12 @@ public interface SendOperations {
      *
      * @param recipient                   the recipient
      * @param airlineBoardingPassTemplate airline boarding pass template
+     * @param notificationType            the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse airlineBoardingPassTemplate(String recipient, AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate)
+    SendResponse airlineBoardingPassTemplate(MessageRecipient recipient, AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate,
+            NotificationTypeEnum notificationType)
             throws FacebookException;
 
     /**
@@ -467,8 +499,10 @@ public interface SendOperations {
      *
      * @param recipient             the recipient
      * @param airlineUpdateTemplate airline update template
+     * @param notificationType      the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse airlineUpdateTemplate(String recipient, AirlineUpdateTemplatePayload airlineUpdateTemplate) throws FacebookException;
+    SendResponse airlineUpdateTemplate(MessageRecipient recipient, AirlineUpdateTemplatePayload airlineUpdateTemplate,
+            NotificationTypeEnum notificationType) throws FacebookException;
 }
