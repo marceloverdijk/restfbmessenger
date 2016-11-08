@@ -23,6 +23,8 @@ import com.restfb.types.send.ButtonTemplatePayload;
 import com.restfb.types.send.CallButton;
 import com.restfb.types.send.GenericTemplatePayload;
 import com.restfb.types.send.IdMessageRecipient;
+import com.restfb.types.send.ListTemplatePayload;
+import com.restfb.types.send.ListViewElement;
 import com.restfb.types.send.MediaAttachment;
 import com.restfb.types.send.Message;
 import com.restfb.types.send.PhoneMessageRecipient;
@@ -318,6 +320,24 @@ public class DefaultSendOperationsTests {
     }
 
     @Test
+    public void testButtonTemplateWithIdMessageRecipient() {
+        ButtonTemplatePayload buttonTemplate = createButtonTemplate();
+        send.buttonTemplate(idMessageRecipient, buttonTemplate);
+        TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
+        Message message = new Message(attachment);
+        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testButtonTemplateWithPhoneMessageRecipient() {
+        ButtonTemplatePayload buttonTemplate = createButtonTemplate();
+        send.buttonTemplate(phoneMessageRecipient, buttonTemplate);
+        TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
+        Message message = new Message(attachment);
+        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
     public void testGenericTemplateWithIdMessageRecipient() {
         GenericTemplatePayload genericTemplate = createGenericTemplate();
         send.genericTemplate(idMessageRecipient, genericTemplate);
@@ -336,19 +356,19 @@ public class DefaultSendOperationsTests {
     }
 
     @Test
-    public void testButtonTemplateWithIdMessageRecipient() {
-        ButtonTemplatePayload buttonTemplate = createButtonTemplate();
-        send.buttonTemplate(idMessageRecipient, buttonTemplate);
-        TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
+    public void testListTemplateWithIdMessageRecipient() {
+        ListTemplatePayload listTemplate = createListTemplate();
+        send.listTemplate(idMessageRecipient, listTemplate);
+        TemplateAttachment attachment = new TemplateAttachment(listTemplate);
         Message message = new Message(attachment);
         verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testButtonTemplateWithPhoneMessageRecipient() {
-        ButtonTemplatePayload buttonTemplate = createButtonTemplate();
-        send.buttonTemplate(phoneMessageRecipient, buttonTemplate);
-        TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
+    public void testListTemplateWithPhoneMessageRecipient() {
+        ListTemplatePayload listTemplate = createListTemplate();
+        send.listTemplate(phoneMessageRecipient, listTemplate);
+        TemplateAttachment attachment = new TemplateAttachment(listTemplate);
         Message message = new Message(attachment);
         verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -468,6 +488,13 @@ public class DefaultSendOperationsTests {
         return quickReplies;
     }
 
+    private ButtonTemplatePayload createButtonTemplate() {
+        ButtonTemplatePayload buttonTemplate = new ButtonTemplatePayload("body text");
+        buttonTemplate.addButton(new CallButton("title", "phonenumber"));
+        buttonTemplate.addButton(new PostbackButton("title", "postback"));
+        return buttonTemplate;
+    }
+
     private GenericTemplatePayload createGenericTemplate() {
         GenericTemplatePayload genericTemplate = new GenericTemplatePayload();
         genericTemplate.addBubble(new Bubble("bubble 1"));
@@ -475,11 +502,12 @@ public class DefaultSendOperationsTests {
         return genericTemplate;
     }
 
-    private ButtonTemplatePayload createButtonTemplate() {
-        ButtonTemplatePayload buttonTemplate = new ButtonTemplatePayload("body text");
-        buttonTemplate.addButton(new CallButton("title", "phonenumber"));
-        buttonTemplate.addButton(new PostbackButton("title", "postback"));
-        return buttonTemplate;
+    private ListTemplatePayload createListTemplate() {
+        ListViewElement element1 = new ListViewElement("title 1");
+        ListViewElement element2 = new ListViewElement("title 2");
+        List<ListViewElement> listViewElements = Arrays.asList(element1, element2);
+        ListTemplatePayload listTemplate = new ListTemplatePayload(listViewElements);
+        return listTemplate;
     }
 
     private ReceiptTemplatePayload createReceiptTemplate() {

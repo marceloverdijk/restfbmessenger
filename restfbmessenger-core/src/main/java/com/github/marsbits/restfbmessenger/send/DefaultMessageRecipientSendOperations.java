@@ -19,6 +19,7 @@ package com.github.marsbits.restfbmessenger.send;
 import com.restfb.exception.FacebookException;
 import com.restfb.types.send.ButtonTemplatePayload;
 import com.restfb.types.send.GenericTemplatePayload;
+import com.restfb.types.send.ListTemplatePayload;
 import com.restfb.types.send.MediaAttachment;
 import com.restfb.types.send.Message;
 import com.restfb.types.send.MessageRecipient;
@@ -209,6 +210,17 @@ public class DefaultMessageRecipientSendOperations implements MessageRecipientSe
     }
 
     @Override
+    public SendResponse buttonTemplate(ButtonTemplatePayload buttonTemplate) throws FacebookException {
+        return buttonTemplate(buttonTemplate, notificationType);
+    }
+
+    @Override
+    public SendResponse buttonTemplate(ButtonTemplatePayload buttonTemplate, NotificationTypeEnum notificationType)
+            throws FacebookException {
+        return sendOperations.buttonTemplate(recipient, buttonTemplate, notificationType);
+    }
+
+    @Override
     public SendResponse genericTemplate(GenericTemplatePayload genericTemplate) throws FacebookException {
         return genericTemplate(genericTemplate, notificationType);
     }
@@ -220,14 +232,13 @@ public class DefaultMessageRecipientSendOperations implements MessageRecipientSe
     }
 
     @Override
-    public SendResponse buttonTemplate(ButtonTemplatePayload buttonTemplate) throws FacebookException {
-        return buttonTemplate(buttonTemplate, notificationType);
+    public SendResponse listTemplate(ListTemplatePayload listTemplate) throws FacebookException {
+        return listTemplate(listTemplate, notificationType);
     }
 
     @Override
-    public SendResponse buttonTemplate(ButtonTemplatePayload buttonTemplate, NotificationTypeEnum notificationType)
-            throws FacebookException {
-        return sendOperations.buttonTemplate(recipient, buttonTemplate, notificationType);
+    public SendResponse listTemplate(ListTemplatePayload listTemplate, NotificationTypeEnum notificationType) throws FacebookException {
+        return sendOperations.listTemplate(recipient, listTemplate, notificationType);
     }
 
     @Override

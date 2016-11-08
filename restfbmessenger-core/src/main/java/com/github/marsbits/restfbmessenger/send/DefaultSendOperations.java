@@ -21,6 +21,7 @@ import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.types.send.ButtonTemplatePayload;
 import com.restfb.types.send.GenericTemplatePayload;
+import com.restfb.types.send.ListTemplatePayload;
 import com.restfb.types.send.MediaAttachment;
 import com.restfb.types.send.Message;
 import com.restfb.types.send.MessageRecipient;
@@ -249,6 +250,17 @@ public class DefaultSendOperations implements SendOperations {
     }
 
     @Override
+    public SendResponse buttonTemplate(MessageRecipient recipient, ButtonTemplatePayload buttonTemplate) throws FacebookException {
+        return buttonTemplate(recipient, buttonTemplate, null);
+    }
+
+    @Override
+    public SendResponse buttonTemplate(MessageRecipient recipient, ButtonTemplatePayload buttonTemplate,
+            NotificationTypeEnum notificationType) throws FacebookException {
+        return template(recipient, buttonTemplate, notificationType);
+    }
+
+    @Override
     public SendResponse genericTemplate(MessageRecipient recipient, GenericTemplatePayload genericTemplate) throws FacebookException {
         return genericTemplate(recipient, genericTemplate, null);
     }
@@ -260,14 +272,14 @@ public class DefaultSendOperations implements SendOperations {
     }
 
     @Override
-    public SendResponse buttonTemplate(MessageRecipient recipient, ButtonTemplatePayload buttonTemplate) throws FacebookException {
-        return buttonTemplate(recipient, buttonTemplate, null);
+    public SendResponse listTemplate(MessageRecipient recipient, ListTemplatePayload listTemplate) throws FacebookException {
+        return listTemplate(recipient, listTemplate, null);
     }
 
     @Override
-    public SendResponse buttonTemplate(MessageRecipient recipient, ButtonTemplatePayload buttonTemplate,
-            NotificationTypeEnum notificationType) throws FacebookException {
-        return template(recipient, buttonTemplate, notificationType);
+    public SendResponse listTemplate(MessageRecipient recipient, ListTemplatePayload listTemplate, NotificationTypeEnum notificationType)
+            throws FacebookException {
+        return template(recipient, listTemplate, notificationType);
     }
 
     @Override

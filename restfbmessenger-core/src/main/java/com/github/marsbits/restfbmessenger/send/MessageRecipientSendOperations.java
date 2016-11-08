@@ -19,6 +19,7 @@ package com.github.marsbits.restfbmessenger.send;
 import com.restfb.exception.FacebookException;
 import com.restfb.types.send.ButtonTemplatePayload;
 import com.restfb.types.send.GenericTemplatePayload;
+import com.restfb.types.send.ListTemplatePayload;
 import com.restfb.types.send.MediaAttachment;
 import com.restfb.types.send.Message;
 import com.restfb.types.send.NotificationTypeEnum;
@@ -315,6 +316,25 @@ public interface MessageRecipientSendOperations {
             throws FacebookException;
 
     /**
+     * Sends the given button template to the user.
+     *
+     * @param buttonTemplate the button template
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse buttonTemplate(ButtonTemplatePayload buttonTemplate) throws FacebookException;
+
+    /**
+     * Sends the given button template to the user.
+     *
+     * @param buttonTemplate   the button template
+     * @param notificationType the push notification type
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse buttonTemplate(ButtonTemplatePayload buttonTemplate, NotificationTypeEnum notificationType) throws FacebookException;
+
+    /**
      * Sends the given generic template to the user.
      *
      * @param genericTemplate the generic template
@@ -334,23 +354,23 @@ public interface MessageRecipientSendOperations {
     SendResponse genericTemplate(GenericTemplatePayload genericTemplate, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
-     * Sends the given button template to the user.
+     * Sends the given list template to the user.
      *
-     * @param buttonTemplate the button template
+     * @param listTemplate the list template
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse buttonTemplate(ButtonTemplatePayload buttonTemplate) throws FacebookException;
+    SendResponse listTemplate(ListTemplatePayload listTemplate) throws FacebookException;
 
     /**
-     * Sends the given button template to the user.
+     * Sends the given list template to the user.
      *
-     * @param buttonTemplate   the button template
+     * @param listTemplate     the list template
      * @param notificationType the push notification type
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse buttonTemplate(ButtonTemplatePayload buttonTemplate, NotificationTypeEnum notificationType) throws FacebookException;
+    SendResponse listTemplate(ListTemplatePayload listTemplate, NotificationTypeEnum notificationType) throws FacebookException;
 
     /**
      * Sends the given receipt template to the user.

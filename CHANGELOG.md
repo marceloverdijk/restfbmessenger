@@ -2,6 +2,8 @@
 
 ### 1.1.0 (2016-11-xx)
 
+* Aligned with Messenger Platform 1.3
+  * Added support for the new list template
 * Added support for setting thread settings
 * Added support for push notification type
 * Added Messeger#getUserProfile method with varargs fields argument
