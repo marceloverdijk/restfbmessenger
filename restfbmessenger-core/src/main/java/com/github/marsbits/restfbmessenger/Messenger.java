@@ -16,9 +16,18 @@
 
 package com.github.marsbits.restfbmessenger;
 
+import com.github.marsbits.restfbmessenger.send.MessageRecipientSendOperations;
 import com.github.marsbits.restfbmessenger.send.SendOperations;
 import com.restfb.exception.FacebookException;
 import com.restfb.types.User;
+import com.restfb.types.send.CallToAction;
+import com.restfb.types.send.DomainActionTypeEnum;
+import com.restfb.types.send.Greeting;
+import com.restfb.types.send.MessageRecipient;
+import com.restfb.types.send.NotificationTypeEnum;
+import com.restfb.types.send.SendResponse;
+
+import java.util.List;
 
 /**
  * Interface specifying the operations for interacting with Facebook Messenger.
@@ -102,4 +111,132 @@ public interface Messenger {
      * Send API for sending messages to users.
      */
     SendOperations send();
+
+    /**
+     * Send API for sending messages to users.
+     *
+     * @param recipient the recipient, not null
+     */
+    MessageRecipientSendOperations send(MessageRecipient recipient);
+
+    /**
+     * Send API for sending messages to users.
+     *
+     * @param recipient        the recipient, not null
+     * @param notificationType the push notification type
+     */
+    MessageRecipientSendOperations send(MessageRecipient recipient, NotificationTypeEnum notificationType);
+
+    /**
+     * Sets the greeting text for new conversations.
+     *
+     * @param greeting the greeting, not null
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse setGreeting(Greeting greeting) throws FacebookException;
+
+    /**
+     * Removes the greeting text for new conversations.
+     *
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse removeGreeting() throws FacebookException;
+
+    /**
+     * Sets the get started button for the welcome screen.
+     *
+     * @param payload the payload, not null
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse setGetStartedButton(String payload) throws FacebookException;
+
+    /**
+     * Sets the get started button for the welcome screen.
+     *
+     * @param callToAction the call to action, not null
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse setGetStartedButton(CallToAction callToAction) throws FacebookException;
+
+    /**
+     * Removes the get started button for the welcome screen.
+     *
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse removeGetStartedButton() throws FacebookException;
+
+    /**
+     * Sets the persistent menu.
+     *
+     * @param callToActions the call to actions, not null
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse setPersistentMenu(List<CallToAction> callToActions) throws FacebookException;
+
+    /**
+     * Removes the persistent menu.
+     *
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse removePersistentMenu() throws FacebookException;
+
+    /**
+     * Sets the account linking url.
+     *
+     * @param url the account linking url, not null
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse setAccountLinkingUrl(String url) throws FacebookException;
+
+    /**
+     * Removes the account linking url.
+     *
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse removeAccountLinkingUrl() throws FacebookException;
+
+    /**
+     * Adds the provided url to the domain whitelist.
+     *
+     * @param url the url, not null
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse addDomainWhitelisting(String url) throws FacebookException;
+
+    /**
+     * Adds the provided urls to the domain whitelist.
+     *
+     * @param urls the urls, not null
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse addDomainWhitelisting(List<String> urls) throws FacebookException;
+
+    /**
+     * Removes the provided url from the domain whitelist.
+     *
+     * @param url the url, not null
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse removeDomainWhitelisting(String url) throws FacebookException;
+
+    /**
+     * Removes the provided urls from the domain whitelist.
+     *
+     * @param urls the urls, not null
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse removeDomainWhitelisting(List<String> urls) throws FacebookException;
 }

@@ -2,8 +2,10 @@
 
 ### 1.1.0 (2016-11-xx)
 
-* Added SendOperations methods accepting a push notification type
+* Added support for setting thread settings
+* Added support for push notification type
 * Added Messeger#getUserProfile method with varargs fields argument
+* Added Objects#requireNonNull check for required arguments
 * Upgraded RestFB dependency to latest 1.34.0
 * Updated default Facebook API version to 2.8 
 

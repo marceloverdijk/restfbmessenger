@@ -16,7 +16,9 @@
 
 package com.github.marsbits.restfbmessenger;
 
+import com.github.marsbits.restfbmessenger.send.DefaultMessageRecipientSendOperations;
 import com.github.marsbits.restfbmessenger.send.DefaultSendOperations;
+import com.github.marsbits.restfbmessenger.send.MessageRecipientSendOperations;
 import com.github.marsbits.restfbmessenger.send.SendOperations;
 import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
 import com.restfb.DefaultFacebookClient;
@@ -25,17 +27,29 @@ import com.restfb.Parameter;
 import com.restfb.Version;
 import com.restfb.exception.FacebookException;
 import com.restfb.types.User;
+import com.restfb.types.send.CallToAction;
+import com.restfb.types.send.DomainActionTypeEnum;
+import com.restfb.types.send.Greeting;
+import com.restfb.types.send.Message;
+import com.restfb.types.send.MessageRecipient;
+import com.restfb.types.send.NotificationTypeEnum;
+import com.restfb.types.send.SendResponse;
+import com.restfb.types.send.SettingTypeEnum;
+import com.restfb.types.send.ThreadStateEnum;
 import com.restfb.types.webhook.WebhookObject;
 import com.restfb.util.EncodingUtils;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.WARNING;
 
@@ -51,6 +65,8 @@ public class DefaultMessenger implements Messenger {
 
     public static final Version DEFAULT_API_VERSION = Version.VERSION_2_8;
 
+    public static final String THREAD_SETTINGS_PATH = "me/thread_settings";
+
     public static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
     public static final String SIGNATURE_PREFIX = "sha1=";
 
@@ -58,6 +74,14 @@ public class DefaultMessenger implements Messenger {
 
     public static final String USER_FIELDS_PARAM_NAME = "fields";
     public static final String USER_FIELDS_DEFAULT_VALUE = "first_name,last_name,profile_pic,locale,timezone,gender";
+
+    public static final String SETTING_TYPE_PARAM_NAME = "setting_type";
+    public static final String GREETING_PARAM_NAME = "greeting";
+    public static final String THREAD_STATE_PARAM_NAME = "thread_state";
+    public static final String CALL_TO_ACTIONS_PARAM_NAME = "call_to_actions";
+    public static final String ACCOUNT_LINKING_URL_PARAM_NAME = "account_linking_url";
+    public static final String WHITELISTED_DOMAINS_PARAM_NAME = "whitelisted_domains";
+    public static final String DOMAIN_ACTION_TYPE_PARAM_NAME = "domain_action_type";
 
     protected String verifyToken;
     protected String appSecret;
@@ -159,31 +183,6 @@ public class DefaultMessenger implements Messenger {
         }
     }
 
-    @Override
-    public User getUserProfile(String userId) throws FacebookException {
-        return getUserProfile(userId, USER_FIELDS_DEFAULT_VALUE);
-    }
-
-    @Override
-    public User getUserProfile(String userId, String... fields) throws FacebookException {
-        StringBuilder sb = new StringBuilder();
-        String sep = "";
-        for (String field : fields) {
-            sb.append(sep).append(field);
-            sep = ",";
-        }
-        return getUserProfile(userId, sb.toString());
-    }
-
-    @Override
-    public User getUserProfile(String userId, String fields) throws FacebookException {
-        return facebookClient.fetchObject(userId, User.class, Parameter.with(USER_FIELDS_PARAM_NAME, fields));
-    }
-
-    @Override
-    public SendOperations send() {
-        return sendOperations;
-    }
 
     protected boolean verifySignature(String payload, String signature) {
         if (signature == null || !signature.startsWith(SIGNATURE_PREFIX)) {
@@ -210,5 +209,149 @@ public class DefaultMessenger implements Messenger {
         } catch (InvalidKeyException e) {
             throw new IllegalStateException("Signing key is inappropriate");
         }
+    }
+
+    @Override
+    public User getUserProfile(String userId) throws FacebookException {
+        return getUserProfile(userId, USER_FIELDS_DEFAULT_VALUE);
+    }
+
+    @Override
+    public User getUserProfile(String userId, String... fields) throws FacebookException {
+        StringBuilder sb = new StringBuilder();
+        String sep = "";
+        for (String field : fields) {
+            sb.append(sep).append(field);
+            sep = ",";
+        }
+        return getUserProfile(userId, sb.toString());
+    }
+
+    @Override
+    public User getUserProfile(String userId, String fields) throws FacebookException {
+        requireNonNull(userId, "'userId' must not be null");
+        return facebookClient.fetchObject(userId, User.class, Parameter.with(USER_FIELDS_PARAM_NAME, fields));
+    }
+
+    @Override
+    public SendOperations send() {
+        return sendOperations;
+    }
+
+    @Override
+    public MessageRecipientSendOperations send(MessageRecipient recipient) {
+        return send(recipient, null);
+    }
+
+    @Override
+    public MessageRecipientSendOperations send(MessageRecipient recipient, NotificationTypeEnum notificationType) {
+        return new DefaultMessageRecipientSendOperations(sendOperations, recipient, notificationType);
+    }
+
+    @Override
+    public SendResponse setGreeting(Greeting greeting) throws FacebookException {
+        requireNonNull(greeting, "'greeting' must not be null");
+        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.greeting),
+                Parameter.with(GREETING_PARAM_NAME, greeting));
+    }
+
+    @Override
+    public SendResponse removeGreeting() throws FacebookException {
+        boolean success = facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.greeting));
+        // TODO
+        return new SendResponse();
+    }
+
+    @Override
+    public SendResponse setGetStartedButton(String payload) throws FacebookException {
+        requireNonNull(payload, "'payload' must not be null");
+        Message message = new Message(payload);
+        CallToAction callToAction = new CallToAction(message);
+        return setGetStartedButton(callToAction);
+    }
+
+    @Override
+    public SendResponse setGetStartedButton(CallToAction callToAction) throws FacebookException {
+        requireNonNull(callToAction, "'callToAction' must not be null");
+        List<CallToAction> callToActions = Arrays.asList(callToAction);
+        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.new_thread),
+                Parameter.with(CALL_TO_ACTIONS_PARAM_NAME, callToActions));
+    }
+
+    @Override
+    public SendResponse removeGetStartedButton() throws FacebookException {
+        boolean success = facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.new_thread));
+        // TODO
+        return new SendResponse();
+    }
+
+    @Override
+    public SendResponse setPersistentMenu(List<CallToAction> callToActions) throws FacebookException {
+        requireNonNull(callToActions, "'callToActions' must not be null");
+        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.existing_thread),
+                Parameter.with(CALL_TO_ACTIONS_PARAM_NAME, callToActions));
+    }
+
+    @Override
+    public SendResponse removePersistentMenu() throws FacebookException {
+        boolean success = facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.existing_thread));
+        // TODO
+        return new SendResponse();
+    }
+
+    @Override
+    public SendResponse setAccountLinkingUrl(String url) throws FacebookException {
+        requireNonNull(url, "'url' must not be null");
+        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.account_linking),
+                Parameter.with(ACCOUNT_LINKING_URL_PARAM_NAME, url));
+    }
+
+    @Override
+    public SendResponse removeAccountLinkingUrl() throws FacebookException {
+        boolean success = facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.account_linking));
+        // TODO
+        return new SendResponse();
+    }
+
+    @Override
+    public SendResponse addDomainWhitelisting(String url) throws FacebookException {
+        requireNonNull(url, "'url' must not be null");
+        return addDomainWhitelisting(Arrays.asList(url));
+    }
+
+    @Override
+    public SendResponse addDomainWhitelisting(List<String> urls) throws FacebookException {
+        requireNonNull(urls, "'urls' must not be null");
+        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
+                Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
+                Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.add));
+    }
+
+    @Override
+    public SendResponse removeDomainWhitelisting(String url) throws FacebookException {
+        requireNonNull(url, "'url' must not be null");
+        return removeDomainWhitelisting(Arrays.asList(url));
+    }
+
+    @Override
+    public SendResponse removeDomainWhitelisting(List<String> urls) throws FacebookException {
+        requireNonNull(urls, "'urls' must not be null");
+        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
+                Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
+                Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.remove));
     }
 }

@@ -40,6 +40,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Default implementation of the {@link SendOperations} interface.
  *
@@ -57,8 +59,13 @@ public class DefaultSendOperations implements SendOperations {
 
     protected FacebookClient facebookClient;
 
+    /**
+     * Creates a {@code DefaultSendOperations} instance.
+     *
+     * @param facebookClient the facebook client, not null
+     */
     public DefaultSendOperations(FacebookClient facebookClient) {
-        this.facebookClient = facebookClient;
+        this.facebookClient = requireNonNull(facebookClient, "'facebookClient' must not be null");
     }
 
     @Override
@@ -69,6 +76,8 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse senderAction(MessageRecipient recipient, SenderActionEnum senderAction, NotificationTypeEnum notificationType)
             throws FacebookException {
+        requireNonNull(recipient, "'recipient' must not be null");
+        requireNonNull(senderAction, "'senderAction' must not be null");
         return send(recipient, notificationType, Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction.name()));
     }
 
@@ -110,6 +119,8 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse message(MessageRecipient recipient, Message message, NotificationTypeEnum notificationType)
             throws FacebookException {
+        requireNonNull(recipient, "'recipient' must not be null");
+        requireNonNull(message, "'message' must not be null");
         return send(recipient, notificationType, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
@@ -121,6 +132,8 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse textMessage(MessageRecipient recipient, String text, NotificationTypeEnum notificationType)
             throws FacebookException {
+        requireNonNull(recipient, "'recipient' must not be null");
+        requireNonNull(text, "'text' must not be null");
         Message message = new Message(text);
         return message(recipient, message, notificationType);
     }
@@ -133,6 +146,9 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse attachment(MessageRecipient recipient, MediaAttachment.Type type, String url, NotificationTypeEnum notificationType)
             throws FacebookException {
+        requireNonNull(recipient, "'recipient' must not be null");
+        requireNonNull(type, "'type' must not be null");
+        requireNonNull(url, "'url' must not be null");
         MediaAttachment attachment = new MediaAttachment(type, url);
         Message message = new Message(attachment);
         return message(recipient, message, notificationType);
@@ -190,6 +206,9 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse quickReplies(MessageRecipient recipient, String text, List<QuickReply> quickReplies,
             NotificationTypeEnum notificationType) throws FacebookException {
+        requireNonNull(recipient, "'recipient' must not be null");
+        requireNonNull(text, "'text' must not be null");
+        requireNonNull(quickReplies, "'quickReplies' must not be null");
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
         return message(recipient, message, notificationType);
@@ -204,6 +223,9 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse quickReplies(MessageRecipient recipient, MediaAttachment attachment, List<QuickReply> quickReplies,
             NotificationTypeEnum notificationType) throws FacebookException {
+        requireNonNull(recipient, "'recipient' must not be null");
+        requireNonNull(attachment, "'attachment' must not be null");
+        requireNonNull(quickReplies, "'quickReplies' must not be null");
         Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
         return message(recipient, message, notificationType);
@@ -218,6 +240,9 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse quickReplies(MessageRecipient recipient, TemplateAttachment attachment, List<QuickReply> quickReplies,
             NotificationTypeEnum notificationType) throws FacebookException {
+        requireNonNull(recipient, "'recipient' must not be null");
+        requireNonNull(attachment, "'attachment' must not be null");
+        requireNonNull(quickReplies, "'quickReplies' must not be null");
         Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
         return message(recipient, message, notificationType);
@@ -306,12 +331,15 @@ public class DefaultSendOperations implements SendOperations {
     }
 
     protected SendResponse template(MessageRecipient recipient, TemplatePayload template, NotificationTypeEnum notificationType) {
+        requireNonNull(recipient, "'recipient' must not be null");
+        requireNonNull(template, "'template' must not be null");
         TemplateAttachment attachment = new TemplateAttachment(template);
         Message message = new Message(attachment);
         return message(recipient, message, notificationType);
     }
 
     protected SendResponse send(MessageRecipient recipient, NotificationTypeEnum notificationType, Parameter... parameters) {
+        requireNonNull(recipient, "'recipient' must not be null");
         List<Parameter> params = new ArrayList<>();
         params.add(Parameter.with(RECIPIENT_PARAM_NAME, recipient));
         if (notificationType != null) {
@@ -326,6 +354,7 @@ public class DefaultSendOperations implements SendOperations {
     }
 
     protected <T> T send(Class<T> objectType, Parameter... parameters) {
+        requireNonNull(objectType, "'objectType' must not be null");
         return facebookClient.publish(MESSAGES_PATH, objectType, parameters);
     }
 }
