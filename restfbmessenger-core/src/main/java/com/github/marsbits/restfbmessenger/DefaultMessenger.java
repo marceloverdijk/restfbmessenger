@@ -245,6 +245,7 @@ public class DefaultMessenger implements Messenger {
 
     @Override
     public MessageRecipientSendOperations send(MessageRecipient recipient, NotificationTypeEnum notificationType) {
+        requireNonNull(recipient, "'recipient' must not be null");
         return new DefaultMessageRecipientSendOperations(sendOperations, recipient, notificationType);
     }
 
