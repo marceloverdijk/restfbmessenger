@@ -60,7 +60,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 /**
- * Tests for {@link DefaultSendOperations}.
+ * Abstract class containing helpers for Send API related tests.
  *
  * @author Marcel Overdijk
  */

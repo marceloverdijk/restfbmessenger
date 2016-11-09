@@ -54,7 +54,17 @@ public class DefaultMessageRecipientSendOperations implements MessageRecipientSe
      * Creates a {@code DefaultMessageRecipientSendOperations} instance for the given {@link MessageRecipient}.
      *
      * @param sendOperations the send operations, not null
-     * @param recipient the recipient, not null
+     * @param recipient      the recipient, not null
+     */
+    public DefaultMessageRecipientSendOperations(SendOperations sendOperations, MessageRecipient recipient) {
+        this(sendOperations, recipient, null);
+    }
+
+    /**
+     * Creates a {@code DefaultMessageRecipientSendOperations} instance for the given {@link MessageRecipient}.
+     *
+     * @param sendOperations   the send operations, not null
+     * @param recipient        the recipient, not null
      * @param notificationType the push notification type
      */
     public DefaultMessageRecipientSendOperations(SendOperations sendOperations, MessageRecipient recipient,
