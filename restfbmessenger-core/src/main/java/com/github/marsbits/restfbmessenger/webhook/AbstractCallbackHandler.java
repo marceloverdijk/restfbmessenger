@@ -29,6 +29,7 @@ import com.restfb.types.webhook.messaging.OptinItem;
 import com.restfb.types.webhook.messaging.PaymentItem;
 import com.restfb.types.webhook.messaging.PostbackItem;
 import com.restfb.types.webhook.messaging.ReadItem;
+import com.restfb.types.webhook.messaging.ReferralItem;
 
 import java.util.logging.Logger;
 
@@ -37,11 +38,16 @@ import static java.util.logging.Level.FINE;
 import static java.util.logging.Level.WARNING;
 
 /**
- * Abstract implementation of the {@link CallbackHandler} interface. <p> This class processes the received webhook and delegates the actual
- * callbacks to the appropriate methods like {@link #onMessage(Messenger, MessagingItem)}, {@link #onPostback(Messenger, MessagingItem)}
- * etc. <p> Custom classes that extend this {@code AbstractCallbackHandler} should override the callback methods that they want to listen
- * and interact to. <p> A special case is the {@link #fallback(Messenger, MessagingItem)} methdod which is called when the received callback
- * type is unknown. This could potentially happen when Facebook introduces new callback types.
+ * Abstract implementation of the {@link CallbackHandler} interface.
+ *
+ * This class processes the received webhook and delegates the actual callbacks to the appropriate methods like {@link #onMessage(Messenger,
+ * MessagingItem)}, {@link #onPostback(Messenger, MessagingItem)} etc.
+ *
+ * Custom classes that extend this {@code AbstractCallbackHandler} should override the callback methods that they want to listen and
+ * interact to.
+ *
+ * A special case is the {@link #fallback(Messenger, MessagingItem)} methdod which is called when the received callback type is unknown.
+ * This could potentially happen when Facebook introduces new callback types.
  *
  * @author Marcel Overdijk
  * @since 1.0.0
@@ -68,20 +74,22 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
                         } else {
                             onMessage(messenger, messaging);
                         }
-                    } else if (innerMessagingItem instanceof PostbackItem) {
-                        onPostback(messenger, messaging);
-                    } else if (innerMessagingItem instanceof OptinItem) {
-                        onOptin(messenger, messaging);
-                    } else if (innerMessagingItem instanceof AccountLinkingItem) {
-                        onAccountLinking(messenger, messaging);
                     } else if (innerMessagingItem instanceof DeliveryItem) {
                         onMessageDelivered(messenger, messaging);
                     } else if (innerMessagingItem instanceof ReadItem) {
                         onMessageRead(messenger, messaging);
-                    } else if (innerMessagingItem instanceof CheckoutUpdateItem) {
-                        onCheckoutUpdate(messenger, messaging);
+                    } else if (innerMessagingItem instanceof PostbackItem) {
+                        onPostback(messenger, messaging);
+                    } else if (innerMessagingItem instanceof OptinItem) {
+                        onOptin(messenger, messaging);
+                    } else if (innerMessagingItem instanceof ReferralItem) {
+                        onReferral(messenger, messaging);
                     } else if (innerMessagingItem instanceof PaymentItem) {
                         onPayment(messenger, messaging);
+                    } else if (innerMessagingItem instanceof CheckoutUpdateItem) {
+                        onCheckoutUpdate(messenger, messaging);
+                    } else if (innerMessagingItem instanceof AccountLinkingItem) {
+                        onAccountLinking(messenger, messaging);
                     } else {
                         if (logger.isLoggable(WARNING)) {
                             Class clazz = innerMessagingItem != null
@@ -102,33 +110,6 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
      * @param messaging the {@code MessagingItem} containing the message data
      */
     public void onMessage(Messenger messenger, MessagingItem messaging) {
-    }
-
-    /**
-     * Handles a postback callback.
-     *
-     * @param messenger the {@code Messenger} instance that retrieved the callback
-     * @param messaging the {@code MessagingItem} containing the postback data
-     */
-    public void onPostback(Messenger messenger, MessagingItem messaging) {
-    }
-
-    /**
-     * Handles a optin callback.
-     *
-     * @param messenger the {@code Messenger} instance that retrieved the callback
-     * @param messaging the {@code MessagingItem} containing the optin data
-     */
-    public void onOptin(Messenger messenger, MessagingItem messaging) {
-    }
-
-    /**
-     * Handles an account linking callback.
-     *
-     * @param messenger the {@code Messenger} instance that retrieved the callback
-     * @param messaging the {@code MessagingItem} containing the account linking data
-     */
-    public void onAccountLinking(Messenger messenger, MessagingItem messaging) {
     }
 
     /**
@@ -159,12 +140,30 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
     }
 
     /**
-     * Handles a checkout update callback.
+     * Handles a postback callback.
      *
      * @param messenger the {@code Messenger} instance that retrieved the callback
-     * @param messaging the {@code MessagingItem} containing the checkout update data
+     * @param messaging the {@code MessagingItem} containing the postback data
      */
-    public void onCheckoutUpdate(Messenger messenger, MessagingItem messaging) {
+    public void onPostback(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles a optin callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the optin data
+     */
+    public void onOptin(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles a referral callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the referral data
+     */
+    public void onReferral(Messenger messenger, MessagingItem messaging) {
     }
 
     /**
@@ -174,6 +173,24 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
      * @param messaging the {@code MessagingItem} containing the payment data
      */
     public void onPayment(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles a checkout update callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the checkout update data
+     */
+    public void onCheckoutUpdate(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles an account linking callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the account linking data
+     */
+    public void onAccountLinking(Messenger messenger, MessagingItem messaging) {
     }
 
     /**

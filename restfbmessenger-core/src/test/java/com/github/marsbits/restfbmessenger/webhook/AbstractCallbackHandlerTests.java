@@ -28,6 +28,7 @@ import com.restfb.types.webhook.messaging.OptinItem;
 import com.restfb.types.webhook.messaging.PaymentItem;
 import com.restfb.types.webhook.messaging.PostbackItem;
 import com.restfb.types.webhook.messaging.ReadItem;
+import com.restfb.types.webhook.messaging.ReferralItem;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -73,39 +74,6 @@ public class AbstractCallbackHandlerTests {
     }
 
     @Test
-    public void testOnPostback() {
-        PostbackItem postback = new PostbackItem();
-        MessagingItem messagingItem = new MessagingItem();
-        messagingItem.setPostback(postback);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
-        spyCallbackHandler.onCallback(messenger, webhookObject);
-        verify(spyCallbackHandler, times(1)).onPostback(messenger, messagingItem);
-        verifyNoMoreInteractions(spyCallbackHandler);
-    }
-
-    @Test
-    public void testOnOptin() {
-        OptinItem optin = new OptinItem();
-        MessagingItem messagingItem = new MessagingItem();
-        messagingItem.setOptin(optin);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
-        spyCallbackHandler.onCallback(messenger, webhookObject);
-        verify(spyCallbackHandler, times(1)).onOptin(messenger, messagingItem);
-        verifyNoMoreInteractions(spyCallbackHandler);
-    }
-
-    @Test
-    public void testOnAccountLinking() {
-        AccountLinkingItem accountLinking = new AccountLinkingItem();
-        MessagingItem messagingItem = new MessagingItem();
-        messagingItem.setAccountLinking(accountLinking);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
-        spyCallbackHandler.onCallback(messenger, webhookObject);
-        verify(spyCallbackHandler, times(1)).onAccountLinking(messenger, messagingItem);
-        verifyNoMoreInteractions(spyCallbackHandler);
-    }
-
-    @Test
     public void testOnMessageDelivered() {
         DeliveryItem delivery = new DeliveryItem();
         MessagingItem messagingItem = new MessagingItem();
@@ -140,13 +108,35 @@ public class AbstractCallbackHandlerTests {
     }
 
     @Test
-    public void testOnCheckoutUpdate() {
-        CheckoutUpdateItem checkoutUpdate = new CheckoutUpdateItem();
+    public void testOnPostback() {
+        PostbackItem postback = new PostbackItem();
         MessagingItem messagingItem = new MessagingItem();
-        messagingItem.setCheckoutUpdate(checkoutUpdate);
+        messagingItem.setPostback(postback);
         WebhookObject webhookObject = createWebhookObject(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
-        verify(spyCallbackHandler, times(1)).onCheckoutUpdate(messenger, messagingItem);
+        verify(spyCallbackHandler, times(1)).onPostback(messenger, messagingItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnOptin() {
+        OptinItem optin = new OptinItem();
+        MessagingItem messagingItem = new MessagingItem();
+        messagingItem.setOptin(optin);
+        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onOptin(messenger, messagingItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnReferral() {
+        ReferralItem referral = new ReferralItem();
+        MessagingItem messagingItem = new MessagingItem();
+        messagingItem.setReferral(referral);
+        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onReferral(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
     }
 
@@ -158,6 +148,28 @@ public class AbstractCallbackHandlerTests {
         WebhookObject webhookObject = createWebhookObject(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onPayment(messenger, messagingItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnCheckoutUpdate() {
+        CheckoutUpdateItem checkoutUpdate = new CheckoutUpdateItem();
+        MessagingItem messagingItem = new MessagingItem();
+        messagingItem.setCheckoutUpdate(checkoutUpdate);
+        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onCheckoutUpdate(messenger, messagingItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnAccountLinking() {
+        AccountLinkingItem accountLinking = new AccountLinkingItem();
+        MessagingItem messagingItem = new MessagingItem();
+        messagingItem.setAccountLinking(accountLinking);
+        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onAccountLinking(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
     }
 

@@ -4,6 +4,7 @@
 
 * Aligned with Messenger Platform 1.3
   * Added support for the new list template
+  * Added support for the new referral callback
 * Added support for setting thread settings
 * Added support for push notification type
 * Added Messeger#getUserProfile method with varargs fields argument

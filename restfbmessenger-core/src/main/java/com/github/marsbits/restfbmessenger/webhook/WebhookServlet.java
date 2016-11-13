@@ -66,24 +66,18 @@ public class WebhookServlet extends HttpServlet {
     public void init() throws ServletException {
         logger.info("Initializing webhook servlet...");
         if (messenger == null) {
-            String providerClass =
-                    getServletConfig().getInitParameter(MESSENGER_PROVIDER_CLASS_PARAM_NAME);
+            String providerClass = getServletConfig().getInitParameter(MESSENGER_PROVIDER_CLASS_PARAM_NAME);
             if (providerClass == null || providerClass.length() == 0) {
-                logger.severe(format("Servlet init parameter not provided: %s",
-                        MESSENGER_PROVIDER_CLASS_PARAM_NAME));
+                logger.severe(format("Servlet init parameter not provided: %s", MESSENGER_PROVIDER_CLASS_PARAM_NAME));
             } else {
                 try {
-                    messenger = ((MessengerProvider) Class.forName(providerClass).newInstance())
-                            .getMessenger();
+                    messenger = ((MessengerProvider) Class.forName(providerClass).newInstance()).getMessenger();
                 } catch (ClassNotFoundException e) {
                     logger.severe("Messenger provider class not found: " + providerClass);
                 } catch (InstantiationException e) {
-                    logger.severe(
-                            "Could not instantiate messenger provider class: " + providerClass);
+                    logger.severe("Could not instantiate messenger provider class: " + providerClass);
                 } catch (IllegalAccessException e) {
-                    logger.severe(
-                            "Could not instantiate (illegal access) messenger provider class: "
-                                    + providerClass);
+                    logger.severe("Could not instantiate (illegal access) messenger provider class: " + providerClass);
                 }
             }
         }
