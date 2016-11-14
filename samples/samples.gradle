@@ -1,11 +1,10 @@
 ext {
-    appengineVersion = "1.9.42"
+    appengineVersion = "1.9.46"
     junitVersion = "4.12"
     mockitoVersion = "1.10.19"
-    restfbVersion = "1.32.0"
-    restfbmessengerVersion = "1.0.2-SNAPSHOT"
+    restfbmessengerVersion = "1.1.0-SNAPSHOT"
     servletVersion = "3.1.0"
-    springVersion = "4.3.3.RELEASE"
+    springVersion = "4.3.4.RELEASE"
 }
 
 apply plugin: "idea"
