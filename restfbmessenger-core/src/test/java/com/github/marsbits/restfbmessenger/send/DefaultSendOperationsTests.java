@@ -24,12 +24,14 @@ import com.restfb.types.send.IdMessageRecipient;
 import com.restfb.types.send.ListTemplatePayload;
 import com.restfb.types.send.MediaAttachment;
 import com.restfb.types.send.Message;
+import com.restfb.types.send.MessageRecipient;
 import com.restfb.types.send.NotificationTypeEnum;
 import com.restfb.types.send.PhoneMessageRecipient;
 import com.restfb.types.send.QuickReply;
 import com.restfb.types.send.ReceiptTemplatePayload;
 import com.restfb.types.send.SenderActionEnum;
 import com.restfb.types.send.TemplateAttachment;
+import com.restfb.types.send.UserRefMessageRecipient;
 import com.restfb.types.send.airline.AirlineBoardingPassTemplatePayload;
 import com.restfb.types.send.airline.AirlineCheckinTemplatePayload;
 import com.restfb.types.send.airline.AirlineItineraryTemplatePayload;
@@ -37,6 +39,8 @@ import com.restfb.types.send.airline.AirlineUpdateTemplatePayload;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.List;
 
@@ -50,8 +54,19 @@ import static org.mockito.Mockito.mock;
  *
  * @author Marcel Overdijk
  */
-@SuppressWarnings("Duplicates")
+@RunWith(Parameterized.class)
 public class DefaultSendOperationsTests extends AbstractSendOperationsTests {
+
+    @Parameterized.Parameters(name = "{0}")
+    public static Object[] data() {
+        return new Object[] {
+                new IdMessageRecipient("1"),
+                new PhoneMessageRecipient("+1(212)555-2368"),
+                new UserRefMessageRecipient("UNIQUE_REF_PARAM")};
+    }
+
+    @Parameterized.Parameter(0)
+    public MessageRecipient messageRecipient;
 
     private DefaultSendOperations send;
 
@@ -59,862 +74,428 @@ public class DefaultSendOperationsTests extends AbstractSendOperationsTests {
     public void setUp() {
         this.facebookClient = mock(FacebookClient.class);
         this.send = new DefaultSendOperations(facebookClient);
-        this.idMessageRecipient = new IdMessageRecipient("1");
-        this.phoneMessageRecipient = new PhoneMessageRecipient("+1(212)555-2368");
     }
 
     @Test
-    public void testSenderActionWithIdMessageRecipient() {
+    public void testSenderAction() {
         SenderActionEnum senderAction = SenderActionEnum.mark_seen;
-        send.senderAction(idMessageRecipient, senderAction);
-        verifySend(idMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction));
+        send.senderAction(messageRecipient, senderAction);
+        verifySend(messageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction));
     }
 
     @Test
-    public void testSenderActionWithIdMessageRecipientAndNotificationType() {
+    public void testSenderActionWithNotificationType() {
         SenderActionEnum senderAction = SenderActionEnum.mark_seen;
-        send.senderAction(idMessageRecipient, senderAction, NotificationTypeEnum.NO_PUSH);
-        verifySend(idMessageRecipient,
+        send.senderAction(messageRecipient, senderAction, NotificationTypeEnum.NO_PUSH);
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction));
     }
 
     @Test
-    public void testSenderActionWithPhoneMessageRecipient() {
-        SenderActionEnum senderAction = SenderActionEnum.mark_seen;
-        send.senderAction(phoneMessageRecipient, senderAction);
-        verifySend(phoneMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction));
+    public void testMarkSeen() {
+        send.markSeen(messageRecipient);
+        verifySend(messageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.mark_seen));
     }
 
     @Test
-    public void testSenderActionWithPhoneMessageRecipientAndNotificationType() {
-        SenderActionEnum senderAction = SenderActionEnum.mark_seen;
-        send.senderAction(phoneMessageRecipient, senderAction, NotificationTypeEnum.NO_PUSH);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction));
-    }
-
-    @Test
-    public void testMarkSeenWithIdMessageRecipient() {
-        send.markSeen(idMessageRecipient);
-        verifySend(idMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.mark_seen));
-    }
-
-    @Test
-    public void testMarkSeenWithIdMessageRecipientAndNotificationType() {
-        send.markSeen(idMessageRecipient, NotificationTypeEnum.NO_PUSH);
-        verifySend(idMessageRecipient,
+    public void testMarkSeenWithNotificationType() {
+        send.markSeen(messageRecipient, NotificationTypeEnum.NO_PUSH);
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.mark_seen));
     }
 
     @Test
-    public void testMarkSeenWithPhoneMessageRecipient() {
-        send.markSeen(phoneMessageRecipient);
-        verifySend(phoneMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.mark_seen));
+    public void testTypingOn() {
+        send.typingOn(messageRecipient);
+        verifySend(messageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_on));
     }
 
     @Test
-    public void testMarkSeenWithPhoneMessageRecipientAndNotificationType() {
-        send.markSeen(phoneMessageRecipient, NotificationTypeEnum.NO_PUSH);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.mark_seen));
-    }
-
-    @Test
-    public void testTypingOnWithIdMessageRecipient() {
-        send.typingOn(idMessageRecipient);
-        verifySend(idMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_on));
-    }
-
-    @Test
-    public void testTypingOnWithIdMessageRecipientAndNotificationType() {
-        send.typingOn(idMessageRecipient, NotificationTypeEnum.NO_PUSH);
-        verifySend(idMessageRecipient,
+    public void testTypingOnWithNotificationType() {
+        send.typingOn(messageRecipient, NotificationTypeEnum.NO_PUSH);
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_on));
     }
 
     @Test
-    public void testTypingOnWithPhoneMessageRecipient() {
-        send.typingOn(phoneMessageRecipient);
-        verifySend(phoneMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_on));
+    public void testTypingOff() {
+        send.typingOff(messageRecipient);
+        verifySend(messageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_off));
     }
 
     @Test
-    public void testTypingOnWithPhoneMessageRecipientAndNotificationType() {
-        send.typingOn(phoneMessageRecipient, NotificationTypeEnum.NO_PUSH);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_on));
-    }
-
-    @Test
-    public void testTypingOffWithIdMessageRecipient() {
-        send.typingOff(idMessageRecipient);
-        verifySend(idMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_off));
-    }
-
-    @Test
-    public void testTypingOffWithIdMessageRecipientAndNotificationType() {
-        send.typingOff(idMessageRecipient, NotificationTypeEnum.NO_PUSH);
-        verifySend(idMessageRecipient,
+    public void testTypingOffWithNotificationType() {
+        send.typingOff(messageRecipient, NotificationTypeEnum.NO_PUSH);
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_off));
     }
 
     @Test
-    public void testTypingOffWithPhoneMessageRecipient() {
-        send.typingOff(phoneMessageRecipient);
-        verifySend(phoneMessageRecipient, Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_off));
-    }
-
-    @Test
-    public void testTypingOffWithPhoneMessageRecipientAndNotificationType() {
-        send.typingOff(phoneMessageRecipient, NotificationTypeEnum.NO_PUSH);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(SENDER_ACTION_PARAM_NAME, SenderActionEnum.typing_off));
-    }
-
-    @Test
-    public void testMessageWithIdMessageRecipient() {
+    public void testMessage() {
         Message message = new Message("Hello!");
-        send.message(idMessageRecipient, message);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        send.message(messageRecipient, message);
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testMessageWithIdMessageRecipientAndNotificationType() {
+    public void testMessageWithNotificationType() {
         Message message = new Message("Hello!");
-        send.message(idMessageRecipient, message, NotificationTypeEnum.NO_PUSH);
-        verifySend(idMessageRecipient,
+        send.message(messageRecipient, message, NotificationTypeEnum.NO_PUSH);
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testMessageWithPhoneMessageRecipient() {
-        Message message = new Message("Hello!");
-        send.message(phoneMessageRecipient, message);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+    public void testTextMessage() {
+        String text = "Hello!";
+        send.textMessage(messageRecipient, text);
+        Message message = new Message(text);
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testMessageWithPhoneMessageRecipientAndNotificationType() {
-        Message message = new Message("Hello!");
-        send.message(phoneMessageRecipient, message, NotificationTypeEnum.NO_PUSH);
-        verifySend(phoneMessageRecipient,
+    public void testTextMessageWithNotificationType() {
+        String text = "Hello!";
+        send.textMessage(messageRecipient, text, NotificationTypeEnum.NO_PUSH);
+        Message message = new Message(text);
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testTextMessageWithIdMessageRecipient() {
-        String text = "Hello!";
-        send.textMessage(idMessageRecipient, text);
-        Message message = new Message(text);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testTextMessageWithIdMessageRecipientAndNotificationType() {
-        String text = "Hello!";
-        send.textMessage(idMessageRecipient, text, NotificationTypeEnum.NO_PUSH);
-        Message message = new Message(text);
-        verifySend(idMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testTextMessageWithPhoneMessageRecipient() {
-        String text = "Hello!";
-        send.textMessage(phoneMessageRecipient, text);
-        Message message = new Message(text);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testTextMessageWithPhoneMessageRecipientAndNotificationType() {
-        String text = "Hello!";
-        send.textMessage(phoneMessageRecipient, text, NotificationTypeEnum.NO_PUSH);
-        Message message = new Message(text);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAttachmentWithIdMessageRecipient() {
+    public void testAttachment() {
         MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
         String url = "http://localhost";
-        send.attachment(idMessageRecipient, MediaAttachment.Type.IMAGE, url);
+        send.attachment(messageRecipient, MediaAttachment.Type.IMAGE, url);
         MediaAttachment attachment = new MediaAttachment(type, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAttachmentWithIdMessageRecipientAndNotificationType() {
+    public void testAttachmentWithNotificationType() {
         MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
         String url = "http://localhost";
-        send.attachment(idMessageRecipient, MediaAttachment.Type.IMAGE, url, NotificationTypeEnum.NO_PUSH);
+        send.attachment(messageRecipient, MediaAttachment.Type.IMAGE, url, NotificationTypeEnum.NO_PUSH);
         MediaAttachment attachment = new MediaAttachment(type, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAttachmentWithPhoneMessageRecipient() {
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
+    public void testImageAttachment() {
         String url = "http://localhost";
-        send.attachment(phoneMessageRecipient, type, url);
-        MediaAttachment attachment = new MediaAttachment(type, url);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAttachmentWithPhoneMessageRecipientAndNotificationType() {
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
-        String url = "http://localhost";
-        send.attachment(phoneMessageRecipient, type, url, NotificationTypeEnum.NO_PUSH);
-        MediaAttachment attachment = new MediaAttachment(type, url);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testImageAttachmentWithIdMessageRecipient() {
-        String url = "http://localhost";
-        send.imageAttachment(idMessageRecipient, url);
+        send.imageAttachment(messageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.IMAGE, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testImageAttachmentWithIdMessageRecipientAndNotificationType() {
+    public void testImageAttachmentWithNotificationType() {
         String url = "http://localhost";
-        send.imageAttachment(idMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        send.imageAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.IMAGE, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testImageAttachmentWithPhoneMessageRecipient() {
+    public void testAudioAttachment() {
         String url = "http://localhost";
-        send.imageAttachment(phoneMessageRecipient, url);
-        MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.IMAGE, url);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testImageAttachmentWithPhoneMessageRecipientAndNotificationType() {
-        String url = "http://localhost";
-        send.imageAttachment(phoneMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
-        MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.IMAGE, url);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAudioAttachmentWithIdMessageRecipient() {
-        String url = "http://localhost";
-        send.audioAttachment(idMessageRecipient, url);
+        send.audioAttachment(messageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.AUDIO, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAudioAttachmentWithIdMessageRecipientAndNotificationType() {
+    public void testAudioAttachmentWithNotificationType() {
         String url = "http://localhost";
-        send.audioAttachment(idMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        send.audioAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.AUDIO, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAudioAttachmentWithPhoneMessageRecipient() {
+    public void testVideoAttachment() {
         String url = "http://localhost";
-        send.audioAttachment(phoneMessageRecipient, url);
-        MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.AUDIO, url);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAudioAttachmentWithPhoneMessageRecipientAndNotificationType() {
-        String url = "http://localhost";
-        send.audioAttachment(phoneMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
-        MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.AUDIO, url);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testVideoAttachmentWithIdMessageRecipient() {
-        String url = "http://localhost";
-        send.videoAttachment(idMessageRecipient, url);
+        send.videoAttachment(messageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.VIDEO, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testVideoAttachmentWithIdMessageRecipientAndNotificationType() {
+    public void testVideoAttachmentWithNotificationType() {
         String url = "http://localhost";
-        send.videoAttachment(idMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        send.videoAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.VIDEO, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testVideoAttachmentWithPhoneMessageRecipient() {
+    public void testFileAttachment() {
         String url = "http://localhost";
-        send.videoAttachment(phoneMessageRecipient, url);
-        MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.VIDEO, url);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testVideoAttachmentWithPhoneMessageRecipientAndNotificationType() {
-        String url = "http://localhost";
-        send.videoAttachment(phoneMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
-        MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.VIDEO, url);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testFileAttachmentWithIdMessageRecipient() {
-        String url = "http://localhost";
-        send.fileAttachment(idMessageRecipient, url);
+        send.fileAttachment(messageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.FILE, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testFileAttachmentWithIdMessageRecipientAndNotificationType() {
+    public void testFileAttachmentWithNotificationType() {
         String url = "http://localhost";
-        send.fileAttachment(idMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        send.fileAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.FILE, url);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testFileAttachmentWithPhoneMessageRecipient() {
-        String url = "http://localhost";
-        send.fileAttachment(phoneMessageRecipient, url);
-        MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.FILE, url);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testFileAttachmentWithPhoneMessageRecipientAndNotificationType() {
-        String url = "http://localhost";
-        send.fileAttachment(phoneMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
-        MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.FILE, url);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testQuickRepliesWithTextMessageAndIdMessageRecipient() {
+    public void testQuickRepliesWithTextMessage() {
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(idMessageRecipient, text, quickReplies);
+        send.quickReplies(messageRecipient, text, quickReplies);
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testQuickRepliesWithTextMessageAndIdMessageRecipientAndNotificationType() {
+    public void testQuickRepliesWithTextMessageAndNotificationType() {
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(idMessageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH);
+        send.quickReplies(messageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH);
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testQuickRepliesWithTextMessageAndPhoneMessageRecipient() {
-        String text = "Hello!";
+    public void testQuickRepliesWithMediaAttachment() {
+        MediaAttachment attachment = createMediaAttachment();
         List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(phoneMessageRecipient, text, quickReplies);
-        Message message = new Message(text);
+        send.quickReplies(messageRecipient, attachment, quickReplies);
+        Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testQuickRepliesWithTextMessageAndPhoneMessageRecipientAndNotificationType() {
-        String text = "Hello!";
+    public void testQuickRepliesWithMediaAttachmentAndNotificationType() {
+        MediaAttachment attachment = createMediaAttachment();
         List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(phoneMessageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH);
-        Message message = new Message(text);
+        send.quickReplies(messageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
+        Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
-        verifySend(phoneMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testQuickRepliesWithMediaAttachmentAndIdMessageRecipient() {
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
-        String url = "http://localhost";
-        MediaAttachment attachment = new MediaAttachment(type, url);
-        List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(idMessageRecipient, attachment, quickReplies);
-        Message message = new Message(attachment);
-        message.addQuickReplies(quickReplies);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testQuickRepliesWithMediaAttachmentAndIdMessageRecipientAndNotificationType() {
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
-        String url = "http://localhost";
-        MediaAttachment attachment = new MediaAttachment(type, url);
-        List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(idMessageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
-        Message message = new Message(attachment);
-        message.addQuickReplies(quickReplies);
-        verifySend(idMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testQuickRepliesWithMediaAttachmentAndPhoneMessageRecipient() {
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
-        String url = "http://localhost";
-        MediaAttachment attachment = new MediaAttachment(type, url);
-        List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(phoneMessageRecipient, attachment, quickReplies);
-        Message message = new Message(attachment);
-        message.addQuickReplies(quickReplies);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testQuickRepliesWithMediaAttachmentAndPhoneMessageRecipientAndNotificationType() {
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
-        String url = "http://localhost";
-        MediaAttachment attachment = new MediaAttachment(type, url);
-        List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(phoneMessageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
-        Message message = new Message(attachment);
-        message.addQuickReplies(quickReplies);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testQuickRepliesWithTemplateAttachmentAndIdMessageRecipient() {
+    public void testQuickRepliesWithTemplateAttachment() {
         ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
         TemplateAttachment attachment = new TemplateAttachment(payload);
         List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(idMessageRecipient, attachment, quickReplies);
+        send.quickReplies(messageRecipient, attachment, quickReplies);
         Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testQuickRepliesWithTemplateAttachmentAndIdMessageRecipientAndNotificationType() {
+    public void testQuickRepliesWithTemplateAttachmentAndNotificationType() {
         ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
         TemplateAttachment attachment = new TemplateAttachment(payload);
         List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(idMessageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
+        send.quickReplies(messageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
         Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testQuickRepliesWithTemplateAttachmentAndPhoneMessageRecipient() {
-        ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
-        TemplateAttachment attachment = new TemplateAttachment(payload);
-        List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(phoneMessageRecipient, attachment, quickReplies);
-        Message message = new Message(attachment);
-        message.addQuickReplies(quickReplies);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testQuickRepliesWithTemplateAttachmentAndPhoneMessageRecipientAndNotificationType() {
-        ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
-        TemplateAttachment attachment = new TemplateAttachment(payload);
-        List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(phoneMessageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
-        Message message = new Message(attachment);
-        message.addQuickReplies(quickReplies);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testButtonTemplateWithIdMessageRecipient() {
+    public void testButtonTemplate() {
         ButtonTemplatePayload buttonTemplate = createButtonTemplate();
-        send.buttonTemplate(idMessageRecipient, buttonTemplate);
+        send.buttonTemplate(messageRecipient, buttonTemplate);
         TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testButtonTemplateWithIdMessageRecipientAndNotificationType() {
+    public void testButtonTemplateWithNotificationType() {
         ButtonTemplatePayload buttonTemplate = createButtonTemplate();
-        send.buttonTemplate(idMessageRecipient, buttonTemplate, NotificationTypeEnum.NO_PUSH);
+        send.buttonTemplate(messageRecipient, buttonTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testButtonTemplateWithPhoneMessageRecipient() {
-        ButtonTemplatePayload buttonTemplate = createButtonTemplate();
-        send.buttonTemplate(phoneMessageRecipient, buttonTemplate);
-        TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testButtonTemplateWithPhoneMessageRecipientAndNotificationType() {
-        ButtonTemplatePayload buttonTemplate = createButtonTemplate();
-        send.buttonTemplate(phoneMessageRecipient, buttonTemplate, NotificationTypeEnum.NO_PUSH);
-        TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testGenericTemplateWithIdMessageRecipient() {
+    public void testGenericTemplate() {
         GenericTemplatePayload genericTemplate = createGenericTemplate();
-        send.genericTemplate(idMessageRecipient, genericTemplate);
+        send.genericTemplate(messageRecipient, genericTemplate);
         TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testGenericTemplateWithIdMessageRecipientAndNotificationType() {
+    public void testGenericTemplateWithNotificationType() {
         GenericTemplatePayload genericTemplate = createGenericTemplate();
-        send.genericTemplate(idMessageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH);
+        send.genericTemplate(messageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testGenericTemplateWithPhoneMessageRecipient() {
-        GenericTemplatePayload genericTemplate = createGenericTemplate();
-        send.genericTemplate(phoneMessageRecipient, genericTemplate);
-        TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testGenericTemplateWithPhoneMessageRecipientAndNotificationType() {
-        GenericTemplatePayload genericTemplate = createGenericTemplate();
-        send.genericTemplate(phoneMessageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH);
-        TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testListTemplateWithIdMessageRecipient() {
+    public void testListTemplate() {
         ListTemplatePayload listTemplate = createListTemplate();
-        send.listTemplate(idMessageRecipient, listTemplate);
+        send.listTemplate(messageRecipient, listTemplate);
         TemplateAttachment attachment = new TemplateAttachment(listTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testListTemplateWithIdMessageRecipientAndNotificationType() {
+    public void testListTemplateWithNotificationType() {
         ListTemplatePayload listTemplate = createListTemplate();
-        send.listTemplate(idMessageRecipient, listTemplate, NotificationTypeEnum.NO_PUSH);
+        send.listTemplate(messageRecipient, listTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(listTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testListTemplateWithPhoneMessageRecipient() {
-        ListTemplatePayload listTemplate = createListTemplate();
-        send.listTemplate(phoneMessageRecipient, listTemplate);
-        TemplateAttachment attachment = new TemplateAttachment(listTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testListTemplateWithPhoneMessageRecipientAndNotificationType() {
-        ListTemplatePayload listTemplate = createListTemplate();
-        send.listTemplate(phoneMessageRecipient, listTemplate, NotificationTypeEnum.NO_PUSH);
-        TemplateAttachment attachment = new TemplateAttachment(listTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testReceiptTemplateWithIdMessageRecipient() {
+    public void testReceiptTemplate() {
         ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
-        send.receiptTemplate(idMessageRecipient, receiptTemplate);
+        send.receiptTemplate(messageRecipient, receiptTemplate);
         TemplateAttachment attachment = new TemplateAttachment(receiptTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testReceiptTemplateWithIdMessageRecipientAndNotificationType() {
+    public void testReceiptTemplateWithNotificationType() {
         ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
-        send.receiptTemplate(idMessageRecipient, receiptTemplate, NotificationTypeEnum.NO_PUSH);
+        send.receiptTemplate(messageRecipient, receiptTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(receiptTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testReceiptTemplateWithPhoneMessageRecipient() {
-        ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
-        send.receiptTemplate(phoneMessageRecipient, receiptTemplate);
-        TemplateAttachment attachment = new TemplateAttachment(receiptTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testReceiptTemplateWithPhoneMessageRecipientAndNotificationType() {
-        ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
-        send.receiptTemplate(phoneMessageRecipient, receiptTemplate, NotificationTypeEnum.NO_PUSH);
-        TemplateAttachment attachment = new TemplateAttachment(receiptTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAirlineItineraryTemplateWithIdMessageRecipient() {
+    public void testAirlineItineraryTemplate() {
         AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
-        send.airlineItineraryTemplate(idMessageRecipient, airlineItineraryTemplate);
+        send.airlineItineraryTemplate(messageRecipient, airlineItineraryTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineItineraryTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAirlineItineraryTemplateWithIdMessageRecipientAndNotificationType() {
+    public void testAirlineItineraryTemplateWithNotificationType() {
         AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
-        send.airlineItineraryTemplate(idMessageRecipient, airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
+        send.airlineItineraryTemplate(messageRecipient, airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(airlineItineraryTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAirlineItineraryTemplateWithPhoneMessageRecipient() {
-        AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
-        send.airlineItineraryTemplate(phoneMessageRecipient, airlineItineraryTemplate);
-        TemplateAttachment attachment = new TemplateAttachment(airlineItineraryTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAirlineItineraryTemplateWithPhoneMessageRecipientAndNotificationType() {
-        AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
-        send.airlineItineraryTemplate(phoneMessageRecipient, airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
-        TemplateAttachment attachment = new TemplateAttachment(airlineItineraryTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAirlineCheckinTemplateWithIdMessageRecipient() {
+    public void testAirlineCheckinTemplate() {
         AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
-        send.airlineCheckinTemplate(idMessageRecipient, airlineCheckinTemplate);
+        send.airlineCheckinTemplate(messageRecipient, airlineCheckinTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineCheckinTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAirlineCheckinTemplateWithIdMessageRecipientAndNotificationType() {
+    public void testAirlineCheckinTemplateWithNotificationType() {
         AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
-        send.airlineCheckinTemplate(idMessageRecipient, airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
+        send.airlineCheckinTemplate(messageRecipient, airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(airlineCheckinTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAirlineCheckinTemplateWithPhoneMessageRecipient() {
-        AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
-        send.airlineCheckinTemplate(phoneMessageRecipient, airlineCheckinTemplate);
-        TemplateAttachment attachment = new TemplateAttachment(airlineCheckinTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAirlineCheckinTemplateWithPhoneMessageRecipientAndNotificationType() {
-        AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
-        send.airlineCheckinTemplate(phoneMessageRecipient, airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
-        TemplateAttachment attachment = new TemplateAttachment(airlineCheckinTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAirlineBoardingPassTemplateWithIdMessageRecipient() {
+    public void testAirlineBoardingPassTemplate() {
         AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
                 createAirlineBoardingPassTemplate();
-        send.airlineBoardingPassTemplate(idMessageRecipient, airlineBoardingPassTemplate);
+        send.airlineBoardingPassTemplate(messageRecipient, airlineBoardingPassTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineBoardingPassTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAirlineBoardingPassTemplateWithIdMessageRecipientAndNotificationType() {
+    public void testAirlineBoardingPassTemplateWithNotificationType() {
         AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
                 createAirlineBoardingPassTemplate();
-        send.airlineBoardingPassTemplate(idMessageRecipient, airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
+        send.airlineBoardingPassTemplate(messageRecipient, airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(airlineBoardingPassTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAirlineBoardingPassTemplateWithPhoneMessageRecipient() {
-        AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
-                createAirlineBoardingPassTemplate();
-        send.airlineBoardingPassTemplate(phoneMessageRecipient, airlineBoardingPassTemplate);
-        TemplateAttachment attachment = new TemplateAttachment(airlineBoardingPassTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAirlineBoardingPassTemplateWithPhoneMessageRecipientAndNotificationType() {
-        AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
-                createAirlineBoardingPassTemplate();
-        send.airlineBoardingPassTemplate(phoneMessageRecipient, airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
-        TemplateAttachment attachment = new TemplateAttachment(airlineBoardingPassTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAirlineUpdateTemplateWithIdMessageRecipient() {
+    public void testAirlineUpdateTemplate() {
         AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
-        send.airlineUpdateTemplate(idMessageRecipient, airlineUpdateTemplate);
+        send.airlineUpdateTemplate(messageRecipient, airlineUpdateTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineUpdateTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
-    public void testAirlineUpdateTemplateWithIdMessageRecipientAndNotificationType() {
+    public void testAirlineUpdateTemplateWithNotificationType() {
         AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
-        send.airlineUpdateTemplate(idMessageRecipient, airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
+        send.airlineUpdateTemplate(messageRecipient, airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(airlineUpdateTemplate);
         Message message = new Message(attachment);
-        verifySend(idMessageRecipient,
-                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
-                Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAirlineUpdateTemplateWithPhoneMessageRecipient() {
-        AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
-        send.airlineUpdateTemplate(phoneMessageRecipient, airlineUpdateTemplate);
-        TemplateAttachment attachment = new TemplateAttachment(airlineUpdateTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
-    }
-
-    @Test
-    public void testAirlineUpdateTemplateWithPhoneMessageRecipientAndNotificationType() {
-        AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
-        send.airlineUpdateTemplate(phoneMessageRecipient, airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
-        TemplateAttachment attachment = new TemplateAttachment(airlineUpdateTemplate);
-        Message message = new Message(attachment);
-        verifySend(phoneMessageRecipient,
+        verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }

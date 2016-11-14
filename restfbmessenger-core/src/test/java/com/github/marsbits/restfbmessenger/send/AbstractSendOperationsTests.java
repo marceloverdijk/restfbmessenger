@@ -22,19 +22,15 @@ import com.restfb.types.send.Bubble;
 import com.restfb.types.send.ButtonTemplatePayload;
 import com.restfb.types.send.CallButton;
 import com.restfb.types.send.GenericTemplatePayload;
-import com.restfb.types.send.IdMessageRecipient;
 import com.restfb.types.send.ListTemplatePayload;
 import com.restfb.types.send.ListViewElement;
 import com.restfb.types.send.MediaAttachment;
-import com.restfb.types.send.Message;
-import com.restfb.types.send.PhoneMessageRecipient;
+import com.restfb.types.send.MessageRecipient;
 import com.restfb.types.send.PostbackButton;
 import com.restfb.types.send.QuickReply;
 import com.restfb.types.send.ReceiptSummary;
 import com.restfb.types.send.ReceiptTemplatePayload;
 import com.restfb.types.send.SendResponse;
-import com.restfb.types.send.SenderActionEnum;
-import com.restfb.types.send.TemplateAttachment;
 import com.restfb.types.send.airline.AirlineBoardingPassTemplatePayload;
 import com.restfb.types.send.airline.AirlineCheckinTemplatePayload;
 import com.restfb.types.send.airline.AirlineItineraryTemplatePayload;
@@ -44,19 +40,13 @@ import com.restfb.types.send.airline.FlightAirport;
 import com.restfb.types.send.airline.FlightInfo;
 import com.restfb.types.send.airline.FlightSchedule;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.MESSAGES_PATH;
-import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.MESSAGE_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.RECIPIENT_PARAM_NAME;
-import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.SENDER_ACTION_PARAM_NAME;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -68,14 +58,7 @@ public abstract class AbstractSendOperationsTests {
 
     protected FacebookClient facebookClient;
 
-    protected IdMessageRecipient idMessageRecipient;
-    protected PhoneMessageRecipient phoneMessageRecipient;
-
-    protected void verifySend(IdMessageRecipient recipient, Parameter... parameters) {
-        verifySend(Parameter.with(RECIPIENT_PARAM_NAME, recipient), parameters);
-    }
-
-    protected void verifySend(PhoneMessageRecipient recipient, Parameter... parameters) {
+    protected void verifySend(MessageRecipient recipient, Parameter... parameters) {
         verifySend(Parameter.with(RECIPIENT_PARAM_NAME, recipient), parameters);
     }
 
@@ -84,6 +67,10 @@ public abstract class AbstractSendOperationsTests {
         params.add(recipient);
         params.addAll(Arrays.asList(parameters));
         verify(facebookClient).publish(MESSAGES_PATH, SendResponse.class, params.toArray(new Parameter[params.size()]));
+    }
+
+    protected MediaAttachment createMediaAttachment() {
+        return new MediaAttachment(MediaAttachment.Type.IMAGE, "http://localhost");
     }
 
     protected List<QuickReply> createQuickReplies() {

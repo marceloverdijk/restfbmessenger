@@ -22,12 +22,14 @@ import com.restfb.types.send.IdMessageRecipient;
 import com.restfb.types.send.ListTemplatePayload;
 import com.restfb.types.send.MediaAttachment;
 import com.restfb.types.send.Message;
+import com.restfb.types.send.MessageRecipient;
 import com.restfb.types.send.NotificationTypeEnum;
 import com.restfb.types.send.PhoneMessageRecipient;
 import com.restfb.types.send.QuickReply;
 import com.restfb.types.send.ReceiptTemplatePayload;
 import com.restfb.types.send.SenderActionEnum;
 import com.restfb.types.send.TemplateAttachment;
+import com.restfb.types.send.UserRefMessageRecipient;
 import com.restfb.types.send.airline.AirlineBoardingPassTemplatePayload;
 import com.restfb.types.send.airline.AirlineCheckinTemplatePayload;
 import com.restfb.types.send.airline.AirlineItineraryTemplatePayload;
@@ -35,6 +37,8 @@ import com.restfb.types.send.airline.AirlineUpdateTemplatePayload;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.List;
 
@@ -46,8 +50,19 @@ import static org.mockito.Mockito.verify;
  *
  * @author Marcel Overdijk
  */
-@SuppressWarnings("Duplicates")
+@RunWith(Parameterized.class)
 public class DefaultMessageRecipientSendOperationsTests extends AbstractSendOperationsTests {
+
+    @Parameterized.Parameters(name = "{0}")
+    public static Object[] data() {
+        return new Object[] {
+                new IdMessageRecipient("1"),
+                new PhoneMessageRecipient("+1(212)555-2368"),
+                new UserRefMessageRecipient("UNIQUE_REF_PARAM")};
+    }
+
+    @Parameterized.Parameter(0)
+    public MessageRecipient messageRecipient;
 
     private DefaultMessageRecipientSendOperations send;
 
@@ -56,732 +71,718 @@ public class DefaultMessageRecipientSendOperationsTests extends AbstractSendOper
     @Before
     public void setUp() {
         this.sendOperations = mock(SendOperations.class);
-        this.idMessageRecipient = new IdMessageRecipient("1");
-        this.phoneMessageRecipient = new PhoneMessageRecipient("+1(212)555-2368");
     }
 
     @Test
-    public void testSenderActionWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testSenderAction() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         SenderActionEnum senderAction = SenderActionEnum.mark_seen;
         send.senderAction(senderAction);
-        verify(sendOperations).senderAction(idMessageRecipient, senderAction, null);
+        verify(sendOperations).senderAction(messageRecipient, senderAction, null);
     }
 
     @Test
-    public void testSenderActionWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        SenderActionEnum senderAction = SenderActionEnum.mark_seen;
-        send.senderAction(senderAction, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).senderAction(idMessageRecipient, senderAction, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testSenderActionWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testSenderActionWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         SenderActionEnum senderAction = SenderActionEnum.mark_seen;
         send.senderAction(senderAction);
-        verify(sendOperations).senderAction(phoneMessageRecipient, senderAction, null);
+        verify(sendOperations).senderAction(messageRecipient, senderAction, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testSenderActionWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testSenderActionWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         SenderActionEnum senderAction = SenderActionEnum.mark_seen;
         send.senderAction(senderAction, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).senderAction(phoneMessageRecipient, senderAction, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).senderAction(messageRecipient, senderAction, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testMarkSeenWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testSenderActionWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        SenderActionEnum senderAction = SenderActionEnum.mark_seen;
+        send.senderAction(senderAction, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).senderAction(messageRecipient, senderAction, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testMarkSeen() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         send.markSeen();
-        verify(sendOperations).markSeen(idMessageRecipient, null);
+        verify(sendOperations).markSeen(messageRecipient, null);
     }
 
     @Test
-    public void testMarkSeenWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        send.markSeen(NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).markSeen(idMessageRecipient, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testMarkSeenWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testMarkSeenWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         send.markSeen();
-        verify(sendOperations).markSeen(phoneMessageRecipient, null);
+        verify(sendOperations).markSeen(messageRecipient, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testMarkSeenWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testMarkSeenWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         send.markSeen(NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).markSeen(phoneMessageRecipient, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).markSeen(messageRecipient, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testTypingOnWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testMarkSeenWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        send.markSeen(NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).markSeen(messageRecipient, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testTypingOn() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         send.typingOn();
-        verify(sendOperations).typingOn(idMessageRecipient, null);
+        verify(sendOperations).typingOn(messageRecipient, null);
     }
 
     @Test
-    public void testTypingOnWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        send.typingOn(NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).typingOn(idMessageRecipient, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testTypingOnWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testTypingOnWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         send.typingOn();
-        verify(sendOperations).typingOn(phoneMessageRecipient, null);
+        verify(sendOperations).typingOn(messageRecipient, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testTypingOnWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testTypingOnWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         send.typingOn(NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).typingOn(phoneMessageRecipient, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).typingOn(messageRecipient, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testTypingOffWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testTypingOnWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        send.typingOn(NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).typingOn(messageRecipient, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testTypingOff() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         send.typingOff();
-        verify(sendOperations).typingOff(idMessageRecipient, null);
+        verify(sendOperations).typingOff(messageRecipient, null);
     }
 
     @Test
-    public void testTypingOffWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        send.typingOff(NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).typingOff(idMessageRecipient, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testTypingOffWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testTypingOffWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         send.typingOff();
-        verify(sendOperations).typingOff(phoneMessageRecipient, null);
+        verify(sendOperations).typingOff(messageRecipient, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testTypingOffWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testTypingOffWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         send.typingOff(NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).typingOff(phoneMessageRecipient, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).typingOff(messageRecipient, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testMessageWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testTypingOffWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        send.typingOff(NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).typingOff(messageRecipient, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testMessage() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         Message message = new Message("Hello!");
         send.message(message);
-        verify(sendOperations).message(idMessageRecipient, message, null);
+        verify(sendOperations).message(messageRecipient, message, null);
     }
 
     @Test
-    public void testMessageWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        Message message = new Message("Hello!");
-        send.message(message, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).message(idMessageRecipient, message, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testMessageWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testMessageWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         Message message = new Message("Hello!");
         send.message(message);
-        verify(sendOperations).message(phoneMessageRecipient, message, null);
+        verify(sendOperations).message(messageRecipient, message, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testMessageWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testMessageWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         Message message = new Message("Hello!");
         send.message(message, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).message(phoneMessageRecipient, message, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).message(messageRecipient, message, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testTextMessageWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testMessageWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        Message message = new Message("Hello!");
+        send.message(message, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).message(messageRecipient, message, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testTextMessage() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String text = "Hello!";
         send.textMessage(text);
-        verify(sendOperations).textMessage(idMessageRecipient, text, null);
+        verify(sendOperations).textMessage(messageRecipient, text, null);
     }
 
     @Test
-    public void testTextMessageWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        String text = "Hello!";
-        send.textMessage(text, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).textMessage(idMessageRecipient, text, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testTextMessageWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testTextMessageWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         String text = "Hello!";
         send.textMessage(text);
-        verify(sendOperations).textMessage(phoneMessageRecipient, text, null);
+        verify(sendOperations).textMessage(messageRecipient, text, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testTextMessageWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testTextMessageWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String text = "Hello!";
         send.textMessage(text, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).textMessage(phoneMessageRecipient, text, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).textMessage(messageRecipient, text, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testAttachmentWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testTextMessageWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        String text = "Hello!";
+        send.textMessage(text, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).textMessage(messageRecipient, text, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testAttachment() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
         String url = "http://localhost";
         send.attachment(type, url);
-        verify(sendOperations).attachment(idMessageRecipient, type, url, null);
+        verify(sendOperations).attachment(messageRecipient, type, url, null);
     }
 
     @Test
-    public void testAttachmentWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
-        String url = "http://localhost";
-        send.attachment(type, url, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).attachment(idMessageRecipient, type, url, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testAttachmentWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testAttachmentWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
         String url = "http://localhost";
         send.attachment(type, url);
-        verify(sendOperations).attachment(phoneMessageRecipient, type, url, null);
+        verify(sendOperations).attachment(messageRecipient, type, url, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testAttachmentWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testAttachmentWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
         String url = "http://localhost";
         send.attachment(type, url, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).attachment(phoneMessageRecipient, type, url, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).attachment(messageRecipient, type, url, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testImageAttachmentWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testAttachmentWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
+        String url = "http://localhost";
+        send.attachment(type, url, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).attachment(messageRecipient, type, url, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testImageAttachment() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String url = "http://localhost";
         send.imageAttachment(url);
-        verify(sendOperations).imageAttachment(idMessageRecipient, url, null);
+        verify(sendOperations).imageAttachment(messageRecipient, url, null);
     }
 
     @Test
-    public void testImageAttachmentWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        String url = "http://localhost";
-        send.imageAttachment(url, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).imageAttachment(idMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testImageAttachmentWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testImageAttachmentWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         String url = "http://localhost";
         send.imageAttachment(url);
-        verify(sendOperations).imageAttachment(phoneMessageRecipient, url, null);
+        verify(sendOperations).imageAttachment(messageRecipient, url, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testImageAttachmentWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testImageAttachmentWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String url = "http://localhost";
         send.imageAttachment(url, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).imageAttachment(phoneMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).imageAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testAudioAttachmentWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testImageAttachmentWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        String url = "http://localhost";
+        send.imageAttachment(url, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).imageAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testAudioAttachment() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String url = "http://localhost";
         send.audioAttachment(url);
-        verify(sendOperations).audioAttachment(idMessageRecipient, url, null);
+        verify(sendOperations).audioAttachment(messageRecipient, url, null);
     }
 
     @Test
-    public void testAudioAttachmentWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        String url = "http://localhost";
-        send.audioAttachment(url, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).audioAttachment(idMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testAudioAttachmentWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testAudioAttachmentWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         String url = "http://localhost";
         send.audioAttachment(url);
-        verify(sendOperations).audioAttachment(phoneMessageRecipient, url, null);
+        verify(sendOperations).audioAttachment(messageRecipient, url, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testAudioAttachmentWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testAudioAttachmentWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String url = "http://localhost";
         send.audioAttachment(url, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).audioAttachment(phoneMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).audioAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testVideoAttachmentWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testAudioAttachmentWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        String url = "http://localhost";
+        send.audioAttachment(url, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).audioAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testVideoAttachment() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String url = "http://localhost";
         send.videoAttachment(url);
-        verify(sendOperations).videoAttachment(idMessageRecipient, url, null);
+        verify(sendOperations).videoAttachment(messageRecipient, url, null);
     }
 
     @Test
-    public void testVideoAttachmentWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        String url = "http://localhost";
-        send.videoAttachment(url, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).videoAttachment(idMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testVideoAttachmentWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testVideoAttachmentWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         String url = "http://localhost";
         send.videoAttachment(url);
-        verify(sendOperations).videoAttachment(phoneMessageRecipient, url, null);
+        verify(sendOperations).videoAttachment(messageRecipient, url, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testVideoAttachmentWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testVideoAttachmentWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String url = "http://localhost";
         send.videoAttachment(url, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).videoAttachment(phoneMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).videoAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testFileAttachmentWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testVideoAttachmentWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        String url = "http://localhost";
+        send.videoAttachment(url, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).videoAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testFileAttachment() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String url = "http://localhost";
         send.fileAttachment(url);
-        verify(sendOperations).fileAttachment(idMessageRecipient, url, null);
+        verify(sendOperations).fileAttachment(messageRecipient, url, null);
     }
 
     @Test
-    public void testFileAttachmentWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        String url = "http://localhost";
-        send.fileAttachment(url, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).fileAttachment(idMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testFileAttachmentWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testFileAttachmentWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         String url = "http://localhost";
         send.fileAttachment(url);
-        verify(sendOperations).fileAttachment(phoneMessageRecipient, url, null);
+        verify(sendOperations).fileAttachment(messageRecipient, url, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testFileAttachmentWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testFileAttachmentWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String url = "http://localhost";
         send.fileAttachment(url, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).fileAttachment(phoneMessageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).fileAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testQuickRepliesWithTextMessageAndIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testFileAttachmentWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        String url = "http://localhost";
+        send.fileAttachment(url, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).fileAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testQuickRepliesWithTextMessage() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(text, quickReplies);
-        verify(sendOperations).quickReplies(idMessageRecipient, text, quickReplies, null);
+        verify(sendOperations).quickReplies(messageRecipient, text, quickReplies, null);
     }
 
     @Test
-    public void testQuickRepliesWithTextMessageAndIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        String text = "Hello!";
-        List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(text, quickReplies, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).quickReplies(idMessageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testQuickRepliesWithTextMessageAndPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testQuickRepliesWithTextMessageAndImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(text, quickReplies);
-        verify(sendOperations).quickReplies(phoneMessageRecipient, text, quickReplies, null);
+        verify(sendOperations).quickReplies(messageRecipient, text, quickReplies, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testQuickRepliesWithTextMessageAndPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testQuickRepliesWithTextMessageAndExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(text, quickReplies, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).quickReplies(phoneMessageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).quickReplies(messageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testQuickRepliesWithMediaAttachmentAndIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
-        String url = "http://localhost";
-        MediaAttachment attachment = new MediaAttachment(type, url);
+    public void testQuickRepliesWithTextMessageAndExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        String text = "Hello!";
+        List<QuickReply> quickReplies = createQuickReplies();
+        send.quickReplies(text, quickReplies, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).quickReplies(messageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testQuickRepliesWithMediaAttachment() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
+        MediaAttachment attachment = createMediaAttachment();
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(attachment, quickReplies);
-        verify(sendOperations).quickReplies(idMessageRecipient, attachment, quickReplies, null);
+        verify(sendOperations).quickReplies(messageRecipient, attachment, quickReplies, null);
     }
 
     @Test
-    public void testQuickRepliesWithMediaAttachmentAndIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
-        String url = "http://localhost";
-        MediaAttachment attachment = new MediaAttachment(type, url);
-        List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).quickReplies(idMessageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testQuickRepliesWithMediaAttachmentAndPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
-        String url = "http://localhost";
-        MediaAttachment attachment = new MediaAttachment(type, url);
+    public void testQuickRepliesWithMediaAttachmentAndImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        MediaAttachment attachment = createMediaAttachment();
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(attachment, quickReplies);
-        verify(sendOperations).quickReplies(phoneMessageRecipient, attachment, quickReplies, null);
+        verify(sendOperations).quickReplies(messageRecipient, attachment, quickReplies, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testQuickRepliesWithMediaAttachmentAndPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
-        MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
-        String url = "http://localhost";
-        MediaAttachment attachment = new MediaAttachment(type, url);
+    public void testQuickRepliesWithMediaAttachmentAndExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
+        MediaAttachment attachment = createMediaAttachment();
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).quickReplies(phoneMessageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).quickReplies(messageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testQuickRepliesWithTemplateAttachmentAndIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testQuickRepliesWithMediaAttachmentAndExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        MediaAttachment attachment = createMediaAttachment();
+        List<QuickReply> quickReplies = createQuickReplies();
+        send.quickReplies(attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).quickReplies(messageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testQuickRepliesWithTemplateAttachment() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
         TemplateAttachment attachment = new TemplateAttachment(payload);
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(attachment, quickReplies);
-        verify(sendOperations).quickReplies(idMessageRecipient, attachment, quickReplies, null);
+        verify(sendOperations).quickReplies(messageRecipient, attachment, quickReplies, null);
     }
 
     @Test
-    public void testQuickRepliesWithTemplateAttachmentAndIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
-        TemplateAttachment attachment = new TemplateAttachment(payload);
-        List<QuickReply> quickReplies = createQuickReplies();
-        send.quickReplies(attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).quickReplies(idMessageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testQuickRepliesWithTemplateAttachmentAndPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testQuickRepliesWithTemplateAttachmentAndImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
         TemplateAttachment attachment = new TemplateAttachment(payload);
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(attachment, quickReplies);
-        verify(sendOperations).quickReplies(phoneMessageRecipient, attachment, quickReplies, null);
+        verify(sendOperations).quickReplies(messageRecipient, attachment, quickReplies, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testQuickRepliesWithTemplateAttachmentAndPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testQuickRepliesWithTemplateAttachmentAndExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
         TemplateAttachment attachment = new TemplateAttachment(payload);
         List<QuickReply> quickReplies = createQuickReplies();
         send.quickReplies(attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).quickReplies(phoneMessageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).quickReplies(messageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testButtonTemplateWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testQuickRepliesWithTemplateAttachmentAndExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
+        TemplateAttachment attachment = new TemplateAttachment(payload);
+        List<QuickReply> quickReplies = createQuickReplies();
+        send.quickReplies(attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).quickReplies(messageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testButtonTemplate() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         ButtonTemplatePayload buttonTemplate = createButtonTemplate();
         send.buttonTemplate(buttonTemplate);
-        verify(sendOperations).buttonTemplate(idMessageRecipient, buttonTemplate, null);
+        verify(sendOperations).buttonTemplate(messageRecipient, buttonTemplate, null);
     }
 
     @Test
-    public void testButtonTemplateWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        ButtonTemplatePayload buttonTemplate = createButtonTemplate();
-        send.buttonTemplate(buttonTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).buttonTemplate(idMessageRecipient, buttonTemplate, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testButtonTemplateWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testButtonTemplateWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         ButtonTemplatePayload buttonTemplate = createButtonTemplate();
         send.buttonTemplate(buttonTemplate);
-        verify(sendOperations).buttonTemplate(phoneMessageRecipient, buttonTemplate, null);
+        verify(sendOperations).buttonTemplate(messageRecipient, buttonTemplate, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testButtonTemplateWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testButtonTemplateWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         ButtonTemplatePayload buttonTemplate = createButtonTemplate();
         send.buttonTemplate(buttonTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).buttonTemplate(phoneMessageRecipient, buttonTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).buttonTemplate(messageRecipient, buttonTemplate, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testGenericTemplateWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testButtonTemplateWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        ButtonTemplatePayload buttonTemplate = createButtonTemplate();
+        send.buttonTemplate(buttonTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).buttonTemplate(messageRecipient, buttonTemplate, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testGenericTemplate() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         GenericTemplatePayload genericTemplate = createGenericTemplate();
         send.genericTemplate(genericTemplate);
-        verify(sendOperations).genericTemplate(idMessageRecipient, genericTemplate, null);
+        verify(sendOperations).genericTemplate(messageRecipient, genericTemplate, null);
     }
 
     @Test
-    public void testGenericTemplateWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        GenericTemplatePayload genericTemplate = createGenericTemplate();
-        send.genericTemplate(genericTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).genericTemplate(idMessageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testGenericTemplateWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testGenericTemplateWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         GenericTemplatePayload genericTemplate = createGenericTemplate();
         send.genericTemplate(genericTemplate);
-        verify(sendOperations).genericTemplate(phoneMessageRecipient, genericTemplate, null);
+        verify(sendOperations).genericTemplate(messageRecipient, genericTemplate, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testGenericTemplateWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testGenericTemplateWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         GenericTemplatePayload genericTemplate = createGenericTemplate();
         send.genericTemplate(genericTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).genericTemplate(phoneMessageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).genericTemplate(messageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testListTemplateWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testGenericTemplateWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        GenericTemplatePayload genericTemplate = createGenericTemplate();
+        send.genericTemplate(genericTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).genericTemplate(messageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testListTemplate() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         ListTemplatePayload listTemplate = createListTemplate();
         send.listTemplate(listTemplate);
-        verify(sendOperations).listTemplate(idMessageRecipient, listTemplate, null);
+        verify(sendOperations).listTemplate(messageRecipient, listTemplate, null);
     }
 
     @Test
-    public void testListTemplateWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        ListTemplatePayload listTemplate = createListTemplate();
-        send.listTemplate(listTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).listTemplate(idMessageRecipient, listTemplate, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testListTemplateWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testListTemplateWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         ListTemplatePayload listTemplate = createListTemplate();
         send.listTemplate(listTemplate);
-        verify(sendOperations).listTemplate(phoneMessageRecipient, listTemplate, null);
+        verify(sendOperations).listTemplate(messageRecipient, listTemplate, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testListTemplateWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testListTemplateWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         ListTemplatePayload listTemplate = createListTemplate();
         send.listTemplate(listTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).listTemplate(phoneMessageRecipient, listTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).listTemplate(messageRecipient, listTemplate, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testReceiptTemplateWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testListTemplateWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        ListTemplatePayload listTemplate = createListTemplate();
+        send.listTemplate(listTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).listTemplate(messageRecipient, listTemplate, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testReceiptTemplate() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
         send.receiptTemplate(receiptTemplate);
-        verify(sendOperations).receiptTemplate(idMessageRecipient, receiptTemplate, null);
+        verify(sendOperations).receiptTemplate(messageRecipient, receiptTemplate, null);
     }
 
     @Test
-    public void testReceiptTemplateWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
-        send.receiptTemplate(receiptTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).receiptTemplate(idMessageRecipient, receiptTemplate, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testReceiptTemplateWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testReceiptTemplateWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
         send.receiptTemplate(receiptTemplate);
-        verify(sendOperations).receiptTemplate(phoneMessageRecipient, receiptTemplate, null);
+        verify(sendOperations).receiptTemplate(messageRecipient, receiptTemplate, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testReceiptTemplateWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testReceiptTemplateWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
         send.receiptTemplate(receiptTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).receiptTemplate(phoneMessageRecipient, receiptTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).receiptTemplate(messageRecipient, receiptTemplate, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testAirlineItineraryTemplateWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testReceiptTemplateWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
+        send.receiptTemplate(receiptTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).receiptTemplate(messageRecipient, receiptTemplate, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testAirlineItineraryTemplate() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
         send.airlineItineraryTemplate(airlineItineraryTemplate);
-        verify(sendOperations).airlineItineraryTemplate(idMessageRecipient, airlineItineraryTemplate, null);
+        verify(sendOperations).airlineItineraryTemplate(messageRecipient, airlineItineraryTemplate, null);
     }
 
     @Test
-    public void testAirlineItineraryTemplateWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
-        send.airlineItineraryTemplate(airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).airlineItineraryTemplate(idMessageRecipient, airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testAirlineItineraryTemplateWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testAirlineItineraryTemplateWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
         send.airlineItineraryTemplate(airlineItineraryTemplate);
-        verify(sendOperations).airlineItineraryTemplate(phoneMessageRecipient, airlineItineraryTemplate, null);
+        verify(sendOperations).airlineItineraryTemplate(messageRecipient, airlineItineraryTemplate, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testAirlineItineraryTemplateWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testAirlineItineraryTemplateWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
         send.airlineItineraryTemplate(airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).airlineItineraryTemplate(phoneMessageRecipient, airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).airlineItineraryTemplate(messageRecipient, airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testAirlineCheckinTemplateWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testAirlineItineraryTemplateWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
+        send.airlineItineraryTemplate(airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).airlineItineraryTemplate(messageRecipient, airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testAirlineCheckinTemplate() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
         send.airlineCheckinTemplate(airlineCheckinTemplate);
-        verify(sendOperations).airlineCheckinTemplate(idMessageRecipient, airlineCheckinTemplate, null);
+        verify(sendOperations).airlineCheckinTemplate(messageRecipient, airlineCheckinTemplate, null);
     }
 
     @Test
-    public void testAirlineCheckinTemplateWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
-        send.airlineCheckinTemplate(airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).airlineCheckinTemplate(idMessageRecipient, airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testAirlineCheckinTemplateWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testAirlineCheckinTemplateWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
         send.airlineCheckinTemplate(airlineCheckinTemplate);
-        verify(sendOperations).airlineCheckinTemplate(phoneMessageRecipient, airlineCheckinTemplate, null);
+        verify(sendOperations).airlineCheckinTemplate(messageRecipient, airlineCheckinTemplate, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testAirlineCheckinTemplateWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testAirlineCheckinTemplateWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
         send.airlineCheckinTemplate(airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).airlineCheckinTemplate(phoneMessageRecipient, airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).airlineCheckinTemplate(messageRecipient, airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testAirlineBoardingPassTemplateWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
-                createAirlineBoardingPassTemplate();
+    public void testAirlineCheckinTemplateWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
+        send.airlineCheckinTemplate(airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).airlineCheckinTemplate(messageRecipient, airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testAirlineBoardingPassTemplate() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
+        AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate = createAirlineBoardingPassTemplate();
         send.airlineBoardingPassTemplate(airlineBoardingPassTemplate);
-        verify(sendOperations).airlineBoardingPassTemplate(idMessageRecipient, airlineBoardingPassTemplate, null);
+        verify(sendOperations).airlineBoardingPassTemplate(messageRecipient, airlineBoardingPassTemplate, null);
     }
 
     @Test
-    public void testAirlineBoardingPassTemplateWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testAirlineBoardingPassTemplateWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate = createAirlineBoardingPassTemplate();
+        send.airlineBoardingPassTemplate(airlineBoardingPassTemplate);
+        verify(sendOperations).airlineBoardingPassTemplate(messageRecipient, airlineBoardingPassTemplate, NotificationTypeEnum.SILENT_PUSH);
+    }
+
+    @Test
+    public void testAirlineBoardingPassTemplateWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
                 createAirlineBoardingPassTemplate();
         send.airlineBoardingPassTemplate(airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).airlineBoardingPassTemplate(idMessageRecipient, airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).airlineBoardingPassTemplate(messageRecipient, airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testAirlineBoardingPassTemplateWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
-        AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
-                createAirlineBoardingPassTemplate();
-        send.airlineBoardingPassTemplate(airlineBoardingPassTemplate);
-        verify(sendOperations).airlineBoardingPassTemplate(phoneMessageRecipient, airlineBoardingPassTemplate, null);
-    }
-
-    @Test
-    public void testAirlineBoardingPassTemplateWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
-        AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
-                createAirlineBoardingPassTemplate();
+    public void testAirlineBoardingPassTemplateWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate = createAirlineBoardingPassTemplate();
         send.airlineBoardingPassTemplate(airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations)
-                .airlineBoardingPassTemplate(phoneMessageRecipient, airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).airlineBoardingPassTemplate(messageRecipient, airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
     }
 
     @Test
-    public void testAirlineUpdateTemplateWithIdMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
+    public void testAirlineUpdateTemplate() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
         send.airlineUpdateTemplate(airlineUpdateTemplate);
-        verify(sendOperations).airlineUpdateTemplate(idMessageRecipient, airlineUpdateTemplate, null);
+        verify(sendOperations).airlineUpdateTemplate(messageRecipient, airlineUpdateTemplate, null);
     }
 
     @Test
-    public void testAirlineUpdateTemplateWithIdMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, idMessageRecipient);
-        AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
-        send.airlineUpdateTemplate(airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).airlineUpdateTemplate(idMessageRecipient, airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
-    }
-
-    @Test
-    public void testAirlineUpdateTemplateWithPhoneMessageRecipient() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testAirlineUpdateTemplateWithImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
         AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
         send.airlineUpdateTemplate(airlineUpdateTemplate);
-        verify(sendOperations).airlineUpdateTemplate(phoneMessageRecipient, airlineUpdateTemplate, null);
+        verify(sendOperations).airlineUpdateTemplate(messageRecipient, airlineUpdateTemplate, NotificationTypeEnum.SILENT_PUSH);
     }
 
     @Test
-    public void testAirlineUpdateTemplateWithPhoneMessageRecipientAndNotificationType() {
-        send = new DefaultMessageRecipientSendOperations(sendOperations, phoneMessageRecipient);
+    public void testAirlineUpdateTemplateWithExplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient);
         AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
         send.airlineUpdateTemplate(airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
-        verify(sendOperations).airlineUpdateTemplate(phoneMessageRecipient, airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).airlineUpdateTemplate(messageRecipient, airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
+    }
+
+    @Test
+    public void testAirlineUpdateTemplateWithExplicitNotificationTypeOverrulesImplicitNotificationType() {
+        send = new DefaultMessageRecipientSendOperations(sendOperations, messageRecipient, NotificationTypeEnum.SILENT_PUSH);
+        AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
+        send.airlineUpdateTemplate(airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
+        verify(sendOperations).airlineUpdateTemplate(messageRecipient, airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
     }
 }
