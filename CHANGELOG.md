@@ -2,7 +2,7 @@
 
 ### 1.1.0 (2016-11-xx)
 
-* Aligned with Messenger Platform 1.3
+* Aligned with Messenger Platform 1.3 release
   * Added support for the new list template
   * Added support for the new referral callback
 * Added support for changing thread settings
