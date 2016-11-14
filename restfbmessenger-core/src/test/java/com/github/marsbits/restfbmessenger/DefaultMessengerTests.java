@@ -91,8 +91,7 @@ public class DefaultMessengerTests {
     }
 
     @Test
-    public void testHandleCallbackHandlerIgnoresInvalidSignatureWhenAppSecretIsNull()
-            throws Exception {
+    public void testHandleCallbackHandlerIgnoresInvalidSignatureWhenAppSecretIsNull() throws Exception {
         messenger = new DefaultMessenger(verifyToken, null, callbackHandler, facebookClient);
         when(facebookClient.getJsonMapper()).thenReturn(jsonMapper);
         String signature = "invalid signtaure";
@@ -104,8 +103,7 @@ public class DefaultMessengerTests {
     }
 
     @Test
-    public void testHandleCallbackHandlerDoesNotInvokeCallbackHandlerWhenCallbackHandlerIsNull()
-            throws Exception {
+    public void testHandleCallbackHandlerDoesNotInvokeCallbackHandlerWhenCallbackHandlerIsNull() throws Exception {
         messenger = new DefaultMessenger(verifyToken, appSecret, null, facebookClient);
         String signature = generateSignature(payload, appSecret);
         messenger.handleCallback(payload, signature);
@@ -114,8 +112,7 @@ public class DefaultMessengerTests {
     }
 
     @Test
-    public void testHandleCallbackHandlerDoesNotInvokeCallbackHandlerWhenWebhookObjectIsNotPage()
-            throws Exception {
+    public void testHandleCallbackHandlerDoesNotInvokeCallbackHandlerWhenWebhookObjectIsNotPage() throws Exception {
         String signature = generateSignature(payload, appSecret);
         WebhookObject webhookObject = new WebhookObject();
         webhookObject.setObject("not page");
@@ -125,8 +122,7 @@ public class DefaultMessengerTests {
     }
 
     @Test
-    public void testHandleCallbackHandlerDoesNotMapPayloedWhenHandlerWhenSignatureIsNotValid()
-            throws Exception {
+    public void testHandleCallbackHandlerDoesNotMapPayloedWhenHandlerWhenSignatureIsNotValid() throws Exception {
         String signature = "invalid signature";
         messenger.handleCallback(payload, signature);
         verify(jsonMapper, never()).toJavaObject(any(String.class), any(Class.class));
@@ -145,8 +141,7 @@ public class DefaultMessengerTests {
         user.setLocale("locale");
         user.setTimezone(1.00);
         user.setGender("gender");
-        when(facebookClient.fetchObject(userId, User.class,
-                Parameter.with(USER_FIELDS_PARAM_NAME, USER_FIELDS_DEFAULT_VALUE)))
+        when(facebookClient.fetchObject(userId, User.class, Parameter.with(USER_FIELDS_PARAM_NAME, USER_FIELDS_DEFAULT_VALUE)))
                 .thenReturn(user);
         assertThat(messenger.getUserProfile(userId), is(user));
     }
@@ -157,8 +152,7 @@ public class DefaultMessengerTests {
         User user = new User();
         user.setFirstName("first name");
         user.setLastName("last name");
-        when(facebookClient.fetchObject(userId, User.class,
-                Parameter.with(USER_FIELDS_PARAM_NAME, "first_name,last_name")))
+        when(facebookClient.fetchObject(userId, User.class, Parameter.with(USER_FIELDS_PARAM_NAME, "first_name,last_name")))
                 .thenReturn(user);
         assertThat(messenger.getUserProfile(userId, "first_name", "last_name"), is(user));
     }
@@ -169,8 +163,7 @@ public class DefaultMessengerTests {
         User user = new User();
         user.setFirstName("first name");
         user.setLastName("last name");
-        when(facebookClient.fetchObject(userId, User.class,
-                Parameter.with(USER_FIELDS_PARAM_NAME, "first_name,last_name")))
+        when(facebookClient.fetchObject(userId, User.class, Parameter.with(USER_FIELDS_PARAM_NAME, "first_name,last_name")))
                 .thenReturn(user);
         assertThat(messenger.getUserProfile(userId, "first_name,last_name"), is(user));
     }
