@@ -250,107 +250,99 @@ public class DefaultMessenger implements Messenger {
     }
 
     @Override
-    public SendResponse setGreeting(Greeting greeting) throws FacebookException {
+    public void setGreeting(Greeting greeting) throws FacebookException {
         requireNonNull(greeting, "'greeting' must not be null");
-        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+        facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.greeting),
                 Parameter.with(GREETING_PARAM_NAME, greeting));
     }
 
     @Override
-    public SendResponse removeGreeting() throws FacebookException {
-        boolean success = facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+    public void removeGreeting() throws FacebookException {
+        facebookClient.deleteObject(THREAD_SETTINGS_PATH,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.greeting));
-        // TODO
-        return new SendResponse();
     }
 
     @Override
-    public SendResponse setGetStartedButton(String payload) throws FacebookException {
+    public void setGetStartedButton(String payload) throws FacebookException {
         requireNonNull(payload, "'payload' must not be null");
         Message message = new Message(payload);
         CallToAction callToAction = new CallToAction(message);
-        return setGetStartedButton(callToAction);
+        setGetStartedButton(callToAction);
     }
 
     @Override
-    public SendResponse setGetStartedButton(CallToAction callToAction) throws FacebookException {
+    public void setGetStartedButton(CallToAction callToAction) throws FacebookException {
         requireNonNull(callToAction, "'callToAction' must not be null");
         List<CallToAction> callToActions = Arrays.asList(callToAction);
-        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+        facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
                 Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.new_thread),
                 Parameter.with(CALL_TO_ACTIONS_PARAM_NAME, callToActions));
     }
 
     @Override
-    public SendResponse removeGetStartedButton() throws FacebookException {
-        boolean success = facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+    public void removeGetStartedButton() throws FacebookException {
+        facebookClient.deleteObject(THREAD_SETTINGS_PATH,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
                 Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.new_thread));
-        // TODO
-        return new SendResponse();
     }
 
     @Override
-    public SendResponse setPersistentMenu(List<CallToAction> callToActions) throws FacebookException {
+    public void setPersistentMenu(List<CallToAction> callToActions) throws FacebookException {
         requireNonNull(callToActions, "'callToActions' must not be null");
-        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+        facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
                 Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.existing_thread),
                 Parameter.with(CALL_TO_ACTIONS_PARAM_NAME, callToActions));
     }
 
     @Override
-    public SendResponse removePersistentMenu() throws FacebookException {
-        boolean success = facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+    public void removePersistentMenu() throws FacebookException {
+        facebookClient.deleteObject(THREAD_SETTINGS_PATH,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
                 Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.existing_thread));
-        // TODO
-        return new SendResponse();
     }
 
     @Override
-    public SendResponse setAccountLinkingUrl(String url) throws FacebookException {
+    public void setAccountLinkingUrl(String url) throws FacebookException {
         requireNonNull(url, "'url' must not be null");
-        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+        facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.account_linking),
                 Parameter.with(ACCOUNT_LINKING_URL_PARAM_NAME, url));
     }
 
     @Override
-    public SendResponse removeAccountLinkingUrl() throws FacebookException {
-        boolean success = facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+    public void removeAccountLinkingUrl() throws FacebookException {
+        facebookClient.deleteObject(THREAD_SETTINGS_PATH,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.account_linking));
-        // TODO
-        return new SendResponse();
     }
 
     @Override
-    public SendResponse addDomainWhitelisting(String url) throws FacebookException {
+    public void addDomainWhitelisting(String url) throws FacebookException {
         requireNonNull(url, "'url' must not be null");
-        return addDomainWhitelisting(Arrays.asList(url));
+        addDomainWhitelisting(Arrays.asList(url));
     }
 
     @Override
-    public SendResponse addDomainWhitelisting(List<String> urls) throws FacebookException {
+    public void addDomainWhitelisting(List<String> urls) throws FacebookException {
         requireNonNull(urls, "'urls' must not be null");
-        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+        facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
                 Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
                 Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.add));
     }
 
     @Override
-    public SendResponse removeDomainWhitelisting(String url) throws FacebookException {
+    public void removeDomainWhitelisting(String url) throws FacebookException {
         requireNonNull(url, "'url' must not be null");
-        return removeDomainWhitelisting(Arrays.asList(url));
+        removeDomainWhitelisting(Arrays.asList(url));
     }
 
     @Override
-    public SendResponse removeDomainWhitelisting(List<String> urls) throws FacebookException {
+    public void removeDomainWhitelisting(List<String> urls) throws FacebookException {
         requireNonNull(urls, "'urls' must not be null");
-        return facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+        facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
                 Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
                 Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.remove));

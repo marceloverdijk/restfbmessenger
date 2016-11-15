@@ -194,6 +194,8 @@ public class DefaultMessengerTests {
         assertThat(messenger.verifySignature(payload, signature), is(false));
     }
 
+    // TODO thread settings tests
+
     private String generateSignature(String payload, String appSecret) throws Exception {
         SecretKeySpec signingKey = new SecretKeySpec(appSecret.getBytes(), HMAC_SHA1_ALGORITHM);
         Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);

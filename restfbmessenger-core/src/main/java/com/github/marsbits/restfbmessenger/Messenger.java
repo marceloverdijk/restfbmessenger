@@ -134,7 +134,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse setGreeting(Greeting greeting) throws FacebookException;
+    void setGreeting(Greeting greeting) throws FacebookException;
 
     /**
      * Removes the greeting text for new conversations.
@@ -142,7 +142,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse removeGreeting() throws FacebookException;
+    void removeGreeting() throws FacebookException;
 
     /**
      * Sets the get started button for the welcome screen.
@@ -151,7 +151,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse setGetStartedButton(String payload) throws FacebookException;
+    void setGetStartedButton(String payload) throws FacebookException;
 
     /**
      * Sets the get started button for the welcome screen.
@@ -160,7 +160,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse setGetStartedButton(CallToAction callToAction) throws FacebookException;
+    void setGetStartedButton(CallToAction callToAction) throws FacebookException;
 
     /**
      * Removes the get started button for the welcome screen.
@@ -168,7 +168,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse removeGetStartedButton() throws FacebookException;
+    void removeGetStartedButton() throws FacebookException;
 
     /**
      * Sets the persistent menu.
@@ -177,7 +177,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse setPersistentMenu(List<CallToAction> callToActions) throws FacebookException;
+    void setPersistentMenu(List<CallToAction> callToActions) throws FacebookException;
 
     /**
      * Removes the persistent menu.
@@ -185,7 +185,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse removePersistentMenu() throws FacebookException;
+    void removePersistentMenu() throws FacebookException;
 
     /**
      * Sets the account linking url.
@@ -194,7 +194,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse setAccountLinkingUrl(String url) throws FacebookException;
+    void setAccountLinkingUrl(String url) throws FacebookException;
 
     /**
      * Removes the account linking url.
@@ -202,7 +202,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse removeAccountLinkingUrl() throws FacebookException;
+    void removeAccountLinkingUrl() throws FacebookException;
 
     /**
      * Adds the provided url to the domain whitelist.
@@ -211,7 +211,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse addDomainWhitelisting(String url) throws FacebookException;
+    void addDomainWhitelisting(String url) throws FacebookException;
 
     /**
      * Adds the provided urls to the domain whitelist.
@@ -220,7 +220,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse addDomainWhitelisting(List<String> urls) throws FacebookException;
+    void addDomainWhitelisting(List<String> urls) throws FacebookException;
 
     /**
      * Removes the provided url from the domain whitelist.
@@ -229,7 +229,7 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse removeDomainWhitelisting(String url) throws FacebookException;
+    void removeDomainWhitelisting(String url) throws FacebookException;
 
     /**
      * Removes the provided urls from the domain whitelist.
@@ -238,5 +238,5 @@ public interface Messenger {
      * @return the {@code SendResponse}
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    SendResponse removeDomainWhitelisting(List<String> urls) throws FacebookException;
+    void removeDomainWhitelisting(List<String> urls) throws FacebookException;
 }
