@@ -20,19 +20,35 @@ import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
 import com.restfb.FacebookClient;
 import com.restfb.JsonMapper;
 import com.restfb.Parameter;
+import com.restfb.exception.FacebookException;
+import com.restfb.exception.FacebookOAuthException;
 import com.restfb.types.User;
+import com.restfb.types.send.CallToAction;
+import com.restfb.types.send.Greeting;
+import com.restfb.types.send.Message;
+import com.restfb.types.send.SendResponse;
+import com.restfb.types.send.SettingTypeEnum;
+import com.restfb.types.send.ThreadStateEnum;
 import com.restfb.types.webhook.WebhookObject;
 import com.restfb.util.EncodingUtils;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import static com.github.marsbits.restfbmessenger.DefaultMessenger.CALL_TO_ACTIONS_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.DefaultMessenger.GREETING_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.HMAC_SHA1_ALGORITHM;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.OBJECT_PAGE_VALUE;
+import static com.github.marsbits.restfbmessenger.DefaultMessenger.SETTING_TYPE_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.SIGNATURE_PREFIX;
+import static com.github.marsbits.restfbmessenger.DefaultMessenger.THREAD_SETTINGS_PATH;
+import static com.github.marsbits.restfbmessenger.DefaultMessenger.THREAD_STATE_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.USER_FIELDS_DEFAULT_VALUE;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.USER_FIELDS_PARAM_NAME;
 import static org.hamcrest.CoreMatchers.is;
@@ -59,12 +75,14 @@ public class DefaultMessengerTests {
 
     private CallbackHandler callbackHandler;
     private FacebookClient facebookClient;
+    private FacebookOAuthException facebookOAuthException;
     private JsonMapper jsonMapper;
 
     @Before
     public void setUp() {
         this.callbackHandler = mock(CallbackHandler.class);
         this.facebookClient = mock(FacebookClient.class);
+        this.facebookOAuthException = mock(FacebookOAuthException.class);
         this.jsonMapper = mock(JsonMapper.class);
         this.messenger = new DefaultMessenger(verifyToken, appSecret, callbackHandler, facebookClient);
         when(facebookClient.getJsonMapper()).thenReturn(jsonMapper);
@@ -192,6 +210,107 @@ public class DefaultMessengerTests {
         String payload = "the payload";
         String signature = SIGNATURE_PREFIX + "invalid signature";
         assertThat(messenger.verifySignature(payload, signature), is(false));
+    }
+
+    @Test
+    public void testSetGreeting() {
+        Greeting greeting = new Greeting("greeting");
+        messenger.setGreeting(greeting);
+        verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.greeting),
+                Parameter.with(GREETING_PARAM_NAME, greeting));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testSetGreetingThrowsFacebookExceptionWhenRequestFails() {
+        Greeting greeting = new Greeting("greeting");
+        when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.greeting),
+                Parameter.with(GREETING_PARAM_NAME, greeting)))
+                .thenThrow(facebookOAuthException);
+        messenger.setGreeting(greeting);
+    }
+
+    @Test
+    public void testRemoveGreeting() {
+        messenger.removeGreeting();
+        verify(facebookClient).deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.greeting));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testRemoveGreetingThrowsFacebookExceptionWhenRequestFails() {
+        when(facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.greeting)))
+                .thenThrow(facebookOAuthException);
+        messenger.removeGreeting();
+    }
+
+    @Test
+    public void testSetGetStartedButton() {
+        Message message = new Message("get started");
+        CallToAction callToAction = new CallToAction(message);
+        List<CallToAction> callToActions = Arrays.asList(callToAction);
+        messenger.setGetStartedButton(callToAction);
+        verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.new_thread),
+                Parameter.with(CALL_TO_ACTIONS_PARAM_NAME, callToActions));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testSetGetStartedButtonThrowsFacebookExceptionWhenRequestFails() {
+        Message message = new Message("get started");
+        CallToAction callToAction = new CallToAction(message);
+        List<CallToAction> callToActions = Arrays.asList(callToAction);
+        when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.new_thread),
+                Parameter.with(CALL_TO_ACTIONS_PARAM_NAME, callToActions)))
+                .thenThrow(facebookOAuthException);
+        messenger.setGetStartedButton(callToAction);
+    }
+
+    @Test
+    public void testSetGetStartedButtonWithPayload() {
+        Message message = new Message("get started");
+        CallToAction callToAction = new CallToAction(message);
+        List<CallToAction> callToActions = Arrays.asList(callToAction);
+        messenger.setGetStartedButton("get started");
+        verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.new_thread),
+                Parameter.with(CALL_TO_ACTIONS_PARAM_NAME, callToActions));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testSetGetStartedButtonWithPayloadThrowsFacebookExceptionWhenRequestFails() {
+        Message message = new Message("get started");
+        CallToAction callToAction = new CallToAction(message);
+        List<CallToAction> callToActions = Arrays.asList(callToAction);
+        when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.new_thread),
+                Parameter.with(CALL_TO_ACTIONS_PARAM_NAME, callToActions)))
+                .thenThrow(facebookOAuthException);
+        messenger.setGetStartedButton("get started");
+    }
+
+    @Test
+    public void testRemoveGetStartedButton() {
+        messenger.removeGetStartedButton();
+        verify(facebookClient).deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.new_thread));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testRemoveGetStartedButtonThrowsFacebookExceptionWhenRequestFails() {
+        when(facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.new_thread)))
+                .thenThrow(facebookOAuthException);
+        messenger.removeGetStartedButton();
     }
 
     // TODO thread settings tests
