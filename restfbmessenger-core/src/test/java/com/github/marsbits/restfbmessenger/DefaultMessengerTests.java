@@ -24,6 +24,7 @@ import com.restfb.exception.FacebookException;
 import com.restfb.exception.FacebookOAuthException;
 import com.restfb.types.User;
 import com.restfb.types.send.CallToAction;
+import com.restfb.types.send.DomainActionTypeEnum;
 import com.restfb.types.send.Greeting;
 import com.restfb.types.send.Message;
 import com.restfb.types.send.SendResponse;
@@ -41,7 +42,9 @@ import java.util.List;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import static com.github.marsbits.restfbmessenger.DefaultMessenger.ACCOUNT_LINKING_URL_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.CALL_TO_ACTIONS_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.DefaultMessenger.DOMAIN_ACTION_TYPE_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.GREETING_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.HMAC_SHA1_ALGORITHM;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.OBJECT_PAGE_VALUE;
@@ -51,6 +54,7 @@ import static com.github.marsbits.restfbmessenger.DefaultMessenger.THREAD_SETTIN
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.THREAD_STATE_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.USER_FIELDS_DEFAULT_VALUE;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.USER_FIELDS_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.DefaultMessenger.WHITELISTED_DOMAINS_PARAM_NAME;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -313,7 +317,171 @@ public class DefaultMessengerTests {
         messenger.removeGetStartedButton();
     }
 
-    // TODO thread settings tests
+    @Test
+    public void testSetPersistentMenu() {
+        List<CallToAction> callToActions = Arrays.asList(
+                new CallToAction(new Message("call to action 1")),
+                new CallToAction(new Message("call to action 2"))
+        );
+        messenger.setPersistentMenu(callToActions);
+        verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.existing_thread),
+                Parameter.with(CALL_TO_ACTIONS_PARAM_NAME, callToActions));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testSetPersistentMenuThrowsFacebookExceptionWhenRequestFails() {
+        List<CallToAction> callToActions = Arrays.asList(
+                new CallToAction(new Message("call to action 1")),
+                new CallToAction(new Message("call to action 2"))
+        );
+        when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.existing_thread),
+                Parameter.with(CALL_TO_ACTIONS_PARAM_NAME, callToActions)))
+                .thenThrow(facebookOAuthException);
+        messenger.setPersistentMenu(callToActions);
+    }
+
+    @Test
+    public void testRemovePersistentMenu() {
+        messenger.removePersistentMenu();
+        verify(facebookClient).deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.existing_thread));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testRemovePersistentMenuThrowsFacebookExceptionWhenRequestFails() {
+        when(facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
+                Parameter.with(THREAD_STATE_PARAM_NAME, ThreadStateEnum.existing_thread)))
+                .thenThrow(facebookOAuthException);
+        messenger.removePersistentMenu();
+    }
+
+    @Test
+    public void testSetAccountLinkingUrl() {
+        String url = "account linking url";
+        messenger.setAccountLinkingUrl(url);
+        verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.account_linking),
+                Parameter.with(ACCOUNT_LINKING_URL_PARAM_NAME, url));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testSetAccountLinkingUrlThrowsFacebookExceptionWhenRequestFails() {
+        String url = "account linking url";
+        when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.account_linking),
+                Parameter.with(ACCOUNT_LINKING_URL_PARAM_NAME, url)))
+                .thenThrow(facebookOAuthException);
+        messenger.setAccountLinkingUrl(url);
+    }
+
+    @Test
+    public void testRemoveAccountLinkingUrl() {
+        messenger.removeAccountLinkingUrl();
+        verify(facebookClient).deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.account_linking));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testRemoveAccountLinkingUrlThrowsFacebookExceptionWhenRequestFails() {
+        when(facebookClient.deleteObject(THREAD_SETTINGS_PATH,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.account_linking)))
+                .thenThrow(facebookOAuthException);
+        messenger.removeAccountLinkingUrl();
+    }
+
+    @Test
+    public void testAddDomainWhitelisting() {
+        String url = "domain url";
+        List<String> urls = Arrays.asList(url);
+        messenger.addDomainWhitelisting(url);
+        verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
+                Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
+                Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.add));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testAddDomainWhitelistingThrowsFacebookExceptionWhenRequestFails() {
+        String url = "domain url";
+        List<String> urls = Arrays.asList(url);
+        when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
+                Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
+                Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.add)))
+                .thenThrow(facebookOAuthException);
+        messenger.addDomainWhitelisting(url);
+    }
+
+    @Test
+    public void testAddMultipleDomainWhitelisting() {
+        List<String> urls = Arrays.asList("domain url 1", "domain url 2");
+        messenger.addDomainWhitelisting(urls);
+        verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
+                Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
+                Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.add));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testAddMultipleDomainWhitelistingThrowsFacebookExceptionWhenRequestFails() {
+        List<String> urls = Arrays.asList("domain url 1", "domain url 2");
+        when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
+                Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
+                Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.add)))
+                .thenThrow(facebookOAuthException);
+        messenger.addDomainWhitelisting(urls);
+    }
+
+    @Test
+    public void testRemoveDomainWhitelisting() {
+        String url = "domain url";
+        List<String> urls = Arrays.asList(url);
+        messenger.removeDomainWhitelisting(url);
+        verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
+                Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
+                Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.remove));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testRemoveDomainWhitelistingThrowsFacebookExceptionWhenRequestFails() {
+        String url = "domain url";
+        List<String> urls = Arrays.asList(url);
+        when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
+                Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
+                Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.remove)))
+                .thenThrow(facebookOAuthException);
+        messenger.removeDomainWhitelisting(url);
+    }
+
+    @Test
+    public void testRemoveMultipleDomainWhitelisting() {
+        List<String> urls = Arrays.asList("domain url 1", "domain url 2");
+        messenger.removeDomainWhitelisting(urls);
+        verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
+                Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
+                Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.remove));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testRemoveMultipleDomainWhitelistingThrowsFacebookExceptionWhenRequestFails() {
+        List<String> urls = Arrays.asList("domain url 1", "domain url 2");
+        when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
+                Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
+                Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.remove)))
+                .thenThrow(facebookOAuthException);
+        messenger.removeDomainWhitelisting(urls);
+    }
 
     private String generateSignature(String payload, String appSecret) throws Exception {
         SecretKeySpec signingKey = new SecretKeySpec(appSecret.getBytes(), HMAC_SHA1_ALGORITHM);
