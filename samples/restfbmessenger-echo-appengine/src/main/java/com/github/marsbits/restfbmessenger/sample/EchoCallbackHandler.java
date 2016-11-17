@@ -29,6 +29,7 @@ import com.restfb.types.webhook.messaging.CoordinatesItem;
 import com.restfb.types.webhook.messaging.MessageItem;
 import com.restfb.types.webhook.messaging.MessagingAttachment;
 import com.restfb.types.webhook.messaging.MessagingItem;
+import com.restfb.types.webhook.messaging.PostbackItem;
 
 /**
  * The Echo {@code CallbackHandler}.
@@ -77,6 +78,27 @@ public class EchoCallbackHandler extends AbstractCallbackHandler {
                 }
             }
         }
+
+        messenger.send().typingOff(recipient);
+    }
+
+    @Override
+    public void onPostback(Messenger messenger, MessagingItem messaging) {
+
+        String senderId = messaging.getSender().getId();
+        PostbackItem postback = messaging.getPostback();
+
+        logger.fine(format("Postback received from %s: %s", senderId, postback.getPayload()));
+
+        IdMessageRecipient recipient = new IdMessageRecipient(senderId);
+
+        messenger.send().markSeen(recipient);
+        messenger.send().typingOn(recipient);
+
+        sleep(TimeUnit.SECONDS, 1);
+
+        // Echo the received postback payload
+        messenger.send().textMessage(recipient, format("Echo: %s", postback.getPayload()));
 
         messenger.send().typingOff(recipient);
     }
