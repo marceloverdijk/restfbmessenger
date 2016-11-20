@@ -1,6 +1,6 @@
 ##  RestFB Messenger Changelog
 
-### 1.1.0 (2016-11-xx)
+### 1.1.0 (2016-11-20)
 
 * Aligned with Messenger Platform 1.3 release
   * Added support for the new list template
