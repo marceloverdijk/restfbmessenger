@@ -16,16 +16,11 @@
 
 package com.github.marsbits.restfbmessenger;
 
-import com.github.marsbits.restfbmessenger.send.MessageRecipientSendOperations;
 import com.github.marsbits.restfbmessenger.send.SendOperations;
 import com.restfb.exception.FacebookException;
 import com.restfb.types.User;
 import com.restfb.types.send.CallToAction;
-import com.restfb.types.send.DomainActionTypeEnum;
 import com.restfb.types.send.Greeting;
-import com.restfb.types.send.MessageRecipient;
-import com.restfb.types.send.NotificationTypeEnum;
-import com.restfb.types.send.SendResponse;
 
 import java.util.List;
 
@@ -113,19 +108,13 @@ public interface Messenger {
     SendOperations send();
 
     /**
-     * Send API for sending messages to users.
+     * Sets the greeting text for new conversations.
      *
-     * @param recipient the recipient, not null
+     * @param greeting the greeting, not null
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
-    MessageRecipientSendOperations send(MessageRecipient recipient);
-
-    /**
-     * Send API for sending messages to users.
-     *
-     * @param recipient        the recipient, not null
-     * @param notificationType the push notification type
-     */
-    MessageRecipientSendOperations send(MessageRecipient recipient, NotificationTypeEnum notificationType);
+    void setGreeting(String greeting) throws FacebookException;
 
     /**
      * Sets the greeting text for new conversations.

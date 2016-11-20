@@ -25,6 +25,7 @@ import com.github.marsbits.restfbmessenger.Messenger;
 import com.github.marsbits.restfbmessenger.webhook.AbstractCallbackHandler;
 import com.restfb.types.send.IdMessageRecipient;
 import com.restfb.types.send.MediaAttachment;
+import com.restfb.types.send.MessageRecipient;
 import com.restfb.types.webhook.messaging.CoordinatesItem;
 import com.restfb.types.webhook.messaging.MessageItem;
 import com.restfb.types.webhook.messaging.MessagingAttachment;
@@ -48,7 +49,7 @@ public class EchoCallbackHandler extends AbstractCallbackHandler {
 
         logger.fine(format("Message received from %s: %s", senderId, message.getText()));
 
-        IdMessageRecipient recipient = new IdMessageRecipient(senderId);
+        MessageRecipient recipient = new IdMessageRecipient(senderId);
 
         messenger.send().markSeen(recipient);
         messenger.send().typingOn(recipient);
@@ -72,8 +73,7 @@ public class EchoCallbackHandler extends AbstractCallbackHandler {
                     } else {
                         // Echo the attachment
                         String url = attachment.getPayload().getUrl();
-                        messenger.send().attachment(recipient,
-                                MediaAttachment.Type.valueOf(type.toUpperCase()), url);
+                        messenger.send().attachment(recipient, MediaAttachment.Type.valueOf(type.toUpperCase()), url);
                     }
                 }
             }
@@ -90,7 +90,7 @@ public class EchoCallbackHandler extends AbstractCallbackHandler {
 
         logger.fine(format("Postback received from %s: %s", senderId, postback.getPayload()));
 
-        IdMessageRecipient recipient = new IdMessageRecipient(senderId);
+        MessageRecipient recipient = new IdMessageRecipient(senderId);
 
         messenger.send().markSeen(recipient);
         messenger.send().typingOn(recipient);

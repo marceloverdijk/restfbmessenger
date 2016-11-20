@@ -20,7 +20,6 @@ interface or extending the convenient `com.github.marsbits.restfbmessenger.webho
 like below:
 
 ```java
-@Component
 public class MyCallbackHandler extends AbstractCallbackHandler {
 
     @Override
@@ -54,7 +53,7 @@ _Maven_:
 <dependency>
   <groupId>com.github.marsbits.restfbmessenger</groupId>
   <artifactId>restfbmessenger-core</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -62,7 +61,7 @@ _Gradle_:
 
 ```groovy
 dependencies {
-    compile "com.github.marsbits.restfbmessenger:restfbmessenger-core:1.0.1"
+    compile "com.github.marsbits.restfbmessenger:restfbmessenger-core:1.1.0"
 }
 ```
 
@@ -201,7 +200,7 @@ _Maven_:
 <dependency>
   <groupId>com.github.marsbits.restfbmessenger</groupId>
   <artifactId>restfbmessenger-spring-boot-starter</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -209,7 +208,7 @@ _Gradle_:
 
 ```groovy
 dependencies {
-    compile "com.github.marsbits.restfbmessenger:restfbmessenger-spring-boot-starter:1.0.1"
+    compile "com.github.marsbits.restfbmessenger:restfbmessenger-spring-boot-starter:1.1.0"
 }
 ```
 
@@ -244,7 +243,7 @@ restfbmessenger:
   verify-token: # The Facebook verify token (required the verify the webhook)
   access-token: # The Facebook access token (required to send messages)
   app-secret: # The Facebook app secret (if not provided the payload signature will not be validated; useful in e.g. dev environment)
-  api-version: v2.7 # The Facebook api version
+  api-version: v2.8 # The Facebook api version
   webhook:
     enabled: true # Enable the webhook servlet
     path: /webhook # The path of the webhook servlet

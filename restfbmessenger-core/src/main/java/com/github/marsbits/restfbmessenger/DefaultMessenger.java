@@ -16,9 +16,7 @@
 
 package com.github.marsbits.restfbmessenger;
 
-import com.github.marsbits.restfbmessenger.send.DefaultMessageRecipientSendOperations;
 import com.github.marsbits.restfbmessenger.send.DefaultSendOperations;
-import com.github.marsbits.restfbmessenger.send.MessageRecipientSendOperations;
 import com.github.marsbits.restfbmessenger.send.SendOperations;
 import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
 import com.restfb.DefaultFacebookClient;
@@ -31,8 +29,6 @@ import com.restfb.types.send.CallToAction;
 import com.restfb.types.send.DomainActionTypeEnum;
 import com.restfb.types.send.Greeting;
 import com.restfb.types.send.Message;
-import com.restfb.types.send.MessageRecipient;
-import com.restfb.types.send.NotificationTypeEnum;
 import com.restfb.types.send.SendResponse;
 import com.restfb.types.send.SettingTypeEnum;
 import com.restfb.types.send.ThreadStateEnum;
@@ -239,14 +235,9 @@ public class DefaultMessenger implements Messenger {
     }
 
     @Override
-    public MessageRecipientSendOperations send(MessageRecipient recipient) {
-        return send(recipient, null);
-    }
-
-    @Override
-    public MessageRecipientSendOperations send(MessageRecipient recipient, NotificationTypeEnum notificationType) {
-        requireNonNull(recipient, "'recipient' must not be null");
-        return new DefaultMessageRecipientSendOperations(sendOperations, recipient, notificationType);
+    public void setGreeting(String greeting) throws FacebookException {
+        requireNonNull(greeting, "'greeting' must not be null");
+        setGreeting(new Greeting(greeting));
     }
 
     @Override

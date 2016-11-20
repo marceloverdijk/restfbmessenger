@@ -217,6 +217,25 @@ public class DefaultMessengerTests {
     }
 
     @Test
+    public void testSetGreetingAsText() {
+        String greeting = "greeting";
+        messenger.setGreeting(greeting);
+        verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.greeting),
+                Parameter.with(GREETING_PARAM_NAME, new Greeting(greeting)));
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testSetGreetingAsTextThrowsFacebookExceptionWhenRequestFails() {
+        String greeting = "greeting";
+        when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
+                Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.greeting),
+                Parameter.with(GREETING_PARAM_NAME, new Greeting(greeting))))
+                .thenThrow(facebookOAuthException);
+        messenger.setGreeting(greeting);
+    }
+
+    @Test
     public void testSetGreeting() {
         Greeting greeting = new Greeting("greeting");
         messenger.setGreeting(greeting);
