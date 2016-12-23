@@ -257,6 +257,7 @@ using the RestFB Messenger Spring Boot Starter.
 Here are some projects that use RestFB Messenger to power its Facebok Messenger chatbot.
 
 * [Chuck Norris IO](https://m.me/chucknorris.io) (source code available [here](https://github.com/chucknorris-io/app-facebook-messenger))
+* [Tronald Dump IO](https://m.me/tronalddumpio) (source code available [here](https://github.com/tronalddump-io/app-facebook-messenger))
 
 Create a [New Issue][] or [New Pull Request][] to add your own Facebook Messenger chatbot to the list.
 
