@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -271,8 +271,7 @@ public class DefaultMessengerTests {
 
     @Test
     public void testSetGetStartedButton() {
-        Message message = new Message("get started");
-        CallToAction callToAction = new CallToAction(message);
+        CallToAction callToAction = new CallToAction("get started");
         List<CallToAction> callToActions = Arrays.asList(callToAction);
         messenger.setGetStartedButton(callToAction);
         verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
@@ -283,8 +282,7 @@ public class DefaultMessengerTests {
 
     @Test(expected = FacebookException.class)
     public void testSetGetStartedButtonThrowsFacebookExceptionWhenRequestFails() {
-        Message message = new Message("get started");
-        CallToAction callToAction = new CallToAction(message);
+        CallToAction callToAction = new CallToAction("get started");
         List<CallToAction> callToActions = Arrays.asList(callToAction);
         when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
@@ -296,8 +294,7 @@ public class DefaultMessengerTests {
 
     @Test
     public void testSetGetStartedButtonWithPayload() {
-        Message message = new Message("get started");
-        CallToAction callToAction = new CallToAction(message);
+        CallToAction callToAction = new CallToAction("get started");
         List<CallToAction> callToActions = Arrays.asList(callToAction);
         messenger.setGetStartedButton("get started");
         verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
@@ -308,8 +305,7 @@ public class DefaultMessengerTests {
 
     @Test(expected = FacebookException.class)
     public void testSetGetStartedButtonWithPayloadThrowsFacebookExceptionWhenRequestFails() {
-        Message message = new Message("get started");
-        CallToAction callToAction = new CallToAction(message);
+        CallToAction callToAction = new CallToAction("get started");
         List<CallToAction> callToActions = Arrays.asList(callToAction);
         when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
@@ -339,8 +335,8 @@ public class DefaultMessengerTests {
     @Test
     public void testSetPersistentMenu() {
         List<CallToAction> callToActions = Arrays.asList(
-                new CallToAction(new Message("call to action 1")),
-                new CallToAction(new Message("call to action 2"))
+                new CallToAction("call to action 1"),
+                new CallToAction("call to action 2")
         );
         messenger.setPersistentMenu(callToActions);
         verify(facebookClient).publish(THREAD_SETTINGS_PATH, SendResponse.class,
@@ -352,8 +348,8 @@ public class DefaultMessengerTests {
     @Test(expected = FacebookException.class)
     public void testSetPersistentMenuThrowsFacebookExceptionWhenRequestFails() {
         List<CallToAction> callToActions = Arrays.asList(
-                new CallToAction(new Message("call to action 1")),
-                new CallToAction(new Message("call to action 2"))
+                new CallToAction("call to action 1"),
+                new CallToAction("call to action 2")
         );
         when(facebookClient.publish(THREAD_SETTINGS_PATH, SendResponse.class,
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.call_to_actions),
