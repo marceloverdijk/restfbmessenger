@@ -1,5 +1,12 @@
 ##  RestFB Messenger Changelog
 
+### 1.2.0 (2017-02-13)
+
+* Upgraded RestFB dependency to latest 1.36.0
+  * Fix CallToAction object (https://github.com/restfb/restfb/issues/637)
+* Upgraded Spring Boot Starter to latest Spring Boot 1.5.1
+* Updated license header to 2017
+
 ### 1.1.0 (2016-11-20)
 
 * Aligned with Messenger Platform 1.3 release
