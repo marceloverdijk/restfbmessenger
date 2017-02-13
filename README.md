@@ -53,7 +53,7 @@ _Maven_:
 <dependency>
   <groupId>com.github.marsbits.restfbmessenger</groupId>
   <artifactId>restfbmessenger-core</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
@@ -61,7 +61,7 @@ _Gradle_:
 
 ```groovy
 dependencies {
-    compile "com.github.marsbits.restfbmessenger:restfbmessenger-core:1.1.0"
+    compile "com.github.marsbits.restfbmessenger:restfbmessenger-core:1.2.0"
 }
 ```
 
@@ -200,7 +200,7 @@ _Maven_:
 <dependency>
   <groupId>com.github.marsbits.restfbmessenger</groupId>
   <artifactId>restfbmessenger-spring-boot-starter</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
@@ -208,7 +208,7 @@ _Gradle_:
 
 ```groovy
 dependencies {
-    compile "com.github.marsbits.restfbmessenger:restfbmessenger-spring-boot-starter:1.1.0"
+    compile "com.github.marsbits.restfbmessenger:restfbmessenger-spring-boot-starter:1.2.0"
 }
 ```
 
