@@ -3,7 +3,7 @@
 [![Gitter](https://badges.gitter.im/restfbmessenger/restfbmessenger.svg)](https://gitter.im/restfbmessenger/restfbmessenger?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.marsbits.restfbmessenger/restfbmessenger-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.marsbits.restfbmessenger/restfbmessenger-core)
 [![Javadocs](http://www.javadoc.io/badge/com.github.marsbits.restfbmessenger/restfbmessenger-core.svg?color=brightgreen)](http://www.javadoc.io/doc/com.github.marsbits.restfbmessenger/restfbmessenger-core)
-[![Apache 2.0 License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 RestFB Messenger is a Java library for implementing chatbots on the
 [Facebook Messenger Platform][].
