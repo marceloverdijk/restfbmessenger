@@ -260,6 +260,10 @@ Here are some projects that use RestFB Messenger to power its Facebok Messenger 
 
 Create a [New Issue][] or [New Pull Request][] to add your own Facebook Messenger chatbot to the list.
 
+### Google Guice
+
+TODO
+
 ## License
 
 The RestFB Messenger library is released under version 2.0 of the [Apache License][].

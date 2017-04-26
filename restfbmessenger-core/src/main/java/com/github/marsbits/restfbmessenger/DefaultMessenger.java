@@ -19,6 +19,7 @@ package com.github.marsbits.restfbmessenger;
 import com.github.marsbits.restfbmessenger.send.DefaultSendOperations;
 import com.github.marsbits.restfbmessenger.send.SendOperations;
 import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
+import com.restfb.Connection;
 import com.restfb.DefaultFacebookClient;
 import com.restfb.FacebookClient;
 import com.restfb.Parameter;
@@ -29,6 +30,7 @@ import com.restfb.types.send.CallToAction;
 import com.restfb.types.send.DomainActionTypeEnum;
 import com.restfb.types.send.Greeting;
 import com.restfb.types.send.Message;
+import com.restfb.types.send.PageMessageTag;
 import com.restfb.types.send.SendResponse;
 import com.restfb.types.send.SettingTypeEnum;
 import com.restfb.types.send.ThreadStateEnum;
@@ -62,6 +64,7 @@ public class DefaultMessenger implements Messenger {
     public static final Version DEFAULT_API_VERSION = Version.VERSION_2_8;
 
     public static final String THREAD_SETTINGS_PATH = "me/thread_settings";
+    public static final String PAGE_MESSAGE_TAGS_PATH = "page_message_tags";
 
     public static final String HMAC_SHA1_ALGORITHM = "HmacSHA1";
     public static final String SIGNATURE_PREFIX = "sha1=";
@@ -336,5 +339,10 @@ public class DefaultMessenger implements Messenger {
                 Parameter.with(SETTING_TYPE_PARAM_NAME, SettingTypeEnum.domain_whitelisting),
                 Parameter.with(WHITELISTED_DOMAINS_PARAM_NAME, urls),
                 Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.remove));
+    }
+
+    @Override
+    public List<PageMessageTag> getMessageTags() throws FacebookException {
+        return facebookClient.fetchConnection(PAGE_MESSAGE_TAGS_PATH, PageMessageTag.class).getData();
     }
 }

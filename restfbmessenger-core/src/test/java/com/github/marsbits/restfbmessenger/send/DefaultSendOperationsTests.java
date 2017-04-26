@@ -62,6 +62,7 @@ import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.MES
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.NOTIFICATION_TYPE_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.RECIPIENT_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.SENDER_ACTION_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.TAG_PARAM_NAME;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -168,6 +169,34 @@ public class DefaultSendOperationsTests {
     }
 
     @Test
+    public void testMessageWithNotificationTypeAndMessageTag() {
+        Message message = new Message("Hello!");
+        sendOperations.message(messageRecipient, message, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
+        verifySend(messageRecipient,
+                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
+                Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testMessageWithMessageTag() {
+        Message message = new Message("Hello!");
+        sendOperations.message(messageRecipient, message, MessageTag.ISSUE_RESOLUTION);
+        verifySend(messageRecipient,
+                Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testMessageWithCustomMessageTag() {
+        Message message = new Message("Hello!");
+        sendOperations.message(messageRecipient, message, new MessageTag("CUSTOM"));
+        verifySend(messageRecipient,
+                Parameter.with(TAG_PARAM_NAME, "CUSTOM"),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
     public void testTextMessage() {
         String text = "Hello!";
         sendOperations.textMessage(messageRecipient, text);
@@ -182,6 +211,37 @@ public class DefaultSendOperationsTests {
         Message message = new Message(text);
         verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testTextMessageWithNotificationTypeAndMessageTag() {
+        String text = "Hello!";
+        sendOperations.textMessage(messageRecipient, text, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
+        Message message = new Message(text);
+        verifySend(messageRecipient,
+                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
+                Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testTextMessageWitMessageTag() {
+        String text = "Hello!";
+        sendOperations.textMessage(messageRecipient, text, MessageTag.ISSUE_RESOLUTION);
+        Message message = new Message(text);
+        verifySend(messageRecipient,
+                Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testTextMessageWitCustomMessageTag() {
+        String text = "Hello!";
+        sendOperations.textMessage(messageRecipient, text, new MessageTag("CUSTOM"));
+        Message message = new Message(text);
+        verifySend(messageRecipient,
+                Parameter.with(TAG_PARAM_NAME, "CUSTOM"),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
@@ -310,6 +370,43 @@ public class DefaultSendOperationsTests {
     }
 
     @Test
+    public void testQuickRepliesWithTextMessageAndNotificationTypeAndMessageTag() {
+        String text = "Hello!";
+        List<QuickReply> quickReplies = createQuickReplies();
+        sendOperations.quickReplies(messageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
+        Message message = new Message(text);
+        message.addQuickReplies(quickReplies);
+        verifySend(messageRecipient,
+                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
+                Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testQuickRepliesWithTextMessageAndMessageTag() {
+        String text = "Hello!";
+        List<QuickReply> quickReplies = createQuickReplies();
+        sendOperations.quickReplies(messageRecipient, text, quickReplies, MessageTag.ISSUE_RESOLUTION);
+        Message message = new Message(text);
+        message.addQuickReplies(quickReplies);
+        verifySend(messageRecipient,
+                Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testQuickRepliesWithTextMessageAndCustomMessageTag() {
+        String text = "Hello!";
+        List<QuickReply> quickReplies = createQuickReplies();
+        sendOperations.quickReplies(messageRecipient, text, quickReplies, new MessageTag("CUSTOM"));
+        Message message = new Message(text);
+        message.addQuickReplies(quickReplies);
+        verifySend(messageRecipient,
+                Parameter.with(TAG_PARAM_NAME, "CUSTOM"),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
     public void testQuickRepliesWithMediaAttachment() {
         MediaAttachment attachment = createMediaAttachment();
         List<QuickReply> quickReplies = createQuickReplies();
@@ -392,6 +489,40 @@ public class DefaultSendOperationsTests {
         Message message = new Message(attachment);
         verifySend(messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testGenericTemplateWithNotificationTypeAndMessageTag() {
+        GenericTemplatePayload genericTemplate = createGenericTemplate();
+        sendOperations.genericTemplate(messageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
+        TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
+        Message message = new Message(attachment);
+        verifySend(messageRecipient,
+                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
+                Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testGenericTemplateWithMessageTag() {
+        GenericTemplatePayload genericTemplate = createGenericTemplate();
+        sendOperations.genericTemplate(messageRecipient, genericTemplate, MessageTag.ISSUE_RESOLUTION);
+        TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
+        Message message = new Message(attachment);
+        verifySend(messageRecipient,
+                Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testGenericTemplateWithCustomMessageTag() {
+        GenericTemplatePayload genericTemplate = createGenericTemplate();
+        sendOperations.genericTemplate(messageRecipient, genericTemplate, new MessageTag("CUSTOM"));
+        TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
+        Message message = new Message(attachment);
+        verifySend(messageRecipient,
+                Parameter.with(TAG_PARAM_NAME, "CUSTOM"),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 

@@ -57,6 +57,7 @@ public class DefaultSendOperations implements SendOperations {
     public static final String MESSAGE_PARAM_NAME = "message";
     public static final String SENDER_ACTION_PARAM_NAME = "sender_action";
     public static final String NOTIFICATION_TYPE_PARAM_NAME = "notification_type";
+    public static final String TAG_PARAM_NAME = "tag";
 
     protected FacebookClient facebookClient;
 
@@ -79,7 +80,7 @@ public class DefaultSendOperations implements SendOperations {
             throws FacebookException {
         requireNonNull(recipient, "'recipient' must not be null");
         requireNonNull(senderAction, "'senderAction' must not be null");
-        return send(recipient, notificationType, Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction.name()));
+        return send(recipient, notificationType, null, Parameter.with(SENDER_ACTION_PARAM_NAME, senderAction.name()));
     }
 
     @Override
@@ -114,29 +115,49 @@ public class DefaultSendOperations implements SendOperations {
 
     @Override
     public SendResponse message(MessageRecipient recipient, Message message) throws FacebookException {
-        return message(recipient, message, null);
+        return message(recipient, message, null, null);
     }
 
     @Override
     public SendResponse message(MessageRecipient recipient, Message message, NotificationTypeEnum notificationType)
             throws FacebookException {
+        return message(recipient, message, notificationType, null);
+    }
+
+    @Override
+    public SendResponse message(MessageRecipient recipient, Message message, NotificationTypeEnum notificationType, MessageTag tag)
+            throws FacebookException {
         requireNonNull(recipient, "'recipient' must not be null");
         requireNonNull(message, "'message' must not be null");
-        return send(recipient, notificationType, Parameter.with(MESSAGE_PARAM_NAME, message));
+        return send(recipient, notificationType, tag, Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Override public SendResponse message(MessageRecipient recipient, Message message, MessageTag tag) throws FacebookException {
+        return message(recipient, message, null, tag);
     }
 
     @Override
     public SendResponse textMessage(MessageRecipient recipient, String text) throws FacebookException {
-        return textMessage(recipient, text, null);
+        return textMessage(recipient, text, null, null);
     }
 
     @Override
     public SendResponse textMessage(MessageRecipient recipient, String text, NotificationTypeEnum notificationType)
             throws FacebookException {
+        return textMessage(recipient, text, notificationType, null);
+    }
+
+    @Override
+    public SendResponse textMessage(MessageRecipient recipient, String text, NotificationTypeEnum notificationType, MessageTag tag)
+            throws FacebookException {
         requireNonNull(recipient, "'recipient' must not be null");
         requireNonNull(text, "'text' must not be null");
         Message message = new Message(text);
-        return message(recipient, message, notificationType);
+        return message(recipient, message, notificationType, tag);
+    }
+
+    @Override public SendResponse textMessage(MessageRecipient recipient, String text, MessageTag tag) throws FacebookException {
+        return textMessage(recipient, text, null, tag);
     }
 
     @Override
@@ -201,18 +222,30 @@ public class DefaultSendOperations implements SendOperations {
 
     @Override
     public SendResponse quickReplies(MessageRecipient recipient, String text, List<QuickReply> quickReplies) throws FacebookException {
-        return quickReplies(recipient, text, quickReplies, null);
+        return quickReplies(recipient, text, quickReplies, null, null);
     }
 
     @Override
     public SendResponse quickReplies(MessageRecipient recipient, String text, List<QuickReply> quickReplies,
             NotificationTypeEnum notificationType) throws FacebookException {
+        return quickReplies(recipient, text, quickReplies, notificationType, null);
+    }
+
+    @Override
+    public SendResponse quickReplies(MessageRecipient recipient, String text, List<QuickReply> quickReplies,
+            NotificationTypeEnum notificationType, MessageTag tag) throws FacebookException {
         requireNonNull(recipient, "'recipient' must not be null");
         requireNonNull(text, "'text' must not be null");
         requireNonNull(quickReplies, "'quickReplies' must not be null");
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
-        return message(recipient, message, notificationType);
+        return message(recipient, message, notificationType, tag);
+    }
+
+    @Override
+    public SendResponse quickReplies(MessageRecipient recipient, String text, List<QuickReply> quickReplies, MessageTag tag)
+            throws FacebookException {
+        return quickReplies(recipient, text, quickReplies, null, tag);
     }
 
     @Override
@@ -257,18 +290,30 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse buttonTemplate(MessageRecipient recipient, ButtonTemplatePayload buttonTemplate,
             NotificationTypeEnum notificationType) throws FacebookException {
-        return template(recipient, buttonTemplate, notificationType);
+        return template(recipient, buttonTemplate, notificationType, null);
     }
 
     @Override
     public SendResponse genericTemplate(MessageRecipient recipient, GenericTemplatePayload genericTemplate) throws FacebookException {
-        return genericTemplate(recipient, genericTemplate, null);
+        return genericTemplate(recipient, genericTemplate, null, null);
     }
 
     @Override
     public SendResponse genericTemplate(MessageRecipient recipient, GenericTemplatePayload genericTemplate,
             NotificationTypeEnum notificationType) throws FacebookException {
-        return template(recipient, genericTemplate, notificationType);
+        return genericTemplate(recipient, genericTemplate, notificationType, null);
+    }
+
+    @Override
+    public SendResponse genericTemplate(MessageRecipient recipient, GenericTemplatePayload genericTemplate,
+            NotificationTypeEnum notificationType, MessageTag tag) throws FacebookException {
+        return template(recipient, genericTemplate, notificationType, tag);
+    }
+
+    @Override
+    public SendResponse genericTemplate(MessageRecipient recipient, GenericTemplatePayload genericTemplate, MessageTag tag)
+            throws FacebookException {
+        return genericTemplate(recipient, genericTemplate, null, tag);
     }
 
     @Override
@@ -279,7 +324,7 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse listTemplate(MessageRecipient recipient, ListTemplatePayload listTemplate, NotificationTypeEnum notificationType)
             throws FacebookException {
-        return template(recipient, listTemplate, notificationType);
+        return template(recipient, listTemplate, notificationType, null);
     }
 
     @Override
@@ -290,7 +335,7 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse receiptTemplate(MessageRecipient recipient, ReceiptTemplatePayload receiptTemplate,
             NotificationTypeEnum notificationType) throws FacebookException {
-        return template(recipient, receiptTemplate, notificationType);
+        return template(recipient, receiptTemplate, notificationType, null);
     }
 
     @Override
@@ -302,7 +347,7 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse airlineItineraryTemplate(MessageRecipient recipient, AirlineItineraryTemplatePayload airlineItineraryTemplate,
             NotificationTypeEnum notificationType) throws FacebookException {
-        return template(recipient, airlineItineraryTemplate, notificationType);
+        return template(recipient, airlineItineraryTemplate, notificationType, null);
     }
 
     @Override
@@ -314,7 +359,7 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse airlineCheckinTemplate(MessageRecipient recipient, AirlineCheckinTemplatePayload airlineCheckinTemplate,
             NotificationTypeEnum notificationType) throws FacebookException {
-        return template(recipient, airlineCheckinTemplate, notificationType);
+        return template(recipient, airlineCheckinTemplate, notificationType, null);
     }
 
     @Override
@@ -327,7 +372,7 @@ public class DefaultSendOperations implements SendOperations {
     public SendResponse airlineBoardingPassTemplate(MessageRecipient recipient,
             AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate, NotificationTypeEnum notificationType)
             throws FacebookException {
-        return template(recipient, airlineBoardingPassTemplate, notificationType);
+        return template(recipient, airlineBoardingPassTemplate, notificationType, null);
     }
 
     @Override
@@ -339,23 +384,28 @@ public class DefaultSendOperations implements SendOperations {
     @Override
     public SendResponse airlineUpdateTemplate(MessageRecipient recipient, AirlineUpdateTemplatePayload airlineUpdateTemplate,
             NotificationTypeEnum notificationType) throws FacebookException {
-        return template(recipient, airlineUpdateTemplate, notificationType);
+        return template(recipient, airlineUpdateTemplate, notificationType, null);
     }
 
-    protected SendResponse template(MessageRecipient recipient, TemplatePayload template, NotificationTypeEnum notificationType) {
+    protected SendResponse template(MessageRecipient recipient, TemplatePayload template, NotificationTypeEnum notificationType,
+            MessageTag tag) {
         requireNonNull(recipient, "'recipient' must not be null");
         requireNonNull(template, "'template' must not be null");
         TemplateAttachment attachment = new TemplateAttachment(template);
         Message message = new Message(attachment);
-        return message(recipient, message, notificationType);
+        return message(recipient, message, notificationType, tag);
     }
 
-    protected SendResponse send(MessageRecipient recipient, NotificationTypeEnum notificationType, Parameter... parameters) {
+    protected SendResponse send(MessageRecipient recipient, NotificationTypeEnum notificationType, MessageTag tag,
+            Parameter... parameters) {
         requireNonNull(recipient, "'recipient' must not be null");
         List<Parameter> params = new ArrayList<>();
         params.add(Parameter.with(RECIPIENT_PARAM_NAME, recipient));
         if (notificationType != null) {
             params.add(Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, notificationType.name()));
+        }
+        if (tag != null) {
+            params.add(Parameter.with(TAG_PARAM_NAME, tag.getTag()));
         }
         params.addAll(Arrays.asList(parameters));
         return send(params.toArray(new Parameter[params.size()]));

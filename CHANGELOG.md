@@ -1,5 +1,14 @@
 ##  RestFB Messenger Changelog
 
+### 1.3.0 (2017-04-27)
+
+* Aligned with Messenger Platform 1.4 release
+  * Added support for adding a tag to messages (thanks @ryacobi for the pull request)
+  * Added support for retrieving the supported list of message tags 
+* Upgraded RestFB dependency to latest 1.40.1
+* Upgraded Spring Boot Starter to latest Spring Boot 1.5.3
+
+
 ### 1.2.0 (2017-02-13)
 
 * Upgraded RestFB dependency to latest 1.36.0
