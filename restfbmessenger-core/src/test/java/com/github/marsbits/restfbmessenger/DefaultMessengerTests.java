@@ -17,6 +17,7 @@
 package com.github.marsbits.restfbmessenger;
 
 import com.github.marsbits.restfbmessenger.webhook.CallbackHandler;
+import com.restfb.Connection;
 import com.restfb.FacebookClient;
 import com.restfb.JsonMapper;
 import com.restfb.Parameter;
@@ -27,6 +28,7 @@ import com.restfb.types.send.CallToAction;
 import com.restfb.types.send.DomainActionTypeEnum;
 import com.restfb.types.send.Greeting;
 import com.restfb.types.send.Message;
+import com.restfb.types.send.PageMessageTag;
 import com.restfb.types.send.SendResponse;
 import com.restfb.types.send.SettingTypeEnum;
 import com.restfb.types.send.ThreadStateEnum;
@@ -35,7 +37,9 @@ import com.restfb.util.EncodingUtils;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,6 +52,7 @@ import static com.github.marsbits.restfbmessenger.DefaultMessenger.DOMAIN_ACTION
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.GREETING_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.HMAC_SHA1_ALGORITHM;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.OBJECT_PAGE_VALUE;
+import static com.github.marsbits.restfbmessenger.DefaultMessenger.PAGE_MESSAGE_TAGS_PATH;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.SETTING_TYPE_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.SIGNATURE_PREFIX;
 import static com.github.marsbits.restfbmessenger.DefaultMessenger.THREAD_SETTINGS_PATH;
@@ -496,6 +501,21 @@ public class DefaultMessengerTests {
                 Parameter.with(DOMAIN_ACTION_TYPE_PARAM_NAME, DomainActionTypeEnum.remove)))
                 .thenThrow(facebookOAuthException);
         messenger.removeDomainWhitelisting(urls);
+    }
+
+    @Test
+    public void testGetMessageTags() {
+        Connection<PageMessageTag> connection = mock(Connection.class);
+        when(connection.getData()).thenReturn(new ArrayList<PageMessageTag>());
+        when(facebookClient.fetchConnection(PAGE_MESSAGE_TAGS_PATH, PageMessageTag.class)).thenReturn(connection);
+        messenger.getMessageTags();
+        verify(facebookClient).fetchConnection(PAGE_MESSAGE_TAGS_PATH, PageMessageTag.class);
+    }
+
+    @Test(expected = FacebookException.class)
+    public void testGetMessageTagsThrowsFacebookExceptionWhenRequestFails() {
+        when(facebookClient.fetchConnection(PAGE_MESSAGE_TAGS_PATH, PageMessageTag.class)).thenThrow(facebookOAuthException);
+        messenger.getMessageTags();
     }
 
     private String generateSignature(String payload, String appSecret) throws Exception {

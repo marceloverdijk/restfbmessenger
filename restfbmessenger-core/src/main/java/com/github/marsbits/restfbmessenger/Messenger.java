@@ -21,6 +21,7 @@ import com.restfb.exception.FacebookException;
 import com.restfb.types.User;
 import com.restfb.types.send.CallToAction;
 import com.restfb.types.send.Greeting;
+import com.restfb.types.send.PageMessageTag;
 
 import java.util.List;
 
@@ -228,4 +229,12 @@ public interface Messenger {
      * @throws FacebookException in case an error occurs while performing the Facebook API call
      */
     void removeDomainWhitelisting(List<String> urls) throws FacebookException;
+
+    /**
+     * Returns the list of supported message tags.
+     *
+     * @return the list of supported message tags
+     * * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    List<PageMessageTag> getMessageTags() throws FacebookException;
 }

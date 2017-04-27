@@ -14,21 +14,21 @@ configure(allprojects) { project ->
     group = "com.github.marsbits.restfbmessenger"
 
     ext {
-        hibernateValidatorVersion = "5.2.4.Final"
+        hibernateValidatorVersion = "5.3.5.Final"
         junitVersion = "4.12"
         mockitoVersion = "1.10.19"
-        restfbVersion = "1.36.0"
+        restfbVersion = "1.40.1"
         servletVersion = "2.5"
         servlet3Version = "3.1.0"
-        springVersion = "4.3.6.RELEASE"
-        springBootVersion = "1.5.1.RELEASE"
+        springVersion = "4.3.8.RELEASE"
+        springBootVersion = "1.5.3.RELEASE"
     }
 
     ext.javadocLinks = [
             "http://docs.oracle.com/javase/7/docs/api/",
             "http://docs.oracle.com/javaee/7/api/",
-            "http://docs.spring.io/spring/docs/4.3.6.RELEASE/javadoc-api/",
-            "http://docs.spring.io/spring-boot/docs/1.5.1.RELEASE/api/",
+            "http://docs.spring.io/spring/docs/4.3.8.RELEASE/javadoc-api/",
+            "http://docs.spring.io/spring-boot/docs/1.5.3.RELEASE/api/",
             "http://restfb.com/javadoc/"
     ] as String[]
 
@@ -190,6 +190,6 @@ configure(rootProject) {
 
     task wrapper(type: Wrapper) {
         description = "Generates gradlew[.bat] scripts."
-        gradleVersion = "3.4"
+        gradleVersion = "3.5"
     }
 }
