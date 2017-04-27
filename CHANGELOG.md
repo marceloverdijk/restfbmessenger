@@ -2,7 +2,7 @@
 
 ### 1.3.0 (2017-04-27)
 
-* Aligned with Messenger Platform 1.4 release
+* Added support for Message Tags (https://developers.facebook.com/docs/messenger-platform/send-api-reference/tags)
   * Added support for adding a tag to messages (thanks @ryacobi for the pull request)
   * Added support for retrieving the supported list of message tags 
 * Upgraded RestFB dependency to latest 1.40.1
