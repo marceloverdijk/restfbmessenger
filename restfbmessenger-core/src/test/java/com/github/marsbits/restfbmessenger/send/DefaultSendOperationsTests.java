@@ -30,6 +30,7 @@ import com.restfb.types.send.Message;
 import com.restfb.types.send.MessageRecipient;
 import com.restfb.types.send.MessagingType;
 import com.restfb.types.send.NotificationTypeEnum;
+import com.restfb.types.send.OpenGraphTemplatePayload;
 import com.restfb.types.send.PhoneMessageRecipient;
 import com.restfb.types.send.PostbackButton;
 import com.restfb.types.send.QuickReply;
@@ -39,6 +40,7 @@ import com.restfb.types.send.SendResponse;
 import com.restfb.types.send.SenderActionEnum;
 import com.restfb.types.send.TemplateAttachment;
 import com.restfb.types.send.UserRefMessageRecipient;
+import com.restfb.types.send.WebButton;
 import com.restfb.types.send.airline.AirlineBoardingPassTemplatePayload;
 import com.restfb.types.send.airline.AirlineCheckinTemplatePayload;
 import com.restfb.types.send.airline.AirlineItineraryTemplatePayload;
@@ -78,7 +80,7 @@ public class DefaultSendOperationsTests {
 
     @Parameterized.Parameters(name = "{0}")
     public static Object[] data() {
-        return new Object[]{
+        return new Object[] {
                 new IdMessageRecipient("1"),
                 new PhoneMessageRecipient("+1(212)555-2368"),
                 new UserRefMessageRecipient("UNIQUE_REF_PARAM")};
@@ -375,7 +377,8 @@ public class DefaultSendOperationsTests {
     public void testQuickRepliesWithTextMessageAndNotificationTypeAndMessageTag() {
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
-        sendOperations.quickReplies(RESPONSE, messageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
+        sendOperations
+                .quickReplies(RESPONSE, messageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
         verifySend(RESPONSE, messageRecipient,
@@ -475,6 +478,26 @@ public class DefaultSendOperationsTests {
     }
 
     @Test
+    public void testOpenGraphTemplate() {
+        OpenGraphTemplatePayload openGraphTemplate = createOpenGraphTemplate();
+        sendOperations.openGraphTemplate(RESPONSE, messageRecipient, openGraphTemplate);
+        TemplateAttachment attachment = new TemplateAttachment(openGraphTemplate);
+        Message message = new Message(attachment);
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testOpenGraphTemplateWithNotificationType() {
+        OpenGraphTemplatePayload openGraphTemplate = createOpenGraphTemplate();
+        sendOperations.openGraphTemplate(RESPONSE, messageRecipient, openGraphTemplate, NotificationTypeEnum.NO_PUSH);
+        TemplateAttachment attachment = new TemplateAttachment(openGraphTemplate);
+        Message message = new Message(attachment);
+        verifySend(RESPONSE, messageRecipient,
+                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
     public void testGenericTemplate() {
         GenericTemplatePayload genericTemplate = createGenericTemplate();
         sendOperations.genericTemplate(RESPONSE, messageRecipient, genericTemplate);
@@ -497,7 +520,8 @@ public class DefaultSendOperationsTests {
     @Test
     public void testGenericTemplateWithNotificationTypeAndMessageTag() {
         GenericTemplatePayload genericTemplate = createGenericTemplate();
-        sendOperations.genericTemplate(RESPONSE, messageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
+        sendOperations
+                .genericTemplate(RESPONSE, messageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
         TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
         Message message = new Message(attachment);
         verifySend(RESPONSE, messageRecipient,
@@ -686,6 +710,13 @@ public class DefaultSendOperationsTests {
         buttonTemplate.addButton(new CallButton("title", "phonenumber"));
         buttonTemplate.addButton(new PostbackButton("title", "postback"));
         return buttonTemplate;
+    }
+
+    private OpenGraphTemplatePayload createOpenGraphTemplate() {
+        OpenGraphTemplatePayload openGraphTemplate = new OpenGraphTemplatePayload("open graph url");
+        openGraphTemplate.addButton(new WebButton("title 1", "url 1"));
+        openGraphTemplate.addButton(new WebButton("title 2", "url 2"));
+        return openGraphTemplate;
     }
 
     private GenericTemplatePayload createGenericTemplate() {
