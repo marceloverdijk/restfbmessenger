@@ -39,7 +39,7 @@ public class MyCallbackHandler extends AbstractCallbackHandler {
         // TODO implement..
     }
 
-    // TODO override other methods the chatbot need to repsond to..
+    // TODO override other methods the chatbot need to respond to..
 }
 ```
 
