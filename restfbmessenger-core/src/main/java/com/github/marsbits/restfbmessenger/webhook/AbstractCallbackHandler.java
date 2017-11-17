@@ -90,6 +90,10 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
                         onCheckoutUpdate(messenger, messaging);
                     } else if (messaging.isAccountLinking()) {
                         onAccountLinking(messenger, messaging);
+                    } else if (messaging.isTakeThreadControl()) {
+                        onTakeThreadControl(messenger, messaging);
+                    } else if (messaging.isPassThreadControl()) {
+                        onPassThreadControl(messenger, messaging);
                     } else if (messaging.getAppRoles() != null) {
                         onAppRoles(messenger, messaging);
                     } else {
@@ -192,6 +196,24 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
      * @param messaging the {@code MessagingItem} containing the account linking data
      */
     public void onAccountLinking(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles a take thread control callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the take thread control data
+     */
+    public void onTakeThreadControl(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles a pass thread control callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the pass thread control data
+     */
+    public void onPassThreadControl(Messenger messenger, MessagingItem messaging) {
     }
 
     /**

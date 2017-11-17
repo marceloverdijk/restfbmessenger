@@ -26,11 +26,13 @@ import com.restfb.types.webhook.messaging.DeliveryItem;
 import com.restfb.types.webhook.messaging.MessageItem;
 import com.restfb.types.webhook.messaging.MessagingItem;
 import com.restfb.types.webhook.messaging.OptinItem;
+import com.restfb.types.webhook.messaging.PassThreadControlItem;
 import com.restfb.types.webhook.messaging.PaymentItem;
 import com.restfb.types.webhook.messaging.PostbackItem;
 import com.restfb.types.webhook.messaging.ReadItem;
 import com.restfb.types.webhook.messaging.ReferralItem;
 
+import com.restfb.types.webhook.messaging.TakeThreadControlItem;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -171,6 +173,28 @@ public class AbstractCallbackHandlerTests {
         WebhookObject webhookObject = createWebhookObject(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onAccountLinking(messenger, messagingItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnTakeThreadControl() {
+        TakeThreadControlItem takeThreadControl = new TakeThreadControlItem();
+        MessagingItem messagingItem = new MessagingItem();
+        messagingItem.setTakeThreadControl(takeThreadControl);
+        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onTakeThreadControl(messenger, messagingItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnPassThreadControl() {
+        PassThreadControlItem passThreadControl = new PassThreadControlItem();
+        MessagingItem messagingItem = new MessagingItem();
+        messagingItem.setPassThreadControl(passThreadControl);
+        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onPassThreadControl(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
     }
 
