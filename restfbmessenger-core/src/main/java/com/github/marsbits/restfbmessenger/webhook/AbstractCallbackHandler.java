@@ -79,6 +79,8 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
                         onCheckoutUpdate(messenger, messaging);
                     } else if (messaging.isAccountLinking()) {
                         onAccountLinking(messenger, messaging);
+                    } else if (messaging.isPolicyEnforcement()) {
+                        onPolicyEnforcement(messenger, messaging);
                     } else if (messaging.isTakeThreadControl()) {
                         onTakeThreadControl(messenger, messaging);
                     } else if (messaging.isPassThreadControl()) {
@@ -185,6 +187,15 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
      * @param messaging the {@code MessagingItem} containing the account linking data
      */
     public void onAccountLinking(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles a policy enforcement callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the policy enforcement data
+     */
+    public void onPolicyEnforcement(Messenger messenger, MessagingItem messaging) {
     }
 
     /**

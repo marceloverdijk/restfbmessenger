@@ -28,6 +28,7 @@ import com.restfb.types.webhook.messaging.MessagingItem;
 import com.restfb.types.webhook.messaging.OptinItem;
 import com.restfb.types.webhook.messaging.PassThreadControlItem;
 import com.restfb.types.webhook.messaging.PaymentItem;
+import com.restfb.types.webhook.messaging.PolicyEnforcementItem;
 import com.restfb.types.webhook.messaging.PostbackItem;
 import com.restfb.types.webhook.messaging.ReadItem;
 import com.restfb.types.webhook.messaging.ReferralItem;
@@ -173,6 +174,17 @@ public class AbstractCallbackHandlerTests {
         WebhookObject webhookObject = createWebhookObject(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onAccountLinking(messenger, messagingItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnPolicyEnforcement() {
+        PolicyEnforcementItem policyEnforcement = new PolicyEnforcementItem();
+        MessagingItem messagingItem = new MessagingItem();
+        messagingItem.setPolicyEnforcement(policyEnforcement);
+        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onPolicyEnforcement(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
     }
 
