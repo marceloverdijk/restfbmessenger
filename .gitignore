@@ -13,6 +13,7 @@
 /classes
 /lib
 /log
+/out
 /target
 
 /restfbmessenger-*/bin
@@ -20,6 +21,7 @@
 /restfbmessenger-*/classes
 /restfbmessenger-*/lib
 /restfbmessenger-*/log
+/restfbmessenger-*/out
 /restfbmessenger-*/target
 
 /samples/*/bin
@@ -27,4 +29,5 @@
 /samples/*/classes
 /samples/*/lib
 /samples/*/log
+/samples/*/out
 /samples/*/target
