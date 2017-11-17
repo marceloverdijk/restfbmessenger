@@ -61,7 +61,7 @@ public class DefaultMessenger implements Messenger {
 
     private static final Logger logger = Logger.getLogger(DefaultMessenger.class.getName());
 
-    public static final Version DEFAULT_API_VERSION = Version.VERSION_2_8;
+    public static final Version DEFAULT_API_VERSION = Version.VERSION_2_11;
 
     public static final String THREAD_SETTINGS_PATH = "me/thread_settings";
     public static final String PAGE_MESSAGE_TAGS_PATH = "page_message_tags";
