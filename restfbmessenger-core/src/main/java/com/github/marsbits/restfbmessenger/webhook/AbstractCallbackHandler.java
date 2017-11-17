@@ -19,18 +19,7 @@ package com.github.marsbits.restfbmessenger.webhook;
 import com.github.marsbits.restfbmessenger.Messenger;
 import com.restfb.types.webhook.WebhookEntry;
 import com.restfb.types.webhook.WebhookObject;
-import com.restfb.types.webhook.messaging.AccountLinkingItem;
-import com.restfb.types.webhook.messaging.AppRoles;
-import com.restfb.types.webhook.messaging.CheckoutUpdateItem;
-import com.restfb.types.webhook.messaging.DeliveryItem;
-import com.restfb.types.webhook.messaging.InnerMessagingItem;
-import com.restfb.types.webhook.messaging.MessageItem;
 import com.restfb.types.webhook.messaging.MessagingItem;
-import com.restfb.types.webhook.messaging.OptinItem;
-import com.restfb.types.webhook.messaging.PaymentItem;
-import com.restfb.types.webhook.messaging.PostbackItem;
-import com.restfb.types.webhook.messaging.ReadItem;
-import com.restfb.types.webhook.messaging.ReferralItem;
 
 import java.util.logging.Logger;
 
