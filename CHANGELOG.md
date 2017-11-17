@@ -4,6 +4,7 @@
 
 * Added required `messaging_type` property (https://developers.facebook.com/docs/messenger-platform/send-messages#messaging_types) to all send operations.
 * Added support for the open graph template
+* Updated the available message tags (https://developers.facebook.com/docs/messenger-platform/send-messages/message-tags)
 * Upgraded RestFB dependency to latest 1.48.0
 * Upgraded Spring Boot Starter to latest Spring Boot 1.5.8
 * Updated default Facebook API version to 2.11

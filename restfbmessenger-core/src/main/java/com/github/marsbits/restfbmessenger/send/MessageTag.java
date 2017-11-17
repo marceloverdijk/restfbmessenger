@@ -27,9 +27,19 @@ import static java.util.Objects.requireNonNull;
  */
 public class MessageTag {
 
+    public static final MessageTag PAIRING_UPDATE = new MessageTag("PAIRING_UPDATE");
+    public static final MessageTag APPLICATION_UPDATE = new MessageTag("APPLICATION_UPDATE");
+    public static final MessageTag ACCOUNT_UPDATE = new MessageTag("ACCOUNT_UPDATE");
+    public static final MessageTag PAYMENT_UPDATE = new MessageTag("PAYMENT_UPDATE");
+    public static final MessageTag PERSONAL_FINANCE_UPDATE = new MessageTag("PERSONAL_FINANCE_UPDATE");
     public static final MessageTag SHIPPING_UPDATE = new MessageTag("SHIPPING_UPDATE");
     public static final MessageTag RESERVATION_UPDATE = new MessageTag("RESERVATION_UPDATE");
     public static final MessageTag ISSUE_RESOLUTION = new MessageTag("ISSUE_RESOLUTION");
+    public static final MessageTag APPOINTMENT_UPDATE = new MessageTag("APPOINTMENT_UPDATE");
+    public static final MessageTag GAME_EVENT = new MessageTag("GAME_EVENT");
+    public static final MessageTag TRANSPORTATION_UPDATE = new MessageTag("TRANSPORTATION_UPDATE");
+    public static final MessageTag FEATURE_FUNCTIONALITY_UPDATE = new MessageTag("FEATURE_FUNCTIONALITY_UPDATE");
+    public static final MessageTag TICKET_UPDATE = new MessageTag("TICKET_UPDATE");
 
     private final String tag;
 
