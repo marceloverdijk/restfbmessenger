@@ -28,6 +28,7 @@ import com.restfb.types.send.ListViewElement;
 import com.restfb.types.send.MediaAttachment;
 import com.restfb.types.send.Message;
 import com.restfb.types.send.MessageRecipient;
+import com.restfb.types.send.MessagingType;
 import com.restfb.types.send.NotificationTypeEnum;
 import com.restfb.types.send.PhoneMessageRecipient;
 import com.restfb.types.send.PostbackButton;
@@ -46,7 +47,6 @@ import com.restfb.types.send.airline.BoardingPass;
 import com.restfb.types.send.airline.FlightAirport;
 import com.restfb.types.send.airline.FlightInfo;
 import com.restfb.types.send.airline.FlightSchedule;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,10 +59,12 @@ import java.util.List;
 
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.MESSAGES_PATH;
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.MESSAGE_PARAM_NAME;
+import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.MESSAGING_TYPE_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.NOTIFICATION_TYPE_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.RECIPIENT_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.SENDER_ACTION_PARAM_NAME;
 import static com.github.marsbits.restfbmessenger.send.DefaultSendOperations.TAG_PARAM_NAME;
+import static com.restfb.types.send.MessagingType.RESPONSE;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -76,7 +78,7 @@ public class DefaultSendOperationsTests {
 
     @Parameterized.Parameters(name = "{0}")
     public static Object[] data() {
-        return new Object[] {
+        return new Object[]{
                 new IdMessageRecipient("1"),
                 new PhoneMessageRecipient("+1(212)555-2368"),
                 new UserRefMessageRecipient("UNIQUE_REF_PARAM")};
@@ -155,15 +157,15 @@ public class DefaultSendOperationsTests {
     @Test
     public void testMessage() {
         Message message = new Message("Hello!");
-        sendOperations.message(messageRecipient, message);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        sendOperations.message(RESPONSE, messageRecipient, message);
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testMessageWithNotificationType() {
         Message message = new Message("Hello!");
-        sendOperations.message(messageRecipient, message, NotificationTypeEnum.NO_PUSH);
-        verifySend(messageRecipient,
+        sendOperations.message(RESPONSE, messageRecipient, message, NotificationTypeEnum.NO_PUSH);
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -171,8 +173,8 @@ public class DefaultSendOperationsTests {
     @Test
     public void testMessageWithNotificationTypeAndMessageTag() {
         Message message = new Message("Hello!");
-        sendOperations.message(messageRecipient, message, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
-        verifySend(messageRecipient,
+        sendOperations.message(RESPONSE, messageRecipient, message, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
@@ -181,8 +183,8 @@ public class DefaultSendOperationsTests {
     @Test
     public void testMessageWithMessageTag() {
         Message message = new Message("Hello!");
-        sendOperations.message(messageRecipient, message, MessageTag.ISSUE_RESOLUTION);
-        verifySend(messageRecipient,
+        sendOperations.message(RESPONSE, messageRecipient, message, MessageTag.ISSUE_RESOLUTION);
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -190,8 +192,8 @@ public class DefaultSendOperationsTests {
     @Test
     public void testMessageWithCustomMessageTag() {
         Message message = new Message("Hello!");
-        sendOperations.message(messageRecipient, message, new MessageTag("CUSTOM"));
-        verifySend(messageRecipient,
+        sendOperations.message(RESPONSE, messageRecipient, message, new MessageTag("CUSTOM"));
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(TAG_PARAM_NAME, "CUSTOM"),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -199,17 +201,17 @@ public class DefaultSendOperationsTests {
     @Test
     public void testTextMessage() {
         String text = "Hello!";
-        sendOperations.textMessage(messageRecipient, text);
+        sendOperations.textMessage(RESPONSE, messageRecipient, text);
         Message message = new Message(text);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testTextMessageWithNotificationType() {
         String text = "Hello!";
-        sendOperations.textMessage(messageRecipient, text, NotificationTypeEnum.NO_PUSH);
+        sendOperations.textMessage(RESPONSE, messageRecipient, text, NotificationTypeEnum.NO_PUSH);
         Message message = new Message(text);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -217,9 +219,9 @@ public class DefaultSendOperationsTests {
     @Test
     public void testTextMessageWithNotificationTypeAndMessageTag() {
         String text = "Hello!";
-        sendOperations.textMessage(messageRecipient, text, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
+        sendOperations.textMessage(RESPONSE, messageRecipient, text, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
         Message message = new Message(text);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
@@ -228,9 +230,9 @@ public class DefaultSendOperationsTests {
     @Test
     public void testTextMessageWitMessageTag() {
         String text = "Hello!";
-        sendOperations.textMessage(messageRecipient, text, MessageTag.ISSUE_RESOLUTION);
+        sendOperations.textMessage(RESPONSE, messageRecipient, text, MessageTag.ISSUE_RESOLUTION);
         Message message = new Message(text);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -238,9 +240,9 @@ public class DefaultSendOperationsTests {
     @Test
     public void testTextMessageWitCustomMessageTag() {
         String text = "Hello!";
-        sendOperations.textMessage(messageRecipient, text, new MessageTag("CUSTOM"));
+        sendOperations.textMessage(RESPONSE, messageRecipient, text, new MessageTag("CUSTOM"));
         Message message = new Message(text);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(TAG_PARAM_NAME, "CUSTOM"),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -249,20 +251,20 @@ public class DefaultSendOperationsTests {
     public void testAttachment() {
         MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
         String url = "http://localhost";
-        sendOperations.attachment(messageRecipient, MediaAttachment.Type.IMAGE, url);
+        sendOperations.attachment(RESPONSE, messageRecipient, MediaAttachment.Type.IMAGE, url);
         MediaAttachment attachment = new MediaAttachment(type, url);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testAttachmentWithNotificationType() {
         MediaAttachment.Type type = MediaAttachment.Type.IMAGE;
         String url = "http://localhost";
-        sendOperations.attachment(messageRecipient, MediaAttachment.Type.IMAGE, url, NotificationTypeEnum.NO_PUSH);
+        sendOperations.attachment(RESPONSE, messageRecipient, MediaAttachment.Type.IMAGE, url, NotificationTypeEnum.NO_PUSH);
         MediaAttachment attachment = new MediaAttachment(type, url);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -270,19 +272,19 @@ public class DefaultSendOperationsTests {
     @Test
     public void testImageAttachment() {
         String url = "http://localhost";
-        sendOperations.imageAttachment(messageRecipient, url);
+        sendOperations.imageAttachment(RESPONSE, messageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.IMAGE, url);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testImageAttachmentWithNotificationType() {
         String url = "http://localhost";
-        sendOperations.imageAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        sendOperations.imageAttachment(RESPONSE, messageRecipient, url, NotificationTypeEnum.NO_PUSH);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.IMAGE, url);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -290,19 +292,19 @@ public class DefaultSendOperationsTests {
     @Test
     public void testAudioAttachment() {
         String url = "http://localhost";
-        sendOperations.audioAttachment(messageRecipient, url);
+        sendOperations.audioAttachment(RESPONSE, messageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.AUDIO, url);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testAudioAttachmentWithNotificationType() {
         String url = "http://localhost";
-        sendOperations.audioAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        sendOperations.audioAttachment(RESPONSE, messageRecipient, url, NotificationTypeEnum.NO_PUSH);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.AUDIO, url);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -310,19 +312,19 @@ public class DefaultSendOperationsTests {
     @Test
     public void testVideoAttachment() {
         String url = "http://localhost";
-        sendOperations.videoAttachment(messageRecipient, url);
+        sendOperations.videoAttachment(RESPONSE, messageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.VIDEO, url);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testVideoAttachmentWithNotificationType() {
         String url = "http://localhost";
-        sendOperations.videoAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        sendOperations.videoAttachment(RESPONSE, messageRecipient, url, NotificationTypeEnum.NO_PUSH);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.VIDEO, url);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -330,19 +332,19 @@ public class DefaultSendOperationsTests {
     @Test
     public void testFileAttachment() {
         String url = "http://localhost";
-        sendOperations.fileAttachment(messageRecipient, url);
+        sendOperations.fileAttachment(RESPONSE, messageRecipient, url);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.FILE, url);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testFileAttachmentWithNotificationType() {
         String url = "http://localhost";
-        sendOperations.fileAttachment(messageRecipient, url, NotificationTypeEnum.NO_PUSH);
+        sendOperations.fileAttachment(RESPONSE, messageRecipient, url, NotificationTypeEnum.NO_PUSH);
         MediaAttachment attachment = new MediaAttachment(MediaAttachment.Type.FILE, url);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -351,20 +353,20 @@ public class DefaultSendOperationsTests {
     public void testQuickRepliesWithTextMessage() {
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
-        sendOperations.quickReplies(messageRecipient, text, quickReplies);
+        sendOperations.quickReplies(RESPONSE, messageRecipient, text, quickReplies);
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testQuickRepliesWithTextMessageAndNotificationType() {
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
-        sendOperations.quickReplies(messageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH);
+        sendOperations.quickReplies(RESPONSE, messageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH);
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -373,10 +375,10 @@ public class DefaultSendOperationsTests {
     public void testQuickRepliesWithTextMessageAndNotificationTypeAndMessageTag() {
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
-        sendOperations.quickReplies(messageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
+        sendOperations.quickReplies(RESPONSE, messageRecipient, text, quickReplies, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
@@ -386,10 +388,10 @@ public class DefaultSendOperationsTests {
     public void testQuickRepliesWithTextMessageAndMessageTag() {
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
-        sendOperations.quickReplies(messageRecipient, text, quickReplies, MessageTag.ISSUE_RESOLUTION);
+        sendOperations.quickReplies(RESPONSE, messageRecipient, text, quickReplies, MessageTag.ISSUE_RESOLUTION);
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -398,10 +400,10 @@ public class DefaultSendOperationsTests {
     public void testQuickRepliesWithTextMessageAndCustomMessageTag() {
         String text = "Hello!";
         List<QuickReply> quickReplies = createQuickReplies();
-        sendOperations.quickReplies(messageRecipient, text, quickReplies, new MessageTag("CUSTOM"));
+        sendOperations.quickReplies(RESPONSE, messageRecipient, text, quickReplies, new MessageTag("CUSTOM"));
         Message message = new Message(text);
         message.addQuickReplies(quickReplies);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(TAG_PARAM_NAME, "CUSTOM"),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -410,20 +412,20 @@ public class DefaultSendOperationsTests {
     public void testQuickRepliesWithMediaAttachment() {
         MediaAttachment attachment = createMediaAttachment();
         List<QuickReply> quickReplies = createQuickReplies();
-        sendOperations.quickReplies(messageRecipient, attachment, quickReplies);
+        sendOperations.quickReplies(RESPONSE, messageRecipient, attachment, quickReplies);
         Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testQuickRepliesWithMediaAttachmentAndNotificationType() {
         MediaAttachment attachment = createMediaAttachment();
         List<QuickReply> quickReplies = createQuickReplies();
-        sendOperations.quickReplies(messageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
+        sendOperations.quickReplies(RESPONSE, messageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
         Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -433,10 +435,10 @@ public class DefaultSendOperationsTests {
         ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
         TemplateAttachment attachment = new TemplateAttachment(payload);
         List<QuickReply> quickReplies = createQuickReplies();
-        sendOperations.quickReplies(messageRecipient, attachment, quickReplies);
+        sendOperations.quickReplies(RESPONSE, messageRecipient, attachment, quickReplies);
         Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
@@ -444,10 +446,10 @@ public class DefaultSendOperationsTests {
         ButtonTemplatePayload payload = new ButtonTemplatePayload("body text");
         TemplateAttachment attachment = new TemplateAttachment(payload);
         List<QuickReply> quickReplies = createQuickReplies();
-        sendOperations.quickReplies(messageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
+        sendOperations.quickReplies(RESPONSE, messageRecipient, attachment, quickReplies, NotificationTypeEnum.NO_PUSH);
         Message message = new Message(attachment);
         message.addQuickReplies(quickReplies);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -455,19 +457,19 @@ public class DefaultSendOperationsTests {
     @Test
     public void testButtonTemplate() {
         ButtonTemplatePayload buttonTemplate = createButtonTemplate();
-        sendOperations.buttonTemplate(messageRecipient, buttonTemplate);
+        sendOperations.buttonTemplate(RESPONSE, messageRecipient, buttonTemplate);
         TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testButtonTemplateWithNotificationType() {
         ButtonTemplatePayload buttonTemplate = createButtonTemplate();
-        sendOperations.buttonTemplate(messageRecipient, buttonTemplate, NotificationTypeEnum.NO_PUSH);
+        sendOperations.buttonTemplate(RESPONSE, messageRecipient, buttonTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(buttonTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -475,19 +477,19 @@ public class DefaultSendOperationsTests {
     @Test
     public void testGenericTemplate() {
         GenericTemplatePayload genericTemplate = createGenericTemplate();
-        sendOperations.genericTemplate(messageRecipient, genericTemplate);
+        sendOperations.genericTemplate(RESPONSE, messageRecipient, genericTemplate);
         TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testGenericTemplateWithNotificationType() {
         GenericTemplatePayload genericTemplate = createGenericTemplate();
-        sendOperations.genericTemplate(messageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH);
+        sendOperations.genericTemplate(RESPONSE, messageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -495,10 +497,10 @@ public class DefaultSendOperationsTests {
     @Test
     public void testGenericTemplateWithNotificationTypeAndMessageTag() {
         GenericTemplatePayload genericTemplate = createGenericTemplate();
-        sendOperations.genericTemplate(messageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
+        sendOperations.genericTemplate(RESPONSE, messageRecipient, genericTemplate, NotificationTypeEnum.NO_PUSH, MessageTag.ISSUE_RESOLUTION);
         TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
@@ -507,10 +509,10 @@ public class DefaultSendOperationsTests {
     @Test
     public void testGenericTemplateWithMessageTag() {
         GenericTemplatePayload genericTemplate = createGenericTemplate();
-        sendOperations.genericTemplate(messageRecipient, genericTemplate, MessageTag.ISSUE_RESOLUTION);
+        sendOperations.genericTemplate(RESPONSE, messageRecipient, genericTemplate, MessageTag.ISSUE_RESOLUTION);
         TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(TAG_PARAM_NAME, MessageTag.ISSUE_RESOLUTION.getTag()),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -518,10 +520,10 @@ public class DefaultSendOperationsTests {
     @Test
     public void testGenericTemplateWithCustomMessageTag() {
         GenericTemplatePayload genericTemplate = createGenericTemplate();
-        sendOperations.genericTemplate(messageRecipient, genericTemplate, new MessageTag("CUSTOM"));
+        sendOperations.genericTemplate(RESPONSE, messageRecipient, genericTemplate, new MessageTag("CUSTOM"));
         TemplateAttachment attachment = new TemplateAttachment(genericTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(TAG_PARAM_NAME, "CUSTOM"),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -529,19 +531,19 @@ public class DefaultSendOperationsTests {
     @Test
     public void testListTemplate() {
         ListTemplatePayload listTemplate = createListTemplate();
-        sendOperations.listTemplate(messageRecipient, listTemplate);
+        sendOperations.listTemplate(RESPONSE, messageRecipient, listTemplate);
         TemplateAttachment attachment = new TemplateAttachment(listTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testListTemplateWithNotificationType() {
         ListTemplatePayload listTemplate = createListTemplate();
-        sendOperations.listTemplate(messageRecipient, listTemplate, NotificationTypeEnum.NO_PUSH);
+        sendOperations.listTemplate(RESPONSE, messageRecipient, listTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(listTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -549,19 +551,19 @@ public class DefaultSendOperationsTests {
     @Test
     public void testReceiptTemplate() {
         ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
-        sendOperations.receiptTemplate(messageRecipient, receiptTemplate);
+        sendOperations.receiptTemplate(RESPONSE, messageRecipient, receiptTemplate);
         TemplateAttachment attachment = new TemplateAttachment(receiptTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testReceiptTemplateWithNotificationType() {
         ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
-        sendOperations.receiptTemplate(messageRecipient, receiptTemplate, NotificationTypeEnum.NO_PUSH);
+        sendOperations.receiptTemplate(RESPONSE, messageRecipient, receiptTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(receiptTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -569,19 +571,19 @@ public class DefaultSendOperationsTests {
     @Test
     public void testAirlineItineraryTemplate() {
         AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
-        sendOperations.airlineItineraryTemplate(messageRecipient, airlineItineraryTemplate);
+        sendOperations.airlineItineraryTemplate(RESPONSE, messageRecipient, airlineItineraryTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineItineraryTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testAirlineItineraryTemplateWithNotificationType() {
         AirlineItineraryTemplatePayload airlineItineraryTemplate = createAirlineItineraryTemplate();
-        sendOperations.airlineItineraryTemplate(messageRecipient, airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
+        sendOperations.airlineItineraryTemplate(RESPONSE, messageRecipient, airlineItineraryTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(airlineItineraryTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -589,19 +591,19 @@ public class DefaultSendOperationsTests {
     @Test
     public void testAirlineCheckinTemplate() {
         AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
-        sendOperations.airlineCheckinTemplate(messageRecipient, airlineCheckinTemplate);
+        sendOperations.airlineCheckinTemplate(RESPONSE, messageRecipient, airlineCheckinTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineCheckinTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testAirlineCheckinTemplateWithNotificationType() {
         AirlineCheckinTemplatePayload airlineCheckinTemplate = createAirlineCheckinTemplate();
-        sendOperations.airlineCheckinTemplate(messageRecipient, airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
+        sendOperations.airlineCheckinTemplate(RESPONSE, messageRecipient, airlineCheckinTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(airlineCheckinTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -610,20 +612,20 @@ public class DefaultSendOperationsTests {
     public void testAirlineBoardingPassTemplate() {
         AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
                 createAirlineBoardingPassTemplate();
-        sendOperations.airlineBoardingPassTemplate(messageRecipient, airlineBoardingPassTemplate);
+        sendOperations.airlineBoardingPassTemplate(RESPONSE, messageRecipient, airlineBoardingPassTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineBoardingPassTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testAirlineBoardingPassTemplateWithNotificationType() {
         AirlineBoardingPassTemplatePayload airlineBoardingPassTemplate =
                 createAirlineBoardingPassTemplate();
-        sendOperations.airlineBoardingPassTemplate(messageRecipient, airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
+        sendOperations.airlineBoardingPassTemplate(RESPONSE, messageRecipient, airlineBoardingPassTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(airlineBoardingPassTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
@@ -631,32 +633,40 @@ public class DefaultSendOperationsTests {
     @Test
     public void testAirlineUpdateTemplate() {
         AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
-        sendOperations.airlineUpdateTemplate(messageRecipient, airlineUpdateTemplate);
+        sendOperations.airlineUpdateTemplate(RESPONSE, messageRecipient, airlineUpdateTemplate);
         TemplateAttachment attachment = new TemplateAttachment(airlineUpdateTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     @Test
     public void testAirlineUpdateTemplateWithNotificationType() {
         AirlineUpdateTemplatePayload airlineUpdateTemplate = createAirlineUpdateTemplate();
-        sendOperations.airlineUpdateTemplate(messageRecipient, airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
+        sendOperations.airlineUpdateTemplate(RESPONSE, messageRecipient, airlineUpdateTemplate, NotificationTypeEnum.NO_PUSH);
         TemplateAttachment attachment = new TemplateAttachment(airlineUpdateTemplate);
         Message message = new Message(attachment);
-        verifySend(messageRecipient,
+        verifySend(RESPONSE, messageRecipient,
                 Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
                 Parameter.with(MESSAGE_PARAM_NAME, message));
     }
 
     private void verifySend(MessageRecipient recipient, Parameter... parameters) {
-        verifySend(Parameter.with(RECIPIENT_PARAM_NAME, recipient), parameters);
+        List<Parameter> params = new ArrayList<>();
+        params.add(Parameter.with(RECIPIENT_PARAM_NAME, recipient));
+        params.addAll(Arrays.asList(parameters));
+        verifySend(params.toArray(new Parameter[params.size()]));
     }
 
-    private void verifySend(Parameter recipient, Parameter... parameters) {
+    private void verifySend(MessagingType type, MessageRecipient recipient, Parameter... parameters) {
         List<Parameter> params = new ArrayList<>();
-        params.add(recipient);
+        params.add(Parameter.with(MESSAGING_TYPE_PARAM_NAME, type));
+        params.add(Parameter.with(RECIPIENT_PARAM_NAME, recipient));
         params.addAll(Arrays.asList(parameters));
-        verify(facebookClient).publish(MESSAGES_PATH, SendResponse.class, params.toArray(new Parameter[params.size()]));
+        verifySend(params.toArray(new Parameter[params.size()]));
+    }
+
+    private void verifySend(Parameter... parameters) {
+        verify(facebookClient).publish(MESSAGES_PATH, SendResponse.class, parameters);
     }
 
     private MediaAttachment createMediaAttachment() {

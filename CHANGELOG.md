@@ -1,5 +1,12 @@
 ##  RestFB Messenger Changelog
 
+### 2.2.0 (TBA)
+
+* Added required `messaging_type` property (https://developers.facebook.com/docs/messenger-platform/send-messages#messaging_types) to all send operations.
+* Upgraded RestFB dependency to latest 1.48.0
+* Upgraded Spring Boot Starter to latest Spring Boot 1.5.8
+* Updated default Facebook API version to 2.11
+
 ### 1.3.0 (2017-04-27)
 
 * Added support for Message Tags (https://developers.facebook.com/docs/messenger-platform/send-api-reference/tags)
