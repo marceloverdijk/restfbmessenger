@@ -20,6 +20,7 @@ import com.github.marsbits.restfbmessenger.Messenger;
 import com.restfb.types.webhook.WebhookEntry;
 import com.restfb.types.webhook.WebhookObject;
 import com.restfb.types.webhook.messaging.AccountLinkingItem;
+import com.restfb.types.webhook.messaging.AppRoles;
 import com.restfb.types.webhook.messaging.CheckoutUpdateItem;
 import com.restfb.types.webhook.messaging.DeliveryItem;
 import com.restfb.types.webhook.messaging.MessageItem;
@@ -170,6 +171,17 @@ public class AbstractCallbackHandlerTests {
         WebhookObject webhookObject = createWebhookObject(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onAccountLinking(messenger, messagingItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnAppRoles() {
+        AppRoles appRoles = new AppRoles();
+        MessagingItem messagingItem = new MessagingItem();
+        messagingItem.setAppRoles(appRoles);
+        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onAppRoles(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
     }
 

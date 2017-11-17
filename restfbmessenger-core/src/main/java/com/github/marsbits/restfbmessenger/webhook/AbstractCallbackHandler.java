@@ -20,6 +20,7 @@ import com.github.marsbits.restfbmessenger.Messenger;
 import com.restfb.types.webhook.WebhookEntry;
 import com.restfb.types.webhook.WebhookObject;
 import com.restfb.types.webhook.messaging.AccountLinkingItem;
+import com.restfb.types.webhook.messaging.AppRoles;
 import com.restfb.types.webhook.messaging.CheckoutUpdateItem;
 import com.restfb.types.webhook.messaging.DeliveryItem;
 import com.restfb.types.webhook.messaging.InnerMessagingItem;
@@ -67,33 +68,33 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
                     if (logger.isLoggable(FINE)) {
                         logger.fine(format("Handling messaging item: %s", messaging));
                     }
-                    InnerMessagingItem innerMessagingItem = messaging.getItem();
-                    if (innerMessagingItem instanceof MessageItem) {
-                        if (((MessageItem) innerMessagingItem).isEcho()) {
+                    if (messaging.isMessage()) {
+                        if (messaging.getMessage().isEcho()) {
                             onMessageEcho(messenger, messaging);
                         } else {
                             onMessage(messenger, messaging);
                         }
-                    } else if (innerMessagingItem instanceof DeliveryItem) {
+                    } else if (messaging.isDelivery()) {
                         onMessageDelivered(messenger, messaging);
-                    } else if (innerMessagingItem instanceof ReadItem) {
+                    } else if (messaging.isRead()) {
                         onMessageRead(messenger, messaging);
-                    } else if (innerMessagingItem instanceof PostbackItem) {
+                    } else if (messaging.isPostback()) {
                         onPostback(messenger, messaging);
-                    } else if (innerMessagingItem instanceof OptinItem) {
+                    } else if (messaging.isOptin()) {
                         onOptin(messenger, messaging);
-                    } else if (innerMessagingItem instanceof ReferralItem) {
+                    } else if (messaging.isReferral()) {
                         onReferral(messenger, messaging);
-                    } else if (innerMessagingItem instanceof PaymentItem) {
+                    } else if (messaging.isPayment()) {
                         onPayment(messenger, messaging);
-                    } else if (innerMessagingItem instanceof CheckoutUpdateItem) {
+                    } else if (messaging.isCheckoutUpdate()) {
                         onCheckoutUpdate(messenger, messaging);
-                    } else if (innerMessagingItem instanceof AccountLinkingItem) {
+                    } else if (messaging.isAccountLinking()) {
                         onAccountLinking(messenger, messaging);
+                    } else if (messaging.getAppRoles() != null) {
+                        onAppRoles(messenger, messaging);
                     } else {
                         if (logger.isLoggable(WARNING)) {
-                            Class clazz = innerMessagingItem != null
-                                    ? innerMessagingItem.getClass() : null;
+                            Class clazz = messaging.getItem() != null ? messaging.getItem().getClass() : null;
                             logger.warning(format("Unknown inner messaging item: %s", clazz));
                         }
                         fallback(messenger, messaging);
@@ -191,6 +192,15 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
      * @param messaging the {@code MessagingItem} containing the account linking data
      */
     public void onAccountLinking(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles an app roles callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the app roles data
+     */
+    public void onAppRoles(Messenger messenger, MessagingItem messaging) {
     }
 
     /**
