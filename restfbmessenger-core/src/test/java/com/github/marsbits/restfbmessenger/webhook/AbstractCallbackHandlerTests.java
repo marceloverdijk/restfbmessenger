@@ -32,12 +32,12 @@ import com.restfb.types.webhook.messaging.PolicyEnforcementItem;
 import com.restfb.types.webhook.messaging.PostbackItem;
 import com.restfb.types.webhook.messaging.ReadItem;
 import com.restfb.types.webhook.messaging.ReferralItem;
-
 import com.restfb.types.webhook.messaging.TakeThreadControlItem;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -71,7 +71,7 @@ public class AbstractCallbackHandlerTests {
         MessageItem message = new MessageItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setMessage(message);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onMessage(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -82,7 +82,7 @@ public class AbstractCallbackHandlerTests {
         DeliveryItem delivery = new DeliveryItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setDelivery(delivery);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onMessageDelivered(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -93,7 +93,7 @@ public class AbstractCallbackHandlerTests {
         ReadItem read = new ReadItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setRead(read);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onMessageRead(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -105,7 +105,7 @@ public class AbstractCallbackHandlerTests {
         message.setEcho(true);
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setMessage(message);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onMessageEcho(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -116,7 +116,7 @@ public class AbstractCallbackHandlerTests {
         PostbackItem postback = new PostbackItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setPostback(postback);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onPostback(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -127,7 +127,7 @@ public class AbstractCallbackHandlerTests {
         OptinItem optin = new OptinItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setOptin(optin);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onOptin(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -138,7 +138,7 @@ public class AbstractCallbackHandlerTests {
         ReferralItem referral = new ReferralItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setReferral(referral);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onReferral(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -149,7 +149,7 @@ public class AbstractCallbackHandlerTests {
         PaymentItem payment = new PaymentItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setPayment(payment);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onPayment(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -160,7 +160,7 @@ public class AbstractCallbackHandlerTests {
         CheckoutUpdateItem checkoutUpdate = new CheckoutUpdateItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setCheckoutUpdate(checkoutUpdate);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onCheckoutUpdate(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -171,7 +171,7 @@ public class AbstractCallbackHandlerTests {
         AccountLinkingItem accountLinking = new AccountLinkingItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setAccountLinking(accountLinking);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onAccountLinking(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -182,7 +182,7 @@ public class AbstractCallbackHandlerTests {
         PolicyEnforcementItem policyEnforcement = new PolicyEnforcementItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setPolicyEnforcement(policyEnforcement);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onPolicyEnforcement(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -193,7 +193,7 @@ public class AbstractCallbackHandlerTests {
         TakeThreadControlItem takeThreadControl = new TakeThreadControlItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setTakeThreadControl(takeThreadControl);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onTakeThreadControl(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -204,7 +204,7 @@ public class AbstractCallbackHandlerTests {
         PassThreadControlItem passThreadControl = new PassThreadControlItem();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setPassThreadControl(passThreadControl);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onPassThreadControl(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -215,7 +215,7 @@ public class AbstractCallbackHandlerTests {
         AppRoles appRoles = new AppRoles();
         MessagingItem messagingItem = new MessagingItem();
         messagingItem.setAppRoles(appRoles);
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onAppRoles(messenger, messagingItem);
         verifyNoMoreInteractions(spyCallbackHandler);
@@ -224,9 +224,63 @@ public class AbstractCallbackHandlerTests {
     @Test
     public void testFallback() {
         MessagingItem messagingItem = new MessagingItem();
-        WebhookObject webhookObject = createWebhookObject(messagingItem);
+        WebhookObject webhookObject = createWebhookObjectWithMessagingItem(messagingItem);
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).fallback(messenger, messagingItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnStandbyMessage() {
+        MessageItem message = new MessageItem();
+        MessagingItem standbyItem = new MessagingItem();
+        standbyItem.setMessage(message);
+        WebhookObject webhookObject = createWebhookObjectWithStandbyItem(standbyItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onStandbyMessage(messenger, standbyItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnStandbyMessageDelivered() {
+        DeliveryItem delivery = new DeliveryItem();
+        MessagingItem standbyItem = new MessagingItem();
+        standbyItem.setDelivery(delivery);
+        WebhookObject webhookObject = createWebhookObjectWithStandbyItem(standbyItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onStandbyMessageDelivered(messenger, standbyItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnStandbyMessageRead() {
+        ReadItem read = new ReadItem();
+        MessagingItem standbyItem = new MessagingItem();
+        standbyItem.setRead(read);
+        WebhookObject webhookObject = createWebhookObjectWithStandbyItem(standbyItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onStandbyMessageRead(messenger, standbyItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testOnStandbyMessageEcho() {
+        MessageItem message = new MessageItem();
+        message.setEcho(true);
+        MessagingItem standbyItem = new MessagingItem();
+        standbyItem.setMessage(message);
+        WebhookObject webhookObject = createWebhookObjectWithStandbyItem(standbyItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).onStandbyMessageEcho(messenger, standbyItem);
+        verifyNoMoreInteractions(spyCallbackHandler);
+    }
+
+    @Test
+    public void testStandbyFallback() {
+        MessagingItem standbyItem = new MessagingItem();
+        WebhookObject webhookObject = createWebhookObjectWithStandbyItem(standbyItem);
+        spyCallbackHandler.onCallback(messenger, webhookObject);
+        verify(spyCallbackHandler, times(1)).standbyFallback(messenger, standbyItem);
         verifyNoMoreInteractions(spyCallbackHandler);
     }
 
@@ -242,28 +296,45 @@ public class AbstractCallbackHandlerTests {
         MessagingItem messagingItem3 = new MessagingItem();
         messagingItem3.setPostback(postback);
         MessagingItem messagingItem4 = new MessagingItem();
-        WebhookObject webhookObject = createWebhookObject(messagingItem1, messagingItem2, messagingItem3, messagingItem4);
+        MessageItem standby1 = new MessageItem();
+        MessagingItem standbyItem1 = new MessagingItem();
+        standbyItem1.setMessage(standby1);
+        MessageItem standby2 = new MessageItem();
+        MessagingItem standbyItem2 = new MessagingItem();
+        standbyItem2.setMessage(standby2);
+        MessagingItem standbyItem3 = new MessagingItem();
+        WebhookObject webhookObject = createWebhookObject(
+                Arrays.asList(messagingItem1, messagingItem2, messagingItem3, messagingItem4),
+                Arrays.asList(standbyItem1, standbyItem2, standbyItem3));
         spyCallbackHandler.onCallback(messenger, webhookObject);
         verify(spyCallbackHandler, times(1)).onMessage(messenger, messagingItem1);
         verify(spyCallbackHandler, times(1)).onMessage(messenger, messagingItem2);
         verify(spyCallbackHandler, times(1)).onPostback(messenger, messagingItem3);
         verify(spyCallbackHandler, times(1)).fallback(messenger, messagingItem4);
+        verify(spyCallbackHandler, times(1)).onStandbyMessage(messenger, standbyItem1);
+        verify(spyCallbackHandler, times(1)).onStandbyMessage(messenger, standbyItem2);
+        verify(spyCallbackHandler, times(1)).standbyFallback(messenger, standbyItem3);
         verifyNoMoreInteractions(spyCallbackHandler);
     }
 
-    private WebhookObject createWebhookObject(MessagingItem messagingItem) {
-        return createWebhookObject(new MessagingItem[] {messagingItem});
+    private WebhookObject createWebhookObjectWithMessagingItem(MessagingItem messagingItem) {
+        return createWebhookObject(Arrays.asList(messagingItem), null);
     }
 
-    private WebhookObject createWebhookObject(MessagingItem... messagingItems) {
-        return createWebhookObject("page", messagingItems);
+    private WebhookObject createWebhookObjectWithStandbyItem(MessagingItem standbyItem) {
+        return createWebhookObject(null, Arrays.asList(standbyItem));
     }
 
-    private WebhookObject createWebhookObject(String object, MessagingItem... messagingItems) {
+    private WebhookObject createWebhookObject(List<MessagingItem> messagingItems, List<MessagingItem> standbyItems) {
+        return createWebhookObject("page", messagingItems, standbyItems);
+    }
+
+    private WebhookObject createWebhookObject(String object, List<MessagingItem> messagingItems, List<MessagingItem> standbyItems) {
         WebhookObject webhookObject = new WebhookObject();
-        webhookObject.setObject(object);
+        webhookObject.setObject("page");
         WebhookEntry entry = new WebhookEntry();
-        entry.setMessaging(Arrays.asList(messagingItems));
+        entry.setMessaging(messagingItems);
+        entry.setStandby(standbyItems);
         webhookObject.setEntryList(Arrays.asList(entry));
         return webhookObject;
     }

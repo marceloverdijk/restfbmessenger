@@ -5,10 +5,11 @@
 * Added required `messaging_type` property (https://developers.facebook.com/docs/messenger-platform/send-messages#messaging_types) to all send operations.
 * Added support for the open graph template
 * Added support for additional webhook callbacks:
-  * Added support for policy enforcement
-  * Added support for app roles
-  * Added support for take thread control
-  * Added support for pass thread control  
+  * Policy enforcement
+  * App roles
+  * Take thread control
+  * Pass thread control
+  * Standby
 * Updated the available message tags (https://developers.facebook.com/docs/messenger-platform/send-messages/message-tags)
 * Upgraded RestFB dependency to latest 1.48.0
 * Upgraded Spring Boot Starter to latest Spring Boot 1.5.8

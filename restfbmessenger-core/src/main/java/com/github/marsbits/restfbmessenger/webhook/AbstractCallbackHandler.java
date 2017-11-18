@@ -29,15 +29,15 @@ import static java.util.logging.Level.WARNING;
 
 /**
  * Abstract implementation of the {@link CallbackHandler} interface.
- *
+ * <p>
  * This class processes the received webhook and delegates the actual callbacks to the appropriate methods like {@link #onMessage(Messenger,
  * MessagingItem)}, {@link #onPostback(Messenger, MessagingItem)} etc.
- *
+ * <p>
  * Custom classes that extend this {@code AbstractCallbackHandler} should override the callback methods that they want to listen and
  * interact to.
- *
- * A special case is the {@link #fallback(Messenger, MessagingItem)} methdod which is called when the received callback type is unknown.
- * This could potentially happen when Facebook introduces new callback types.
+ * <p>
+ * Special cases are the {@link #fallback(Messenger, MessagingItem)} and {@link #standbyFallback(Messenger, MessagingItem)} methods which
+ * are called when the received callback type is unknown. This could potentially happen when Facebook introduces new callback types.
  *
  * @author Marcel Overdijk
  * @since 1.0.0
@@ -49,50 +49,82 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
     @Override
     public final void onCallback(Messenger messenger, WebhookObject webhookObject) {
         if (webhookObject != null) {
+            // Process the entry list.
             for (WebhookEntry entry : webhookObject.getEntryList()) {
+
                 if (logger.isLoggable(FINE)) {
                     logger.fine(format("Handling entry: %s", entry));
                 }
-                for (MessagingItem messaging : entry.getMessaging()) {
-                    if (logger.isLoggable(FINE)) {
-                        logger.fine(format("Handling messaging item: %s", messaging));
-                    }
-                    if (messaging.isMessage()) {
-                        if (messaging.getMessage().isEcho()) {
-                            onMessageEcho(messenger, messaging);
+
+                // Process the messaging items.
+                if (entry.getMessaging() != null) {
+                    for (MessagingItem messaging : entry.getMessaging()) {
+                        if (logger.isLoggable(FINE)) {
+                            logger.fine(format("Handling messaging item: %s", messaging));
+                        }
+                        if (messaging.isMessage()) {
+                            if (messaging.getMessage().isEcho()) {
+                                onMessageEcho(messenger, messaging);
+                            } else {
+                                onMessage(messenger, messaging);
+                            }
+                        } else if (messaging.isDelivery()) {
+                            onMessageDelivered(messenger, messaging);
+                        } else if (messaging.isRead()) {
+                            onMessageRead(messenger, messaging);
+                        } else if (messaging.isPostback()) {
+                            onPostback(messenger, messaging);
+                        } else if (messaging.isOptin()) {
+                            onOptin(messenger, messaging);
+                        } else if (messaging.isReferral()) {
+                            onReferral(messenger, messaging);
+                        } else if (messaging.isPayment()) {
+                            onPayment(messenger, messaging);
+                        } else if (messaging.isCheckoutUpdate()) {
+                            onCheckoutUpdate(messenger, messaging);
+                        } else if (messaging.isAccountLinking()) {
+                            onAccountLinking(messenger, messaging);
+                        } else if (messaging.isPolicyEnforcement()) {
+                            onPolicyEnforcement(messenger, messaging);
+                        } else if (messaging.isTakeThreadControl()) {
+                            onTakeThreadControl(messenger, messaging);
+                        } else if (messaging.isPassThreadControl()) {
+                            onPassThreadControl(messenger, messaging);
+                        } else if (messaging.getAppRoles() != null) {
+                            onAppRoles(messenger, messaging);
                         } else {
-                            onMessage(messenger, messaging);
+                            if (logger.isLoggable(WARNING)) {
+                                Class clazz = messaging.getItem() != null ? messaging.getItem().getClass() : null;
+                                logger.warning(format("Unknown inner messaging item: %s", clazz));
+                            }
+                            fallback(messenger, messaging);
                         }
-                    } else if (messaging.isDelivery()) {
-                        onMessageDelivered(messenger, messaging);
-                    } else if (messaging.isRead()) {
-                        onMessageRead(messenger, messaging);
-                    } else if (messaging.isPostback()) {
-                        onPostback(messenger, messaging);
-                    } else if (messaging.isOptin()) {
-                        onOptin(messenger, messaging);
-                    } else if (messaging.isReferral()) {
-                        onReferral(messenger, messaging);
-                    } else if (messaging.isPayment()) {
-                        onPayment(messenger, messaging);
-                    } else if (messaging.isCheckoutUpdate()) {
-                        onCheckoutUpdate(messenger, messaging);
-                    } else if (messaging.isAccountLinking()) {
-                        onAccountLinking(messenger, messaging);
-                    } else if (messaging.isPolicyEnforcement()) {
-                        onPolicyEnforcement(messenger, messaging);
-                    } else if (messaging.isTakeThreadControl()) {
-                        onTakeThreadControl(messenger, messaging);
-                    } else if (messaging.isPassThreadControl()) {
-                        onPassThreadControl(messenger, messaging);
-                    } else if (messaging.getAppRoles() != null) {
-                        onAppRoles(messenger, messaging);
-                    } else {
-                        if (logger.isLoggable(WARNING)) {
-                            Class clazz = messaging.getItem() != null ? messaging.getItem().getClass() : null;
-                            logger.warning(format("Unknown inner messaging item: %s", clazz));
+                    }
+                }
+
+                // Process the standby items.
+                if (entry.getStandby() != null) {
+                    for (MessagingItem standby : entry.getStandby()) {
+                        if (logger.isLoggable(FINE)) {
+                            logger.fine(format("Handling standby item: %s", standby));
                         }
-                        fallback(messenger, messaging);
+                        if (standby.isMessage()) {
+                            if (standby.getMessage().isEcho()) {
+                                onStandbyMessageEcho(messenger, standby);
+                            } else {
+                                onStandbyMessage(messenger, standby);
+                            }
+                        } else if (standby.isDelivery()) {
+                            onStandbyMessageDelivered(messenger, standby);
+                        } else if (standby.isRead()) {
+                            onStandbyMessageRead(messenger, standby);
+                        } else {
+                            if (logger.isLoggable(WARNING)) {
+                                Class clazz = standby.getItem() != null ? standby.getItem().getClass() : null;
+                                logger.warning(format("Unknown inner standby item: %s", clazz));
+                            }
+                            standbyFallback(messenger, standby);
+                        }
                     }
                 }
             }
@@ -232,5 +264,50 @@ public abstract class AbstractCallbackHandler implements CallbackHandler {
      * @param messaging the {@code MessagingItem} containing the callback data
      */
     public void fallback(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles a standby message callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the message data
+     */
+    public void onStandbyMessage(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles a standby message delivered callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the message delivered data
+     */
+    public void onStandbyMessageDelivered(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles a standby message read callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the message read data
+     */
+    public void onStandbyMessageRead(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles a standby message echo callback.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the message echo data
+     */
+    public void onStandbyMessageEcho(Messenger messenger, MessagingItem messaging) {
+    }
+
+    /**
+     * Handles fallback for unknown standby callback types.
+     *
+     * @param messenger the {@code Messenger} instance that retrieved the callback
+     * @param messaging the {@code MessagingItem} containing the callback data
+     */
+    public void standbyFallback(Messenger messenger, MessagingItem messaging) {
     }
 }
