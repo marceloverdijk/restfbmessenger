@@ -49,6 +49,7 @@ import com.restfb.types.send.airline.BoardingPass;
 import com.restfb.types.send.airline.FlightAirport;
 import com.restfb.types.send.airline.FlightInfo;
 import com.restfb.types.send.airline.FlightSchedule;
+import com.restfb.types.send.media.MediaTemplateAttachmentElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -573,6 +574,44 @@ public class DefaultSendOperationsTests {
     }
 
     @Test
+    public void testMediaTemplate() {
+        MediaAttachment mediaTemplate = createMediaTemplate();
+        sendOperations.mediaTemplate(RESPONSE, messageRecipient, mediaTemplate);
+        Message message = new Message(mediaTemplate);
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testMediaTemplateWithNotificationType() {
+        MediaAttachment mediaTemplate = createMediaTemplate();
+        sendOperations.mediaTemplate(RESPONSE, messageRecipient, mediaTemplate, NotificationTypeEnum.NO_PUSH);
+        Message message = new Message(mediaTemplate);
+        verifySend(RESPONSE, messageRecipient,
+                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testMediaTemplateWithElements() {
+        List<MediaAttachment.MediaTemplateElement> elements = createMediaTemplateElements();
+        sendOperations.mediaTemplate(RESPONSE, messageRecipient, elements);
+        MediaAttachment attachment = new MediaAttachment(elements);
+        Message message = new Message(attachment);
+        verifySend(RESPONSE, messageRecipient, Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
+    public void testMediaTemplateWithElementsAndNotificationType() {
+        List<MediaAttachment.MediaTemplateElement> elements = createMediaTemplateElements();
+        sendOperations.mediaTemplate(RESPONSE, messageRecipient, elements, NotificationTypeEnum.NO_PUSH);
+        MediaAttachment attachment = new MediaAttachment(elements);
+        Message message = new Message(attachment);
+        verifySend(RESPONSE, messageRecipient,
+                Parameter.with(NOTIFICATION_TYPE_PARAM_NAME, NotificationTypeEnum.NO_PUSH),
+                Parameter.with(MESSAGE_PARAM_NAME, message));
+    }
+
+    @Test
     public void testReceiptTemplate() {
         ReceiptTemplatePayload receiptTemplate = createReceiptTemplate();
         sendOperations.receiptTemplate(RESPONSE, messageRecipient, receiptTemplate);
@@ -732,6 +771,22 @@ public class DefaultSendOperationsTests {
         List<ListViewElement> listViewElements = Arrays.asList(element1, element2);
         ListTemplatePayload listTemplate = new ListTemplatePayload(listViewElements);
         return listTemplate;
+    }
+
+    private MediaAttachment createMediaTemplate() {
+        List<MediaAttachment.MediaTemplateElement> elements = createMediaTemplateElements();
+        MediaAttachment mediaTemplate = new MediaAttachment(elements);
+        return mediaTemplate;
+    }
+
+    private List<MediaAttachment.MediaTemplateElement> createMediaTemplateElements() {
+        MediaAttachment.MediaTemplateElement element1 =
+                new MediaTemplateAttachmentElement(MediaAttachment.MediaType.IMAGE, "element 1");
+        element1.addButton(new WebButton("title 1", "url 1"));
+        MediaAttachment.MediaTemplateElement element2 =
+                new MediaTemplateAttachmentElement(MediaAttachment.MediaType.IMAGE, "element 2");
+        element1.addButton(new WebButton("title 2", "url 2"));
+        return Arrays.asList(element1, element2);
     }
 
     private ReceiptTemplatePayload createReceiptTemplate() {

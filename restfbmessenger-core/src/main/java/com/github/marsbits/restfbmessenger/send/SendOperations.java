@@ -595,6 +595,54 @@ public interface SendOperations {
             throws FacebookException;
 
     /**
+     * Sends the given media template to the user.
+     *
+     * @param type          the messaging type
+     * @param recipient     the recipient
+     * @param mediaTemplate the media template
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse mediaTemplate(MessagingType type, MessageRecipient recipient, MediaAttachment mediaTemplate) throws FacebookException;
+
+    /**
+     * Sends the given media template to the user.
+     *
+     * @param type             the messaging type
+     * @param recipient        the recipient
+     * @param mediaTemplate    the media template
+     * @param notificationType the push notification type
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse mediaTemplate(MessagingType type, MessageRecipient recipient, MediaAttachment mediaTemplate, NotificationTypeEnum notificationType)
+            throws FacebookException;
+
+    /**
+     * Sends the given media template to the user.
+     *
+     * @param type      the messaging type
+     * @param recipient the recipient
+     * @param elements  the media template elements
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse mediaTemplate(MessagingType type, MessageRecipient recipient, List<MediaAttachment.MediaTemplateElement> elements) throws FacebookException;
+
+    /**
+     * Sends the given media template to the user.
+     *
+     * @param type             the messaging type
+     * @param recipient        the recipient
+     * @param elements         the media template elements
+     * @param notificationType the push notification type
+     * @return the {@code SendResponse}
+     * @throws FacebookException in case an error occurs while performing the Facebook API call
+     */
+    SendResponse mediaTemplate(MessagingType type, MessageRecipient recipient, List<MediaAttachment.MediaTemplateElement> elements,
+            NotificationTypeEnum notificationType) throws FacebookException;
+
+    /**
      * Sends the given receipt template to the user.
      *
      * @param type            the messaging type

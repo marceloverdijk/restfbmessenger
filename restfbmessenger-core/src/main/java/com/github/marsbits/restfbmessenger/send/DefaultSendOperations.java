@@ -362,6 +362,36 @@ public class DefaultSendOperations implements SendOperations {
     }
 
     @Override
+    public SendResponse mediaTemplate(final MessagingType type, final MessageRecipient recipient, final MediaAttachment mediaTemplate)
+            throws FacebookException {
+        return mediaTemplate(type, recipient, mediaTemplate, null);
+    }
+
+    @Override
+    public SendResponse mediaTemplate(final MessagingType type, final MessageRecipient recipient, final MediaAttachment mediaTemplate,
+            final NotificationTypeEnum notificationType) throws FacebookException {
+        requireNonNull(mediaTemplate, "'mediaTemplate' must not be null");
+        Message message = new Message(mediaTemplate);
+        return message(type, recipient, message, notificationType);
+    }
+
+    @Override
+    public SendResponse mediaTemplate(final MessagingType type, final MessageRecipient recipient,
+            final List<MediaAttachment.MediaTemplateElement> elements)
+            throws FacebookException {
+        return mediaTemplate(type, recipient, elements, null);
+    }
+
+    @Override
+    public SendResponse mediaTemplate(final MessagingType type, final MessageRecipient recipient,
+            final List<MediaAttachment.MediaTemplateElement> elements,
+            final NotificationTypeEnum notificationType) throws FacebookException {
+        requireNonNull(elements, "'elements' must not be null");
+        MediaAttachment mediaTemplate = new MediaAttachment(elements);
+        return mediaTemplate(type, recipient, mediaTemplate, notificationType);
+    }
+
+    @Override
     public SendResponse receiptTemplate(MessagingType type, MessageRecipient recipient, ReceiptTemplatePayload receiptTemplate)
             throws FacebookException {
         return receiptTemplate(type, recipient, receiptTemplate, null);
