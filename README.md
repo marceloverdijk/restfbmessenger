@@ -53,7 +53,7 @@ _Maven_:
 <dependency>
   <groupId>com.github.marsbits.restfbmessenger</groupId>
   <artifactId>restfbmessenger-core</artifactId>
-  <version>1.3.0</version>
+  <version>2.2.0</version>
 </dependency>
 ```
 
@@ -61,7 +61,7 @@ _Gradle_:
 
 ```groovy
 dependencies {
-    compile "com.github.marsbits.restfbmessenger:restfbmessenger-core:1.3.0"
+    compile "com.github.marsbits.restfbmessenger:restfbmessenger-core:2.2.0"
 }
 ```
 
@@ -200,7 +200,7 @@ _Maven_:
 <dependency>
   <groupId>com.github.marsbits.restfbmessenger</groupId>
   <artifactId>restfbmessenger-spring-boot-starter</artifactId>
-  <version>1.3.0</version>
+  <version>2.2.0</version>
 </dependency>
 ```
 
@@ -208,7 +208,7 @@ _Gradle_:
 
 ```groovy
 dependencies {
-    compile "com.github.marsbits.restfbmessenger:restfbmessenger-spring-boot-starter:1.3.0"
+    compile "com.github.marsbits.restfbmessenger:restfbmessenger-spring-boot-starter:2.2.0"
 }
 ```
 
@@ -251,19 +251,6 @@ restfbmessenger:
 
 See the [RestFB Messenger Echo Spring Boot][] sample for a full sample
 using the RestFB Messenger Spring Boot Starter.
-
-## Showcases
-
-Here are some projects that use RestFB Messenger to power its Facebok Messenger chatbot.
-
-* [Chuck Norris IO](https://m.me/chucknorris.io) (source code available [here](https://github.com/chucknorris-io/app-facebook-messenger))
-* [Tronald Dump IO](https://m.me/tronalddumpio) (source code available [here](https://github.com/tronalddump-io/app-facebook-messenger))
-
-Create a [New Issue][] or [New Pull Request][] to add your own Facebook Messenger chatbot to the list.
-
-### Google Guice
-
-TODO
 
 ## License
 
