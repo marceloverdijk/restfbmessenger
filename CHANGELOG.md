@@ -1,5 +1,9 @@
 ##  RestFB Messenger Changelog
 
+### 2.2.1 (2017-12-18)
+
+* Upgraded RestFB dependency to latest 2.0.0
+
 ### 2.2.0 (2017-12-01)
 
 * Aligned with Messenger Platform 2.2 release
