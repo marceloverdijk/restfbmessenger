@@ -23,6 +23,7 @@ import com.restfb.JsonMapper;
 import com.restfb.Parameter;
 import com.restfb.exception.FacebookException;
 import com.restfb.exception.FacebookOAuthException;
+import com.restfb.types.ProfilePictureSource;
 import com.restfb.types.User;
 import com.restfb.types.send.CallToAction;
 import com.restfb.types.send.DomainActionTypeEnum;
@@ -162,7 +163,7 @@ public class DefaultMessengerTests {
         User user = new User();
         user.setFirstName("first name");
         user.setLastName("last name");
-        User.Picture picture = new User.Picture();
+        ProfilePictureSource picture = new ProfilePictureSource();
         picture.setUrl("url");
         user.setPicture(picture);
         user.setLocale("locale");

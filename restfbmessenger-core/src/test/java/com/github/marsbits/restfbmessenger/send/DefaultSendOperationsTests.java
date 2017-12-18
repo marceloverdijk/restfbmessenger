@@ -752,9 +752,11 @@ public class DefaultSendOperationsTests {
     }
 
     private OpenGraphTemplatePayload createOpenGraphTemplate() {
-        OpenGraphTemplatePayload openGraphTemplate = new OpenGraphTemplatePayload("open graph url");
-        openGraphTemplate.addButton(new WebButton("title 1", "url 1"));
-        openGraphTemplate.addButton(new WebButton("title 2", "url 2"));
+        OpenGraphTemplatePayload openGraphTemplate = new OpenGraphTemplatePayload();
+        OpenGraphTemplatePayload.Element element = new OpenGraphTemplatePayload.Element("open graph url");
+        element.addButton(new WebButton("title 1", "url 1"));
+        element.addButton(new WebButton("title 2", "url 2"));
+        openGraphTemplate.addElement(element);
         return openGraphTemplate;
     }
 
